@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>湾岸ブリューイング 仕込み記録</title>
+<title>仕込み記録</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -195,12 +195,26 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator{
 }
 input[type=datetime-local]{color-scheme:dark;}
 
-@media (max-width:480px){
-  input[type=date], input[type=time], input[type=datetime-local]{
-    text-align:left;
-    -webkit-appearance:none;
-  }
+/* Custom date/time display: the native input is made invisible but stays
+   fully functional (tap opens the native picker); a styled div shows the
+   value, fully left-aligned and full width, immune to WebKit's inconsistent
+   internal pseudo-element rendering. See wrapDateInput() in the page script. */
+.date-field-wrap{ position:relative; min-width:0; }
+.date-field-wrap input[type=date],
+.date-field-wrap input[type=time],
+.date-field-wrap input[type=datetime-local]{
+  position:absolute !important; inset:0; width:100% !important; height:100%;
+  margin:0; padding:0; border:none; background:transparent; opacity:0;
+  cursor:pointer; z-index:2;
 }
+.date-display{
+  width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:7px; padding:9px 10px; font-size:0.9rem; font-family:'IBM Plex Sans JP', sans-serif;
+  pointer-events:none; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  box-sizing:border-box;
+}
+.date-display.placeholder{ color:var(--text-muted); opacity:0.65; }
+.sched-actual .date-display{ padding:7px 8px; font-size:0.85rem; }
 textarea{min-height:70px; resize:vertical;}
 .abv-display{
   background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
@@ -314,8 +328,8 @@ textarea{min-height:70px; resize:vertical;}
       <path d="M14 30V16h4.5a4 4 0 0 1 0 8H14M25 16v14M25 16h4a3.5 3.5 0 0 1 0 7h-4M25 23l4.5 7" stroke="#ece4d5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     <div>
-      <h1>湾岸ブリューイング</h1>
-      <div class="sub">仕込み記録 BREW LOG</div>
+      <h1>仕込み記録</h1>
+      <div class="sub">BREW LOG</div>
     </div>
   </header>
 
@@ -1767,6 +1781,70 @@ window.addEventListener('scroll', ()=>{
 window.addEventListener('resize', ()=>{
   if(comboCurrentInput) showComboFor(comboCurrentInput);
 });
+
+/* ---------------- Custom date/time input display ---------------- */
+function formatDateDisplayValue(type, value){
+  if(!value) return '';
+  if(type==='date') return value.replace(/-/g,'/');
+  if(type==='datetime-local'){
+    const parts = value.split('T');
+    return (parts[0]?parts[0].replace(/-/g,'/'):'') + (parts[1] ? ' '+parts[1] : '');
+  }
+  return value; // time: HH:MM as-is
+}
+
+function wrapDateInput(input){
+  if(input.dataset.dateWrapped) return;
+  input.dataset.dateWrapped = '1';
+  const type = input.type;
+  const placeholderText = input.getAttribute('placeholder') || (type==='date' ? '日付を選択' : type==='time' ? '時刻を選択' : '日時を選択');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'date-field-wrap' + (input.className ? ' '+input.className : '');
+  const inlineStyle = input.getAttribute('style');
+  if(inlineStyle){ wrap.setAttribute('style', inlineStyle); input.removeAttribute('style'); }
+
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+
+  const display = document.createElement('div');
+  display.className = 'date-display';
+  wrap.appendChild(display);
+
+  function sync(){
+    const formatted = formatDateDisplayValue(type, input.value);
+    if(formatted){
+      display.textContent = formatted;
+      display.classList.remove('placeholder');
+    } else {
+      display.textContent = placeholderText;
+      display.classList.add('placeholder');
+    }
+  }
+  input._dateSync = sync;
+  sync();
+  input.addEventListener('input', sync);
+  input.addEventListener('change', sync);
+}
+
+function wrapAllDateInputs(root){
+  (root || document).querySelectorAll('input[type=date], input[type=time], input[type=datetime-local]').forEach(wrapDateInput);
+}
+
+function syncAllDateDisplays(){
+  document.querySelectorAll('.date-field-wrap input').forEach(inp=>{ if(inp._dateSync) inp._dateSync(); });
+}
+
+wrapAllDateInputs(document);
+new MutationObserver((mutations)=>{
+  for(const m of mutations){
+    if(m.addedNodes && m.addedNodes.length){ wrapAllDateInputs(document); return; }
+  }
+}).observe(document.body, {childList:true, subtree:true});
+
+// Safety net: catches display updates for values set programmatically via
+// JS (e.g. populateFormFields), which don't fire native input/change events.
+setInterval(syncAllDateDisplays, 300);
 
 loadBatches();
 
