@@ -205,15 +205,17 @@ input[type=datetime-local]{color-scheme:dark;}
 .date-field-wrap input[type=time],
 .date-field-wrap input[type=datetime-local]{
   position:absolute !important; inset:0; width:100% !important; height:100%;
-  margin:0; padding:0; border:none; background:transparent; opacity:0;
+  margin:0; padding:0; border:none; background:transparent; opacity:0.01;
   cursor:pointer; z-index:2;
 }
 .date-display{
   width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
   border-radius:7px; padding:9px 10px; font-size:0.9rem; font-family:'IBM Plex Sans JP', sans-serif;
-  pointer-events:none; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  box-sizing:border-box;
+  pointer-events:none; text-align:left; box-sizing:border-box;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
 }
+.date-display .date-display-text{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.date-display .date-display-icon{ flex:none; opacity:0.6; font-size:0.95em; }
 .date-display.placeholder{ color:var(--text-muted); opacity:0.65; }
 .sched-actual .date-display{ padding:7px 8px; font-size:0.85rem; }
 textarea{min-height:70px; resize:vertical;}
@@ -358,7 +360,7 @@ textarea{min-height:70px; resize:vertical;}
       <div class="field"><label>バッチ名</label><input type="text" id="f_batchName" placeholder="例）第12仕込み・APA"></div>
       <div class="grid2">
         <div class="field"><label>スタイル</label><input type="text" id="f_style" data-list="styleList" placeholder="例）American Pale Ale"></div>
-        <div class="field"><label>仕込み日</label><input type="date" id="f_brewDate"></div>
+        <div class="field"><label>仕込み予定日</label><input type="date" id="f_brewDate"></div>
       </div>
       <div class="grid2">
         <div class="field"><label>担当</label><input type="text" id="f_brewer" data-list="brewerList" placeholder="例）湾岸太郎"></div>
@@ -478,9 +480,31 @@ textarea{min-height:70px; resize:vertical;}
     <div id="sch_timeline"></div>
     <div id="sch_dryhops"></div>
     <div class="section">
-      <button type="button" class="add-row-btn" onclick="exportScheduleICS()">📅 このバッチの予定を書き出す (.ics)</button>
-      <button type="button" class="add-row-btn" style="margin-top:8px;" onclick="exportAllSchedulesICS()">📅 全バッチの予定をまとめて書き出す (.ics)</button>
-      <div class="sched-note">書き出したファイルをGoogleカレンダーの「設定 → インポート/エクスポート → インポート」で取り込むと、各工程が予定として登録されます（開始15分前に通知）。Apple/Outlookカレンダーでも同じファイルが使えます。</div>
+      <div class="section-title">リマインダー設定</div>
+      <div class="grid2">
+        <div class="field"><label>各工程の通知タイミング</label>
+          <select id="sch_reminderMin" onchange="saveReminderSetting()">
+            <option value="5">5分前</option>
+            <option value="10">10分前</option>
+            <option value="15" selected>15分前</option>
+            <option value="30">30分前</option>
+            <option value="60">1時間前</option>
+          </select>
+        </div>
+        <div class="field"><label>ドライホップの通知</label>
+          <select id="sch_reminderDryhop" onchange="saveReminderSetting()">
+            <option value="9">当日 朝9時</option>
+            <option value="-15">前日 朝9時</option>
+            <option value="0">当日 深夜0時</option>
+          </select>
+        </div>
+      </div>
+      <div class="sched-note">.icsファイル書き出し時の通知タイミングです。Googleカレンダーの📅ワンタップ登録（クイック追加）は、この設定に関わらずアカウントの既定の通知設定が使われます。</div>
+    </div>
+
+    <div class="section">
+      <button type="button" class="add-row-btn" onclick="exportAllSchedulesICS()">📅 全バッチの予定をまとめて書き出す (.ics)</button>
+      <div class="sched-note">書き出したファイルをGoogleカレンダーの「設定 → インポート/エクスポート → インポート」で取り込むと、各工程が予定として登録されます。Apple/Outlookカレンダーでも同じファイルが使えます。</div>
     </div>
     <div class="section">
       <label class="sched-complete-check">
@@ -1348,6 +1372,7 @@ function openScheduleView(){
   const sel = $('sch_batchSelect');
   const sorted = [...batches].sort((a,b)=>(b.brewDate||'').localeCompare(a.brewDate||''));
   sel.innerHTML = sorted.map(b=>`<option value="${b.id}">${escapeHtml(b.batchName||'(名称未設定)')} ${b.brewDate?'・'+b.brewDate:''}</option>`).join('');
+  loadReminderSetting();
   if(!sorted.length){
     $('sch_timeline').innerHTML = '<div class="sched-empty">仕込み記録がまだありません。先に「新規仕込み」からバッチを作成してください。</div>';
     $('sch_dryhops').innerHTML='';
@@ -1358,6 +1383,26 @@ function openScheduleView(){
   }
   renderSchedule();
   showView('schedule');
+}
+
+async function loadReminderSetting(){
+  try{
+    const r = await window.storage.get('wangan-reminder-settings', false);
+    const s = r ? JSON.parse(r.value) : null;
+    if(s){
+      $('sch_reminderMin').value = s.min || '15';
+      $('sch_reminderDryhop').value = s.dryhop!==undefined ? s.dryhop : '9';
+    }
+  }catch(e){ /* keep defaults */ }
+}
+
+async function saveReminderSetting(){
+  try{
+    await window.storage.set('wangan-reminder-settings', JSON.stringify({
+      min: $('sch_reminderMin').value,
+      dryhop: $('sch_reminderDryhop').value
+    }), false);
+  }catch(e){ /* ignore, not critical */ }
 }
 
 function currentScheduleBatch(){
@@ -1456,7 +1501,9 @@ function renderTimeline(b){
   } else {
     timeline.innerHTML = steps.map(s=>{
       const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : timeOfDayValue(s.date);
-      const gcal = gcalQuickAddLink(`${b.batchName||'仕込み'}：${s.label}`, s.date, addMinutes(s.date,15), s.sub||'');
+      const actualDisp = (actuals[s.key]!==undefined && actuals[s.key]!=='') ? actuals[s.key] : '(未記録)';
+      const details = `予定: ${timeOfDayValue(s.date)} / 実績: ${actualDisp}` + (s.sub ? `\n${s.sub}` : '');
+      const gcal = gcalQuickAddLink(`${b.batchName||'仕込み'}：${s.label}`, s.date, addMinutes(s.date,15), details);
       return `
       <div class="sched-row">
         <div class="sched-dot"></div>
@@ -1475,7 +1522,9 @@ function renderTimeline(b){
       (b.fermentStart ? '' : `<div class="sched-note">発酵開始日を入力すると、実際の投入日が計算されます。</div>`) +
       dryhops.map(s=>{
         const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : (s.hasDate ? dateStrToInputValue(s.dateStr) : '');
-        const gcalHtml = s.hasDate ? `<a class="sched-cal-btn" href="${gcalQuickAddAllDayLink(`${b.batchName||'仕込み'}：${s.label}`, s.dateStr, s.sub||'')}" target="_blank" rel="noopener" title="Googleカレンダーに追加">📅</a>` : `<span class="sched-cal-btn sched-cal-btn-disabled" title="発酵開始日を入力すると使えます">📅</span>`;
+        const actualDisp = (actuals[s.key]!==undefined && actuals[s.key]!=='') ? actuals[s.key] : '(未記録)';
+        const dhDetails = `予定: ${s.dateStr} / 実績: ${actualDisp}` + (s.sub ? `\n${s.sub}` : '');
+        const gcalHtml = s.hasDate ? `<a class="sched-cal-btn" href="${gcalQuickAddAllDayLink(`${b.batchName||'仕込み'}：${s.label}`, s.dateStr, dhDetails)}" target="_blank" rel="noopener" title="Googleカレンダーに追加">📅</a>` : `<span class="sched-cal-btn sched-cal-btn-disabled" title="発酵開始日を入力すると使えます">📅</span>`;
         return `<div class="sched-row sched-dryhop">
           <div class="sched-dot"></div>
           <div class="sched-label">${escapeHtml(s.label)}<div class="sub">${escapeHtml(s.sub)}</div></div>
@@ -1527,50 +1576,51 @@ function gcalQuickAddAllDayLink(title, dateStr, details){
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+function hourOffsetToTrigger(h){
+  h = parseInt(h)||0;
+  if(h===0) return 'PT0M';
+  return h>0 ? `PT${h}H` : `-PT${Math.abs(h)}H`;
+}
+
 function buildBatchICSEvents(b, now){
   const steps = computeScheduleSteps(b);
   const dryhops = computeDryHopSchedule(b).filter(s=>s.hasDate);
+  const actuals = b.scheduleActuals || {};
+  const reminderMin = ($('sch_reminderMin') && $('sch_reminderMin').value) || '15';
+  const dryhopTrigger = hourOffsetToTrigger(($('sch_reminderDryhop') && $('sch_reminderDryhop').value) || '9');
   let ics = '';
   steps.forEach((s,i)=>{
     const end = addMinutes(s.date, 15);
+    const actualDisp = (actuals[s.key]!==undefined && actuals[s.key]!=='') ? actuals[s.key] : '(未記録)';
+    const desc = `予定: ${timeOfDayValue(s.date)} / 実績: ${actualDisp}` + (s.sub ? `\n${s.sub}` : '');
     ics += 'BEGIN:VEVENT\r\n';
     ics += `UID:${b.id}-step-${i}-${s.key}@brewlog\r\n`;
     ics += `DTSTAMP:${now}\r\n`;
     ics += `DTSTART:${icsDateUTC(s.date)}\r\n`;
     ics += `DTEND:${icsDateUTC(end)}\r\n`;
     ics += `SUMMARY:${icsEscape((b.batchName||'仕込み')+'：'+s.label)}\r\n`;
-    if(s.sub) ics += `DESCRIPTION:${icsEscape(s.sub)}\r\n`;
-    ics += 'BEGIN:VALARM\r\nTRIGGER:-PT15M\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n';
+    ics += `DESCRIPTION:${icsEscape(desc)}\r\n`;
+    ics += `BEGIN:VALARM\r\nTRIGGER:-PT${reminderMin}M\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n`;
     ics += 'END:VEVENT\r\n';
   });
   dryhops.forEach((s,i)=>{
     const d0 = icsDateOnly(s.dateStr);
     const d1 = icsAddDaysToDateOnly(d0);
+    const actualDisp = (actuals[s.key]!==undefined && actuals[s.key]!=='') ? actuals[s.key] : '(未記録)';
+    const desc = `予定: ${s.dateStr} / 実績: ${actualDisp}` + (s.sub ? `\n${s.sub}` : '');
     ics += 'BEGIN:VEVENT\r\n';
     ics += `UID:${b.id}-dryhop-${i}-${s.key}@brewlog\r\n`;
     ics += `DTSTAMP:${now}\r\n`;
     ics += `DTSTART;VALUE=DATE:${d0}\r\n`;
     ics += `DTEND;VALUE=DATE:${d1}\r\n`;
     ics += `SUMMARY:${icsEscape((b.batchName||'仕込み')+'：'+s.label)}\r\n`;
-    if(s.sub) ics += `DESCRIPTION:${icsEscape(s.sub)}\r\n`;
-    ics += 'BEGIN:VALARM\r\nTRIGGER:-PT9H\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n';
+    ics += `DESCRIPTION:${icsEscape(desc)}\r\n`;
+    ics += `BEGIN:VALARM\r\nTRIGGER:${dryhopTrigger}\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n`;
     ics += 'END:VEVENT\r\n';
   });
   return {ics, count: steps.length + dryhops.length};
 }
 
-function exportScheduleICS(){
-  const b = currentScheduleBatch();
-  if(!b){ alert('対象バッチを選択してください。'); return; }
-  const now = icsDateUTC(new Date());
-  const {ics, count} = buildBatchICSEvents(b, now);
-  if(!count){
-    alert('仕込み開始日時（と、あればドライホップ用の発酵開始日）を入力してから書き出してください。');
-    return;
-  }
-  const full = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Brew Log//Schedule//JA\r\nCALSCALE:GREGORIAN\r\n' + ics + 'END:VCALENDAR\r\n';
-  downloadBlob(full, (b.batchName||'仕込みスケジュール').replace(/[\\/:*?"<>|]/g,'_') + '.ics', 'text/calendar;charset=utf-8');
-}
 
 function exportAllSchedulesICS(){
   const target = exportableBatches();
@@ -1613,7 +1663,7 @@ function exportableBatches(){
 function exportCSV(){
   const target = exportableBatches();
   if(!target.length){ alert('記録がありません'); return; }
-  const headers = ['バッチ名','スタイル','仕込み日','担当','バッチサイズL','目標OG','実測OG','FG','ABV(%)',
+  const headers = ['バッチ名','スタイル','仕込み予定日','担当','バッチサイズL','目標OG','実測OG','FG','ABV(%)',
     '糖化温度','糖化時間','煮沸時間','仕込み水量L','水源','仕込み水pH','Ca(ppm)','Mg(ppm)','Na(ppm)','Cl(ppm)','SO4(ppm)','HCO3(ppm)','ミネラル添加剤',
     'モルト','ホップ','副原料','酵母','発酵開始日','発酵温度',
     '比重・pHログ','仕込み開始日時','工程スケジュール(予定/実績)','ドライホップ予定(予定/実績)',
@@ -1944,15 +1994,22 @@ function wrapDateInput(input){
 
   const display = document.createElement('div');
   display.className = 'date-display';
+  const textSpan = document.createElement('span');
+  textSpan.className = 'date-display-text';
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'date-display-icon';
+  iconSpan.textContent = type==='time' ? '🕐' : '📅';
+  display.appendChild(textSpan);
+  display.appendChild(iconSpan);
   wrap.appendChild(display);
 
   function sync(){
     const formatted = formatDateDisplayValue(type, input.value);
     if(formatted){
-      display.textContent = formatted;
+      textSpan.textContent = formatted;
       display.classList.remove('placeholder');
     } else {
-      display.textContent = placeholderText;
+      textSpan.textContent = placeholderText;
       display.classList.add('placeholder');
     }
   }
