@@ -1429,13 +1429,21 @@ function saveScheduleActual(key, value){
   renderList();
 }
 
-function renderSchedule(){
+async function renderSchedule(){
   const b = currentScheduleBatch();
   if(!b) return;
-  const displayStart = b.brewStartTime || `${b.brewDate || todayDateValue()}T09:00`;
-  $('sch_startTime').value = displayStart;
+  let needsPersist = false;
+  if(!b.brewStartTime){
+    b.brewStartTime = `${b.brewDate || todayDateValue()}T09:00`;
+    needsPersist = true;
+  }
+  $('sch_startTime').value = b.brewStartTime;
   $('sch_completed').checked = statusOf(b)==='完了';
-  renderTimeline({...b, brewStartTime: displayStart});
+  renderTimeline(b);
+  if(needsPersist){
+    await persist();
+    renderList();
+  }
 }
 
 async function saveScheduleView(){
@@ -1623,7 +1631,7 @@ function buildBatchICSEvents(b, now){
 
 
 function exportAllSchedulesICS(){
-  const target = exportableBatches();
+  const target = batches;
   const now = icsDateUTC(new Date());
   let allEvents = '';
   let batchCount = 0, eventCount = 0;
@@ -1632,7 +1640,7 @@ function exportAllSchedulesICS(){
     if(count){ allEvents += ics; batchCount++; eventCount += count; }
   });
   if(!eventCount){
-    alert('仕込み開始日時が入力されているバッチがありません。各バッチのスケジュールを設定してから書き出してください。');
+    alert('仕込み開始日時が入力されているバッチがありません。仕込みスケジュールタブで仕込み開始日時を設定してから書き出してください。');
     return;
   }
   const full = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Brew Log//Schedule All//JA\r\nCALSCALE:GREGORIAN\r\n' + allEvents + 'END:VCALENDAR\r\n';
