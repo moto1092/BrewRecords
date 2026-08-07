@@ -312,8 +312,16 @@ textarea{min-height:70px; resize:vertical;}
 }
 .sched-cal-btn:hover{border-color:var(--copper);}
 .sched-cal-btn-disabled{opacity:0.3; cursor:default; pointer-events:none;}
-.sched-actual input{padding:7px 8px; font-size:0.85rem;}
+.sched-actual input{padding:7px 8px; font-size:0.85rem; color:var(--hop-bright); font-family:'IBM Plex Mono', monospace; font-weight:500;}
 .sched-empty{color:var(--text-muted); font-size:0.85rem; text-align:center; padding:30px 10px;}
+.sched-col-header{
+  display:flex; align-items:center; gap:12px; padding:0 14px; margin-bottom:6px;
+  font-size:0.66rem; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;
+}
+.sched-col-header-label{flex:1; padding-left:20px;}
+.sched-col-header-planned{flex:0 0 76px; text-align:center; color:var(--copper-bright);}
+.sched-col-header-actual{flex:0 0 110px; text-align:center; color:var(--hop-bright);}
+.sched-col-header-cal{flex:0 0 30px;}
 
 @media (max-width:420px){
   .grid2{grid-template-columns:1fr;}
@@ -476,6 +484,12 @@ textarea{min-height:70px; resize:vertical;}
         <div class="field"><label>仕込み開始日時</label><input type="datetime-local" id="sch_startTime" onchange="onScheduleStartChange()"></div>
       </div>
       <div class="sched-note">糖化・煮沸時間、ホップ投入タイミングをもとに予定時刻を自動計算します。各工程の実際の時刻は下の「実績」欄に入力してください。</div>
+    </div>
+    <div class="sched-col-header">
+      <span class="sched-col-header-label">工程</span>
+      <span class="sched-col-header-planned">予定</span>
+      <span class="sched-col-header-actual">実績</span>
+      <span class="sched-col-header-cal"></span>
     </div>
     <div id="sch_timeline"></div>
     <div id="sch_dryhops"></div>
@@ -661,6 +675,8 @@ textarea{min-height:70px; resize:vertical;}
     <span class="footer-sep">・</span>
     <span class="footer-link" onclick="exportJSON()">バックアップを書き出す</span>
     <span class="footer-sep">・</span>
+    <span class="footer-link" onclick="restoreFromAutoBackup()">自動バックアップから復元</span>
+    <span class="footer-sep">・</span>
     <label class="footer-link">
       バックアップを読み込む
       <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importJSON(this.files[0])">
@@ -672,7 +688,8 @@ textarea{min-height:70px; resize:vertical;}
     </label>
     <div class="footer-note">
       <a href="https://www.brewersfriend.com/" target="_blank" rel="noopener">Brewer's Friendでレシピを探す ↗</a><br>
-      レシピページ右上の「Export」→「BeerXML」からダウンロードしたファイルを、上の「レシピを取り込む」で選択してください。
+      レシピページ右上の「Export」→「BeerXML」からダウンロードしたファイルを、上の「レシピを取り込む」で選択してください。<br><br>
+      記録を保存するたびに、1日1回まで自動的にバックアップが作成されます（直近7日分を保持）。「自動バックアップから復元」でいつでも過去の状態に戻せます。
     </div>
   </div>
 
@@ -765,6 +782,66 @@ async function persist(){
   try{
     await window.storage.set('wangan-batches', JSON.stringify(batches), false);
   }catch(e){ console.error('storage error', e); }
+  maybeAutoBackup();
+}
+
+const AUTO_BACKUP_MAX = 7;
+
+async function maybeAutoBackup(){
+  try{
+    const today = todayDateValue();
+    let lastDate = '';
+    try{
+      const r = await window.storage.get('wangan-lastBackupDate', false);
+      lastDate = r ? r.value : '';
+    }catch(e){ lastDate = ''; }
+    if(lastDate === today) return; // already backed up today
+
+    let index = [];
+    try{
+      const r = await window.storage.get('wangan-backupIndex', false);
+      index = r ? JSON.parse(r.value) : [];
+    }catch(e){ index = []; }
+
+    await window.storage.set(`wangan-backup-${today}`, JSON.stringify(batches), false);
+    index = index.filter(d=>d!==today);
+    index.push(today);
+    while(index.length > AUTO_BACKUP_MAX){
+      const old = index.shift();
+      try{ await window.storage.delete(`wangan-backup-${old}`, false); }catch(e){}
+    }
+    await window.storage.set('wangan-backupIndex', JSON.stringify(index), false);
+    await window.storage.set('wangan-lastBackupDate', today, false);
+  }catch(e){ console.error('auto backup error', e); }
+}
+
+async function listAutoBackups(){
+  try{
+    const r = await window.storage.get('wangan-backupIndex', false);
+    return r ? JSON.parse(r.value) : [];
+  }catch(e){ return []; }
+}
+
+async function restoreFromAutoBackup(){
+  const index = await listAutoBackups();
+  if(!index.length){ alert('自動バックアップはまだありません（1日1回、記録を保存したタイミングで自動的に作成されます）。'); return; }
+  const list = [...index].reverse();
+  const choice = prompt(`復元するバックアップの日付を入力してください（既存のデータは上書きされます）\n\n利用可能な日付:\n${list.join('\n')}`, list[0]);
+  if(!choice) return;
+  if(!index.includes(choice)){ alert('その日付のバックアップは見つかりませんでした。'); return; }
+  if(!confirm(`${choice}時点のバックアップに復元します。現在の記録は上書きされます。よろしいですか？`)) return;
+  try{
+    const r = await window.storage.get(`wangan-backup-${choice}`, false);
+    const restored = r ? JSON.parse(r.value) : null;
+    if(!Array.isArray(restored)) throw new Error('invalid backup data');
+    batches = restored;
+    await window.storage.set('wangan-batches', JSON.stringify(batches), false);
+    renderGauge(); renderList();
+    showView('list');
+    alert(`${choice}時点のバックアップから復元しました。`);
+  }catch(e){
+    alert('復元に失敗しました。');
+  }
 }
 
 function uid(){ return 'b' + Date.now() + Math.random().toString(36).slice(2,7); }
