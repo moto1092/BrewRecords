@@ -23,7 +23,8 @@
 }
 *{box-sizing:border-box;}
 input, select, textarea, button{ min-width:0; }
-.dyn-row, .dyn-subrow, .batch-meta, .batch-top, .gauge-row{ min-width:0; }
+.dyn-row, .dyn-subrow, .batch-meta, .batch-top, .gauge-row, .sched-row{ min-width:0; }
+.sched-label{ min-width:0; }
 html, body{ overflow-x:hidden; max-width:100vw; }
 html,body{margin:0;padding:0;}
 body{
@@ -302,6 +303,13 @@ textarea{min-height:70px; resize:vertical;}
   color:var(--copper-bright);
 }
 .sched-actual{flex:0 0 110px;}
+.sched-cal-btn{
+  flex:0 0 30px; height:30px; display:flex; align-items:center; justify-content:center;
+  border-radius:6px; border:1px solid var(--border); background:var(--surface-2);
+  text-decoration:none; font-size:0.9rem; cursor:pointer;
+}
+.sched-cal-btn:hover{border-color:var(--copper);}
+.sched-cal-btn-disabled{opacity:0.3; cursor:default; pointer-events:none;}
 .sched-actual input{padding:7px 8px; font-size:0.85rem;}
 .sched-empty{color:var(--text-muted); font-size:0.85rem; text-align:center; padding:30px 10px;}
 
@@ -437,16 +445,10 @@ textarea{min-height:70px; resize:vertical;}
         <div class="field"><label>パッケージング日</label><input type="date" id="f_packageDate"></div>
         <div class="field"><label>CO2ボリューム (vol)</label><input type="number" step="0.1" min="0" id="f_co2vol" placeholder="2.4"></div>
       </div>
-      <div class="grid2">
-        <div class="field"><label>形態</label>
-          <input type="text" id="f_packageType" data-list="packageTypeList" placeholder="例）瓶">
-        </div>
-        <div class="field"><label>1単位あたりの量 (ml)</label><input type="number" step="1" min="0" id="f_unitVolume" placeholder="例）330"></div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label>数量</label><input type="number" step="1" min="0" id="f_quantity" placeholder="例）24"></div>
-        <div class="field"><label>合計容量（自動計算）</label><div id="f_totalVolDisplay" class="abv-display">—</div></div>
-      </div>
+      <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin:4px 0 6px;">容器の内訳（瓶・缶・樽などまとめて複数記録可）</label>
+      <div id="packageRows"></div>
+      <button type="button" class="add-row-btn" onclick="addRow('packageRows','package')">＋ 容器を追加</button>
+      <div class="field" style="margin-top:10px;"><label>合計容量（自動計算）</label><div id="f_totalVolDisplay" class="abv-display">—</div></div>
     </div>
 
     <div class="section">
@@ -475,6 +477,11 @@ textarea{min-height:70px; resize:vertical;}
     </div>
     <div id="sch_timeline"></div>
     <div id="sch_dryhops"></div>
+    <div class="section">
+      <button type="button" class="add-row-btn" onclick="exportScheduleICS()">📅 このバッチの予定を書き出す (.ics)</button>
+      <button type="button" class="add-row-btn" style="margin-top:8px;" onclick="exportAllSchedulesICS()">📅 全バッチの予定をまとめて書き出す (.ics)</button>
+      <div class="sched-note">書き出したファイルをGoogleカレンダーの「設定 → インポート/エクスポート → インポート」で取り込むと、各工程が予定として登録されます（開始15分前に通知）。Apple/Outlookカレンダーでも同じファイルが使えます。</div>
+    </div>
     <div class="section">
       <label class="sched-complete-check">
         <input type="checkbox" id="sch_completed">
@@ -697,10 +704,11 @@ function sampleBatch(){
     fg: '1.013',
     packageDate: '2026-08-04',
     co2vol: '2.45',
-    unitVolume: '330',
-    packageType: '瓶',
-    quantity: '68',
-    notes: 'これは操作方法を確認していただくための見本レコードです（BeerXMLのBass Pale Ale Cloneをもとに作成、実測値はサンプルです）。不要であれば削除して問題ありません。\n目標値: ABV 5.31% / IBU 33.47 / SRM 11.01 / Efficiency 83%'
+    packages: [
+      { type: '瓶', unitVolume: '330', quantity: '52' },
+      { type: '瓶', unitVolume: '633', quantity: '8' }
+    ],
+    notes: 'これは操作方法を確認していただくための見本レコードです(BeerXMLのBass Pale Ale Cloneをもとに作成、実測値はサンプルです)。不要であれば削除して問題ありません。\n目標値: ABV 5.31% / IBU 33.47 / SRM 11.01 / Efficiency 83%'
   };
 }
 
@@ -736,6 +744,19 @@ async function persist(){
 }
 
 function uid(){ return 'b' + Date.now() + Math.random().toString(36).slice(2,7); }
+
+function getPackages(b){
+  if(b.packages && b.packages.length) return b.packages;
+  if(b.packageType||b.unitVolume||b.quantity) return [{type:b.packageType, unitVolume:b.unitVolume, quantity:b.quantity}];
+  return [];
+}
+
+function totalPackageVolume(b){
+  return getPackages(b).reduce((sum,p)=>{
+    const qty = parseFloat(p.quantity), unitMl = parseFloat(p.unitVolume);
+    return sum + (qty && unitMl ? qty*unitMl/1000 : 0);
+  }, 0);
+}
 
 function statusOf(b){
   if(b.completed===true) return '完了';
@@ -923,6 +944,11 @@ function addRow(containerId, type, data){
         <option value="煮沸中" ${data&&data.timing==='煮沸中'?'selected':''}>煮沸中</option>
       </select>
       <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+  } else if(type==='package'){
+    row.innerHTML = `<input type="text" placeholder="形態（例 瓶）" class="rp-type" data-list="packageTypeList" style="flex:1 1 90px;" value="${data?escapeHtml(data.type):''}">
+      <input type="number" step="1" min="0" placeholder="ml" class="rp-unitvol" style="flex:0 0 66px;" value="${data?escapeHtml(data.unitVolume):''}">
+      <input type="number" step="1" min="0" placeholder="数量" class="rp-qty" style="flex:0 0 62px;" value="${data?escapeHtml(data.quantity):''}">
+      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
   } else if(type==='gravity'){
     row.innerHTML = `<input type="date" class="rg-date" style="flex:0 0 130px;" value="${data?data.date:''}">
       <input type="number" step="0.001" min="1.000" placeholder="比重" class="rg-val" style="flex:0 0 80px;" value="${data?data.gravity:''}">
@@ -956,6 +982,10 @@ function collectRows(containerId, type){
     return rows.map(r=>({name:r.querySelector('.rm-name').value, amount:r.querySelector('.rm-amount').value, timing:r.querySelector('.rm-timing').value}))
       .filter(x=>x.name||x.amount);
   }
+  if(type==='package'){
+    return rows.map(r=>({type:r.querySelector('.rp-type').value, unitVolume:r.querySelector('.rp-unitvol').value, quantity:r.querySelector('.rp-qty').value}))
+      .filter(x=>x.type||x.unitVolume||x.quantity);
+  }
   if(type==='gravity'){
     return rows.map(r=>({date:r.querySelector('.rg-date').value, gravity:r.querySelector('.rg-val').value, ph:r.querySelector('.rg-ph').value}))
       .filter(x=>x.date||x.gravity||x.ph)
@@ -967,15 +997,17 @@ function collectRows(containerId, type){
 function resetForm(){
   ['batchName','style','brewDate','brewer','batchSize','targetOG','actualOG','mashTemp','mashTime',
    'boilTime','waterVolume','waterSource','waterPh','mCa','mMg','mNa','mCl','mSO4','mHCO3',
-   'yeast','fermentStart','fermentTemp','fg','packageDate','co2vol','packageType','unitVolume','quantity','notes']
+   'yeast','fermentStart','fermentTemp','fg','packageDate','co2vol','notes']
    .forEach(k=>{ const el = $('f_'+k); if(el) el.value=''; });
   $('fermentableRows').innerHTML='';
   $('hopRows').innerHTML='';
   $('adjunctRows').innerHTML='';
   $('mineralRows').innerHTML='';
+  $('packageRows').innerHTML='';
   $('gravityRows').innerHTML='';
   addRow('fermentableRows','fermentable');
   addRow('hopRows','hop');
+  addRow('packageRows','package');
 }
 
 function openNewForm(){
@@ -987,7 +1019,7 @@ function openNewForm(){
 }
 
 function populateFormFields(b){
-  $('fermentableRows').innerHTML=''; $('hopRows').innerHTML=''; $('adjunctRows').innerHTML=''; $('mineralRows').innerHTML=''; $('gravityRows').innerHTML='';
+  $('fermentableRows').innerHTML=''; $('hopRows').innerHTML=''; $('adjunctRows').innerHTML=''; $('mineralRows').innerHTML=''; $('packageRows').innerHTML=''; $('gravityRows').innerHTML='';
   $('f_batchName').value=b.batchName||'';
   $('f_style').value=b.style||'';
   $('f_brewDate').value=b.brewDate||'';
@@ -1013,17 +1045,17 @@ function populateFormFields(b){
   $('f_fg').value=b.fg||'';
   $('f_packageDate').value=b.packageDate||'';
   $('f_co2vol').value=b.co2vol||'';
-  $('f_unitVolume').value=b.unitVolume||'';
-  $('f_packageType').value=b.packageType||'';
-  $('f_quantity').value=b.quantity||'';
   $('f_notes').value=b.notes||'';
   (b.fermentables||[{}]).forEach(x=>addRow('fermentableRows','fermentable',x));
   (b.hops||[{}]).forEach(x=>addRow('hopRows','hop',x));
   (b.adjuncts||[]).forEach(x=>addRow('adjunctRows','adjunct',x));
   (b.minerals||[]).forEach(x=>addRow('mineralRows','mineral',x));
   (b.gravityLog||[]).forEach(x=>addRow('gravityRows','gravity',x));
+  const packages = b.packages || (b.packageType||b.unitVolume||b.quantity ? [{type:b.packageType, unitVolume:b.unitVolume, quantity:b.quantity}] : []);
+  packages.forEach(x=>addRow('packageRows','package',x));
   if(!$('fermentableRows').children.length) addRow('fermentableRows','fermentable');
   if(!$('hopRows').children.length) addRow('hopRows','hop');
+  if(!$('packageRows').children.length) addRow('packageRows','package');
   updateAbvDisplay();
   updateTotalVolDisplay();
 }
@@ -1049,7 +1081,7 @@ function duplicateBatch(id){
     actualOG: '', fg: '', completed: false,
     fermentStart: '', fermentTemp: '',
     gravityLog: [],
-    packageDate: '', quantity: '',
+    packageDate: '', packages: [],
     fermentables: (src.fermentables||[]).map(x=>({...x})),
     hops: (src.hops||[]).map(x=>({...x})),
     adjuncts: (src.adjuncts||[]).map(x=>({...x})),
@@ -1091,7 +1123,7 @@ function scaleDuplicateBatch(id){
     actualOG: '', fg: '', completed: false,
     fermentStart: '', fermentTemp: '',
     gravityLog: [],
-    packageDate: '', quantity: '',
+    packageDate: '', packages: [],
     batchSize: String(round2(newSize)),
     waterVolume: src.waterVolume ? String(round2(parseFloat(src.waterVolume)*ratio)) : '',
     fermentables: (src.fermentables||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
@@ -1143,9 +1175,7 @@ async function saveBatch(){
     fg: $('f_fg').value,
     packageDate: $('f_packageDate').value,
     co2vol: $('f_co2vol').value,
-    unitVolume: $('f_unitVolume').value,
-    packageType: $('f_packageType').value,
-    quantity: $('f_quantity').value,
+    packages: collectRows('packageRows','package'),
     notes: $('f_notes').value,
   };
   if(!b.batchName){ alert('バッチ名を入力してください'); return; }
@@ -1206,7 +1236,12 @@ function openDetail(id){
       <div class="row"><span>発酵開始</span><span>${b.fermentStart||'—'}</span></div>
       <div class="row"><span>発酵温度</span><span>${b.fermentTemp?b.fermentTemp+'℃':'—'}</span></div></div>` : ''}
     ${(b.gravityLog&&b.gravityLog.length) ? `<div class="detail-list">${b.gravityLog.map(g=>`<div class="row"><span>${g.date}</span><span>${g.gravity||'—'}${g.ph?' ・ pH '+g.ph:''}</span></div>`).join('')}</div>` : ''}
-    ${(b.packageDate||b.packageType) ? `<div class="detail-list"><div class="row"><span>パッケージング</span><span>${b.packageDate||'—'} ・ ${b.packageType||''} ${b.quantity||''}${b.unitVolume?' × '+b.unitVolume+'ml':''}</span></div>${(b.quantity&&b.unitVolume)?`<div class="row"><span>合計容量</span><span>${(parseFloat(b.quantity)*parseFloat(b.unitVolume)/1000).toFixed(2)} L</span></div>`:''}${b.co2vol?`<div class="row"><span>CO2ボリューム</span><span>${escapeHtml(b.co2vol)} vol</span></div>`:''}</div>` : ''}
+    ${(b.packageDate||getPackages(b).length||b.co2vol) ? `<div class="detail-list">
+      ${b.packageDate?`<div class="row"><span>パッケージング日</span><span>${escapeHtml(b.packageDate)}</span></div>`:''}
+      ${getPackages(b).map(p=>`<div class="row"><span>${escapeHtml(p.type||'(形態未設定)')}</span><span>${escapeHtml(p.quantity||'')}${p.unitVolume?' × '+escapeHtml(p.unitVolume)+'ml':''}</span></div>`).join('')}
+      ${totalPackageVolume(b)>0?`<div class="row"><span>合計容量</span><span>${totalPackageVolume(b).toFixed(2)} L</span></div>`:''}
+      ${b.co2vol?`<div class="row"><span>CO2ボリューム</span><span>${escapeHtml(b.co2vol)} vol</span></div>`:''}
+    </div>` : ''}
     ${(schedSteps.length||schedDryhops.length) ? `<div class="section"><div class="section-title">仕込みスケジュール</div>
       ${b.brewStartTime?`<div class="detail-list"><div class="row"><span>仕込み開始日時</span><span>${escapeHtml(b.brewStartTime.replace('T',' '))}</span></div></div>`:''}
       ${schedSteps.length?`<div class="detail-list">${schedSteps.map(s=>`<div class="row"><span>${escapeHtml(s.label)}</span><span>予定 ${formatStepDisplay(s.date, schedStartDate)}${schedActuals[s.key]?' ／ 実績 '+escapeHtml(schedActuals[s.key]):''}</span></div>`).join('')}</div>`:''}
@@ -1421,12 +1456,14 @@ function renderTimeline(b){
   } else {
     timeline.innerHTML = steps.map(s=>{
       const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : timeOfDayValue(s.date);
+      const gcal = gcalQuickAddLink(`${b.batchName||'仕込み'}：${s.label}`, s.date, addMinutes(s.date,15), s.sub||'');
       return `
       <div class="sched-row">
         <div class="sched-dot"></div>
         <div class="sched-label">${escapeHtml(s.label)}${s.sub?`<div class="sub">${escapeHtml(s.sub)}</div>`:''}</div>
         <div class="sched-planned">${formatStepDisplay(s.date, startDate)}</div>
         <div class="sched-actual"><input type="time" value="${val}" onchange="saveScheduleActual('${s.key}', this.value)"></div>
+        <a class="sched-cal-btn" href="${gcal}" target="_blank" rel="noopener" title="Googleカレンダーに追加">📅</a>
       </div>`;
     }).join('');
   }
@@ -1438,16 +1475,119 @@ function renderTimeline(b){
       (b.fermentStart ? '' : `<div class="sched-note">発酵開始日を入力すると、実際の投入日が計算されます。</div>`) +
       dryhops.map(s=>{
         const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : (s.hasDate ? dateStrToInputValue(s.dateStr) : '');
+        const gcalHtml = s.hasDate ? `<a class="sched-cal-btn" href="${gcalQuickAddAllDayLink(`${b.batchName||'仕込み'}：${s.label}`, s.dateStr, s.sub||'')}" target="_blank" rel="noopener" title="Googleカレンダーに追加">📅</a>` : `<span class="sched-cal-btn sched-cal-btn-disabled" title="発酵開始日を入力すると使えます">📅</span>`;
         return `<div class="sched-row sched-dryhop">
           <div class="sched-dot"></div>
           <div class="sched-label">${escapeHtml(s.label)}<div class="sub">${escapeHtml(s.sub)}</div></div>
           <div class="sched-planned">${escapeHtml(s.dateStr)}</div>
           <div class="sched-actual"><input type="date" value="${val}" onchange="saveScheduleActual('${s.key}', this.value)"></div>
+          ${gcalHtml}
         </div>`;
       }).join('');
   } else {
     dryhopEl.innerHTML = '';
   }
+}
+
+/* ---------------- Calendar integration ---------------- */
+function icsDateUTC(d){
+  return d.getUTCFullYear() + pad2(d.getUTCMonth()+1) + pad2(d.getUTCDate()) + 'T' + pad2(d.getUTCHours()) + pad2(d.getUTCMinutes()) + '00Z';
+}
+function icsDateOnly(dateStr){
+  // dateStr like "2026/08/04" -> "20260804"
+  return dateStr.replace(/\//g,'');
+}
+function icsAddDaysToDateOnly(yyyymmdd){
+  const y=+yyyymmdd.slice(0,4), m=+yyyymmdd.slice(4,6)-1, d=+yyyymmdd.slice(6,8);
+  const nd = new Date(y,m,d+1);
+  return nd.getFullYear() + pad2(nd.getMonth()+1) + pad2(nd.getDate());
+}
+function icsEscape(s){
+  return String(s||'').replace(/\\/g,'\\\\').replace(/,/g,'\\,').replace(/;/g,'\\;').replace(/\n/g,'\\n');
+}
+
+function gcalQuickAddLink(title, startDate, endDate, details){
+  const params = new URLSearchParams({
+    action:'TEMPLATE',
+    text:title,
+    dates:`${icsDateUTC(startDate)}/${icsDateUTC(endDate)}`,
+    details:details||''
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+function gcalQuickAddAllDayLink(title, dateStr, details){
+  const d0 = icsDateOnly(dateStr);
+  const d1 = icsAddDaysToDateOnly(d0);
+  const params = new URLSearchParams({
+    action:'TEMPLATE',
+    text:title,
+    dates:`${d0}/${d1}`,
+    details:details||''
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function buildBatchICSEvents(b, now){
+  const steps = computeScheduleSteps(b);
+  const dryhops = computeDryHopSchedule(b).filter(s=>s.hasDate);
+  let ics = '';
+  steps.forEach((s,i)=>{
+    const end = addMinutes(s.date, 15);
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:${b.id}-step-${i}-${s.key}@brewlog\r\n`;
+    ics += `DTSTAMP:${now}\r\n`;
+    ics += `DTSTART:${icsDateUTC(s.date)}\r\n`;
+    ics += `DTEND:${icsDateUTC(end)}\r\n`;
+    ics += `SUMMARY:${icsEscape((b.batchName||'仕込み')+'：'+s.label)}\r\n`;
+    if(s.sub) ics += `DESCRIPTION:${icsEscape(s.sub)}\r\n`;
+    ics += 'BEGIN:VALARM\r\nTRIGGER:-PT15M\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  dryhops.forEach((s,i)=>{
+    const d0 = icsDateOnly(s.dateStr);
+    const d1 = icsAddDaysToDateOnly(d0);
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:${b.id}-dryhop-${i}-${s.key}@brewlog\r\n`;
+    ics += `DTSTAMP:${now}\r\n`;
+    ics += `DTSTART;VALUE=DATE:${d0}\r\n`;
+    ics += `DTEND;VALUE=DATE:${d1}\r\n`;
+    ics += `SUMMARY:${icsEscape((b.batchName||'仕込み')+'：'+s.label)}\r\n`;
+    if(s.sub) ics += `DESCRIPTION:${icsEscape(s.sub)}\r\n`;
+    ics += 'BEGIN:VALARM\r\nTRIGGER:-PT9H\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nEND:VALARM\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  return {ics, count: steps.length + dryhops.length};
+}
+
+function exportScheduleICS(){
+  const b = currentScheduleBatch();
+  if(!b){ alert('対象バッチを選択してください。'); return; }
+  const now = icsDateUTC(new Date());
+  const {ics, count} = buildBatchICSEvents(b, now);
+  if(!count){
+    alert('仕込み開始日時（と、あればドライホップ用の発酵開始日）を入力してから書き出してください。');
+    return;
+  }
+  const full = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Brew Log//Schedule//JA\r\nCALSCALE:GREGORIAN\r\n' + ics + 'END:VCALENDAR\r\n';
+  downloadBlob(full, (b.batchName||'仕込みスケジュール').replace(/[\\/:*?"<>|]/g,'_') + '.ics', 'text/calendar;charset=utf-8');
+}
+
+function exportAllSchedulesICS(){
+  const target = exportableBatches();
+  const now = icsDateUTC(new Date());
+  let allEvents = '';
+  let batchCount = 0, eventCount = 0;
+  target.forEach(b=>{
+    const {ics, count} = buildBatchICSEvents(b, now);
+    if(count){ allEvents += ics; batchCount++; eventCount += count; }
+  });
+  if(!eventCount){
+    alert('仕込み開始日時が入力されているバッチがありません。各バッチのスケジュールを設定してから書き出してください。');
+    return;
+  }
+  const full = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Brew Log//Schedule All//JA\r\nCALSCALE:GREGORIAN\r\n' + allEvents + 'END:VCALENDAR\r\n';
+  downloadBlob(full, '仕込みスケジュール_全バッチ_' + new Date().toISOString().slice(0,10) + '.ics', 'text/calendar;charset=utf-8');
+  alert(`${batchCount}バッチ・計${eventCount}件の予定を書き出しました。`);
 }
 
 /* ---------------- Export / Import ---------------- */
@@ -1477,7 +1617,7 @@ function exportCSV(){
     '糖化温度','糖化時間','煮沸時間','仕込み水量L','水源','仕込み水pH','Ca(ppm)','Mg(ppm)','Na(ppm)','Cl(ppm)','SO4(ppm)','HCO3(ppm)','ミネラル添加剤',
     'モルト','ホップ','副原料','酵母','発酵開始日','発酵温度',
     '比重・pHログ','仕込み開始日時','工程スケジュール(予定/実績)','ドライホップ予定(予定/実績)',
-    'パッケージング日','CO2ボリューム','形態','1単位あたりの量(ml)','数量','合計容量L','ステータス','メモ'];
+    'パッケージング日','CO2ボリューム','容器内訳','合計容量L','ステータス','メモ'];
   const lines = [headers.map(csvEscape).join(',')];
   [...target].sort((a,b)=>(a.brewDate||'').localeCompare(b.brewDate||'')).forEach(b=>{
     const ferm = (b.fermentables||[]).map(f=>`${f.name} ${f.amount}kg`).join(' / ');
@@ -1486,7 +1626,8 @@ function exportCSV(){
     const minerals = (b.minerals||[]).map(m=>`${m.name} ${m.amount}g(${m.timing||''})`).join(' / ');
     const gravLog = (b.gravityLog||[]).map(g=>`${g.date} SG${g.gravity||''}${g.ph?' pH'+g.ph:''}`).join(' / ');
     const a = abv(b.actualOG||b.targetOG, b.fg);
-    const totalVol = (b.quantity&&b.unitVolume) ? (parseFloat(b.quantity)*parseFloat(b.unitVolume)/1000).toFixed(2) : '';
+    const packagesStr = getPackages(b).map(p=>`${p.type||''} ${p.quantity||''}${p.unitVolume?'×'+p.unitVolume+'ml':''}`).join(' / ');
+    const totalVol = totalPackageVolume(b)>0 ? totalPackageVolume(b).toFixed(2) : '';
     const schedActuals = b.scheduleActuals || {};
     const schedStartDate = parseStartDateTime(b.brewStartTime);
     const schedSteps = computeScheduleSteps(b).map(s=>`${s.label} 予定${formatStepDisplay(s.date, schedStartDate)}${schedActuals[s.key]?'/実績'+schedActuals[s.key]:''}`).join(' / ');
@@ -1495,7 +1636,7 @@ function exportCSV(){
       b.mashTemp,b.mashTime,b.boilTime,b.waterVolume,b.waterSource,b.waterPh,b.mCa,b.mMg,b.mNa,b.mCl,b.mSO4,b.mHCO3,minerals,
       ferm,hops,adj,b.yeast,b.fermentStart,b.fermentTemp,
       gravLog,b.brewStartTime,schedSteps,schedDryhops,
-      b.packageDate,b.co2vol,b.packageType,b.unitVolume,b.quantity,totalVol,statusOf(b),b.notes].map(csvEscape).join(','));
+      b.packageDate,b.co2vol,packagesStr,totalVol,statusOf(b),b.notes].map(csvEscape).join(','));
   });
   // BOM for Excel (Japanese text)
   downloadBlob('\uFEFF'+lines.join('\r\n'), '仕込み記録_' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv;charset=utf-8');
@@ -1869,17 +2010,21 @@ function updateAbvDisplay(){
 });
 
 function updateTotalVolDisplay(){
-  const qty = parseFloat($('f_quantity').value);
-  const unitMl = parseFloat($('f_unitVolume').value);
+  const rows = [...document.querySelectorAll('#packageRows > *')];
+  let total = 0;
+  rows.forEach(r=>{
+    const qty = parseFloat(r.querySelector('.rp-qty').value);
+    const unitMl = parseFloat(r.querySelector('.rp-unitvol').value);
+    if(qty && unitMl) total += qty * unitMl / 1000;
+  });
   const disp = $('f_totalVolDisplay');
-  if(qty && unitMl){
-    disp.textContent = (qty * unitMl / 1000).toFixed(2) + ' L';
-  } else {
-    disp.textContent = '—';
-  }
+  disp.textContent = total>0 ? total.toFixed(2)+' L' : '—';
 }
-['f_quantity','f_unitVolume'].forEach(id=>{
-  $(id).addEventListener('input', updateTotalVolDisplay);
+document.addEventListener('input', (e)=>{
+  if(e.target.closest && e.target.closest('#packageRows')) updateTotalVolDisplay();
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest && e.target.closest('#packageRows')) setTimeout(updateTotalVolDisplay, 0);
 });
 </script>
 </body>
