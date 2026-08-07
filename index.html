@@ -22,6 +22,9 @@
   --radius:10px;
 }
 *{box-sizing:border-box;}
+input, select, textarea, button{ min-width:0; }
+.dyn-row, .dyn-subrow, .batch-meta, .batch-top, .gauge-row{ min-width:0; }
+html, body{ overflow-x:hidden; max-width:100vw; }
 html,body{margin:0;padding:0;}
 body{
   background:
@@ -181,6 +184,13 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator{
   opacity:0.85;
 }
 input[type=datetime-local]{color-scheme:dark;}
+
+@media (max-width:480px){
+  input[type=date], input[type=time], input[type=datetime-local]{
+    text-align:left;
+    -webkit-appearance:none;
+  }
+}
 textarea{min-height:70px; resize:vertical;}
 .abv-display{
   background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
@@ -274,6 +284,13 @@ textarea{min-height:70px; resize:vertical;}
 @media (max-width:420px){
   .grid2{grid-template-columns:1fr;}
   .detail-grid{grid-template-columns:1fr 1fr;}
+  .wrap{padding-left:12px; padding-right:12px;}
+  .dyn-row, .dyn-subrow{gap:6px;}
+  .rg-date{flex:0 0 118px !important;}
+  .rg-val{flex:0 0 68px !important;}
+  .rg-ph{flex:0 0 58px !important;}
+  .dyn-subrow .rh-timingtype{flex:0 0 98px;}
+  .dyn-subrow .rh-timingvalue{flex:0 0 52px;}
 }
 [hidden]{display:none !important;}
 </style>
@@ -398,13 +415,7 @@ textarea{min-height:70px; resize:vertical;}
       </div>
       <div class="grid2">
         <div class="field"><label>形態</label>
-          <select id="f_packageType">
-            <option value="">選択</option>
-            <option value="瓶">瓶</option>
-            <option value="缶">缶</option>
-            <option value="樽">樽</option>
-            <option value="ケグ">ケグ</option>
-          </select>
+          <input type="text" id="f_packageType" list="packageTypeList" placeholder="例）瓶">
         </div>
         <div class="field"><label>1単位あたりの量 (ml)</label><input type="number" step="1" min="0" id="f_unitVolume" placeholder="例）330"></div>
       </div>
@@ -565,6 +576,27 @@ textarea{min-height:70px; resize:vertical;}
     <option value="桃">
   </datalist>
 
+  <datalist id="packageTypeList">
+    <option value="瓶">
+    <option value="缶">
+    <option value="樽（ケグ）">
+    <option value="ペットボトル">
+    <option value="ボトルコンディション瓶">
+    <option value="クラウラー缶">
+  </datalist>
+
+  <datalist id="adjunctUnitList">
+    <option value="g">
+    <option value="kg">
+    <option value="ml">
+    <option value="L">
+    <option value="個">
+    <option value="本">
+    <option value="粒">
+    <option value="枝">
+    <option value="房">
+  </datalist>
+
   <datalist id="yeastList">
     <option value="Fermentis US-05">
     <option value="Fermentis S-04">
@@ -638,7 +670,7 @@ function sampleBatch(){
       { name: 'Northdown', amount: '28', timingType: 'boil', timingValue: '5' }
     ],
     adjuncts: [
-      { name: 'Flaked Corn', amount: '0.91 kg', timing: '仕込み時' }
+      { name: 'Flaked Corn', amount: '0.91', unit: 'kg', timing: '仕込み時' }
     ],
     minerals: [],
     yeast: 'White Labs WLP007 Dry English Ale Yeast',
@@ -845,16 +877,23 @@ function addRow(containerId, type, data){
         <span class="rh-unit">${timingType==='dryhop'?'日目に投入':'煮沸終了前'}</span>
       </div>`;
   } else if(type==='adjunct'){
-    row.innerHTML = `<input type="text" placeholder="副原料名" class="ra-name" list="adjunctList" value="${data?escapeHtml(data.name):''}">
-      <input type="text" placeholder="量（例 500g/3個）" class="ra-amount" style="flex:0 0 130px;" value="${data?escapeHtml(data.amount):''}">
-      <select class="ra-timing">
-        <option value="仕込み時" ${data&&data.timing==='仕込み時'?'selected':''}>仕込み時</option>
-        <option value="煮沸中" ${data&&data.timing==='煮沸中'?'selected':''}>煮沸中</option>
-        <option value="一次発酵中" ${data&&data.timing==='一次発酵中'?'selected':''}>一次発酵中</option>
-        <option value="二次発酵時" ${data&&data.timing==='二次発酵時'?'selected':''}>二次発酵時</option>
-        <option value="パッケージング時" ${data&&data.timing==='パッケージング時'?'selected':''}>パッケージング時</option>
-      </select>
-      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+    row.className = 'adjunct-entry';
+    row.innerHTML = `
+      <div class="dyn-row">
+        <input type="text" placeholder="副原料名" class="ra-name" list="adjunctList" value="${data?escapeHtml(data.name):''}">
+        <button type="button" class="icon-btn" onclick="this.closest('.adjunct-entry').remove()">✕</button>
+      </div>
+      <div class="dyn-subrow">
+        <input type="number" step="0.01" min="0" placeholder="量" class="ra-amount" style="flex:1 1 70px;" value="${data?escapeHtml(data.amount):''}">
+        <input type="text" list="adjunctUnitList" class="ra-unit" placeholder="単位" style="flex:0 0 58px;" value="${data&&data.unit?escapeHtml(data.unit):''}">
+        <select class="ra-timing" style="flex:1 1 100px;">
+          <option value="仕込み時" ${data&&data.timing==='仕込み時'?'selected':''}>仕込み時</option>
+          <option value="煮沸中" ${data&&data.timing==='煮沸中'?'selected':''}>煮沸中</option>
+          <option value="一次発酵中" ${data&&data.timing==='一次発酵中'?'selected':''}>一次発酵中</option>
+          <option value="二次発酵時" ${data&&data.timing==='二次発酵時'?'selected':''}>二次発酵時</option>
+          <option value="パッケージング時" ${data&&data.timing==='パッケージング時'?'selected':''}>パッケージング時</option>
+        </select>
+      </div>`;
   } else if(type==='mineral'){
     row.innerHTML = `<input type="text" placeholder="添加剤名" class="rm-name" list="mineralList" value="${data?escapeHtml(data.name):''}">
       <span class="amount-wrap" style="flex:0 0 92px;">
@@ -892,7 +931,7 @@ function collectRows(containerId, type){
       .filter(x=>x.name||x.amount);
   }
   if(type==='adjunct'){
-    return rows.map(r=>({name:r.querySelector('.ra-name').value, amount:r.querySelector('.ra-amount').value, timing:r.querySelector('.ra-timing').value}))
+    return rows.map(r=>({name:r.querySelector('.ra-name').value, amount:r.querySelector('.ra-amount').value, unit:r.querySelector('.ra-unit').value, timing:r.querySelector('.ra-timing').value}))
       .filter(x=>x.name||x.amount);
   }
   if(type==='mineral'){
@@ -1039,7 +1078,7 @@ function scaleDuplicateBatch(id){
     waterVolume: src.waterVolume ? String(round2(parseFloat(src.waterVolume)*ratio)) : '',
     fermentables: (src.fermentables||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
     hops: (src.hops||[]).map(x=>({...x, amount: x.amount!=='' ? String(Math.round((parseFloat(x.amount)||0)*ratio)) : x.amount})),
-    adjuncts: (src.adjuncts||[]).map(x=>({...x, amount: scaleFreeAmount(x.amount, ratio)})),
+    adjuncts: (src.adjuncts||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
     minerals: (src.minerals||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
     notes: (src.notes ? src.notes+'\n\n' : '') + `※元レシピ（${oldSize}L）を${newSize}Lにスケーリング（${round2(ratio)}倍）。原材料量は自動換算済み。糖化温度・煮沸時間・目標OG・ミネラル目標値(ppm)は換算していないのでそのままご確認ください。`,
   };
@@ -1138,7 +1177,7 @@ function openDetail(id){
     </div>
     ${(b.fermentables&&b.fermentables.length) ? `<div class="detail-list">${b.fermentables.map(f=>`<div class="row"><span>${escapeHtml(f.name)}</span><span>${escapeHtml(f.amount)} kg</span></div>`).join('')}</div>` : ''}
     ${(b.hops&&b.hops.length) ? `<div class="detail-list">${b.hops.map(h=>`<div class="row"><span>${escapeHtml(h.name)} <span style="color:var(--text-muted)">(${escapeHtml(hopLabel(h))})</span></span><span>${escapeHtml(h.amount)} g</span></div>`).join('')}</div>` : ''}
-    ${(b.adjuncts&&b.adjuncts.length) ? `<div class="detail-list">${b.adjuncts.map(a=>`<div class="row"><span>${escapeHtml(a.name)} <span style="color:var(--text-muted)">(${escapeHtml(a.timing||'')})</span></span><span>${escapeHtml(a.amount)}</span></div>`).join('')}</div>` : ''}
+    ${(b.adjuncts&&b.adjuncts.length) ? `<div class="detail-list">${b.adjuncts.map(a=>`<div class="row"><span>${escapeHtml(a.name)} <span style="color:var(--text-muted)">(${escapeHtml(a.timing||'')})</span></span><span>${escapeHtml(a.amount)}${escapeHtml(a.unit||'')}</span></div>`).join('')}</div>` : ''}
     ${(b.waterSource||b.waterPh||b.mCa||b.mMg||b.mNa||b.mCl||b.mSO4||b.mHCO3||(b.minerals&&b.minerals.length)) ? `<div class="detail-list">
       ${b.waterSource?`<div class="row"><span>水源</span><span>${escapeHtml(b.waterSource)}</span></div>`:''}
       ${b.waterPh?`<div class="row"><span>仕込み水pH</span><span>${escapeHtml(b.waterPh)}</span></div>`:''}
@@ -1425,7 +1464,7 @@ function exportCSV(){
   [...target].sort((a,b)=>(a.brewDate||'').localeCompare(b.brewDate||'')).forEach(b=>{
     const ferm = (b.fermentables||[]).map(f=>`${f.name} ${f.amount}kg`).join(' / ');
     const hops = (b.hops||[]).map(h=>`${h.name} ${h.amount}g(${hopLabel(h)})`).join(' / ');
-    const adj = (b.adjuncts||[]).map(a=>`${a.name} ${a.amount}(${a.timing||''})`).join(' / ');
+    const adj = (b.adjuncts||[]).map(a=>`${a.name} ${a.amount}${a.unit||''}(${a.timing||''})`).join(' / ');
     const minerals = (b.minerals||[]).map(m=>`${m.name} ${m.amount}g(${m.timing||''})`).join(' / ');
     const gravLog = (b.gravityLog||[]).map(g=>`${g.date} SG${g.gravity||''}${g.ph?' pH'+g.ph:''}`).join(' / ');
     const a = abv(b.actualOG||b.targetOG, b.fg);
@@ -1533,7 +1572,7 @@ function parseBeerXML(xmlString){
       if(type==='grain' || type===''){
         fermentables.push({name: fname, amount: String(round2(amountKg))});
       } else {
-        adjuncts.push({name: fname, amount: round2(amountKg)+' kg', timing: '仕込み時'});
+        adjuncts.push({name: fname, amount: String(round2(amountKg)), unit: 'kg', timing: '仕込み時'});
       }
     });
 
