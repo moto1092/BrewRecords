@@ -806,7 +806,7 @@ function renderGauge(){
           stroke-dasharray="${(pct/100)*182.2} 182.2"/>
         <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#ece4d5" stroke-width="2.5" stroke-linecap="round"/>
         <circle cx="${cx}" cy="${cy}" r="4" fill="#ece4d5"/>
-        <text x="75" y="93" text-anchor="middle" fill="#9a9080" font-size="9" font-family="IBM Plex Mono, monospace">${pct.toFixed(0)}% 減衰</text>
+        <text x="75" y="93" text-anchor="middle" fill="#9a9080" font-size="9" font-family="IBM Plex Mono, monospace">${pct.toFixed(0)}% ATTENUATION</text>
       </svg>
       <div class="gauge-stats">
         <div class="gauge-stat"><span class="label">OG</span><span class="val">${og?og.toFixed(3):'—'}</span></div>
