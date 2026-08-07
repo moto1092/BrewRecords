@@ -116,6 +116,14 @@ header .sub{
 .footer-note a{color:var(--copper-bright); text-decoration:none;}
 .footer-note a:hover{text-decoration:underline;}
 
+#comboDropdown{
+  position:absolute; z-index:200; display:none;
+  background:var(--surface-2); border:1px solid var(--copper); border-radius:7px;
+  max-height:190px; overflow-y:auto; box-shadow:0 6px 18px rgba(0,0,0,0.4);
+}
+.combo-item{padding:9px 12px; font-size:0.85rem; cursor:pointer; color:var(--text);}
+.combo-item:hover, .combo-item.active{background:var(--copper); color:#1b1815;}
+
 /* ---------- List ---------- */
 .batch-card{
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
@@ -155,8 +163,10 @@ header .sub{
   font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--copper-bright);
   margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);
 }
-.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.mineral-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.grid2{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px;}
+.grid2 > .field{min-width:0;}
+.mineral-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
+.mineral-grid > .field{min-width:0;}
 @media (max-width:420px){ .mineral-grid{grid-template-columns:repeat(2,1fr);} }
 .field{margin-bottom:10px;}
 .field label{display:block; font-size:0.76rem; color:var(--text-muted); margin-bottom:4px;}
@@ -325,11 +335,11 @@ textarea{min-height:70px; resize:vertical;}
       <div class="section-title">基本情報</div>
       <div class="field"><label>バッチ名</label><input type="text" id="f_batchName" placeholder="例）第12仕込み・APA"></div>
       <div class="grid2">
-        <div class="field"><label>スタイル</label><input type="text" id="f_style" list="styleList" placeholder="例）American Pale Ale"></div>
+        <div class="field"><label>スタイル</label><input type="text" id="f_style" data-list="styleList" placeholder="例）American Pale Ale"></div>
         <div class="field"><label>仕込み日</label><input type="date" id="f_brewDate"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>担当</label><input type="text" id="f_brewer" list="brewerList" placeholder="例）湾岸太郎"></div>
+        <div class="field"><label>担当</label><input type="text" id="f_brewer" data-list="brewerList" placeholder="例）湾岸太郎"></div>
         <div class="field"><label>バッチサイズ (L)</label><input type="number" step="0.1" min="0" id="f_batchSize"></div>
       </div>
     </div>
@@ -353,7 +363,7 @@ textarea{min-height:70px; resize:vertical;}
     <div class="section">
       <div class="section-title">水質調整</div>
       <div class="grid2">
-        <div class="field"><label>水源</label><input type="text" id="f_waterSource" list="waterSourceList" placeholder="例）水道水"></div>
+        <div class="field"><label>水源</label><input type="text" id="f_waterSource" data-list="waterSourceList" placeholder="例）水道水"></div>
         <div class="field"><label>仕込み水 pH</label><input type="number" step="0.01" min="0" max="14" id="f_waterPh" placeholder="例）7.2"></div>
       </div>
       <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin:4px 0 6px;">目標ミネラル分（ppm）</label>
@@ -389,7 +399,7 @@ textarea{min-height:70px; resize:vertical;}
     </div>
 
     <div class="section">
-      <div class="field"><label>酵母</label><input type="text" id="f_yeast" list="yeastList" placeholder="例）US-05"></div>
+      <div class="field"><label>酵母</label><input type="text" id="f_yeast" data-list="yeastList" placeholder="例）US-05"></div>
     </div>
 
     <div class="section">
@@ -415,7 +425,7 @@ textarea{min-height:70px; resize:vertical;}
       </div>
       <div class="grid2">
         <div class="field"><label>形態</label>
-          <input type="text" id="f_packageType" list="packageTypeList" placeholder="例）瓶">
+          <input type="text" id="f_packageType" data-list="packageTypeList" placeholder="例）瓶">
         </div>
         <div class="field"><label>1単位あたりの量 (ml)</label><input type="number" step="1" min="0" id="f_unitVolume" placeholder="例）330"></div>
       </div>
@@ -851,7 +861,7 @@ function addRow(containerId, type, data){
   const row = document.createElement('div');
   row.className = 'dyn-row';
   if(type==='fermentable'){
-    row.innerHTML = `<input type="text" placeholder="モルト名" class="rf-name" list="maltList" value="${data?escapeHtml(data.name):''}">
+    row.innerHTML = `<input type="text" placeholder="モルト名" class="rf-name" data-list="maltList" value="${data?escapeHtml(data.name):''}">
       <span class="amount-wrap" style="flex:0 0 92px;">
         <input type="number" step="0.01" min="0" placeholder="量" class="rf-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">kg</span>
       </span>
@@ -862,7 +872,7 @@ function addRow(containerId, type, data){
     const timingValue = data && data.timingValue !== undefined ? data.timingValue : '';
     row.innerHTML = `
       <div class="dyn-row">
-        <input type="text" placeholder="ホップ名" class="rh-name" list="hopList" value="${data?escapeHtml(data.name):''}">
+        <input type="text" placeholder="ホップ名" class="rh-name" data-list="hopList" value="${data?escapeHtml(data.name):''}">
         <span class="amount-wrap" style="flex:0 0 74px;">
           <input type="number" step="1" min="0" placeholder="量" class="rh-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">g</span>
         </span>
@@ -880,12 +890,12 @@ function addRow(containerId, type, data){
     row.className = 'adjunct-entry';
     row.innerHTML = `
       <div class="dyn-row">
-        <input type="text" placeholder="副原料名" class="ra-name" list="adjunctList" value="${data?escapeHtml(data.name):''}">
+        <input type="text" placeholder="副原料名" class="ra-name" data-list="adjunctList" value="${data?escapeHtml(data.name):''}">
         <button type="button" class="icon-btn" onclick="this.closest('.adjunct-entry').remove()">✕</button>
       </div>
       <div class="dyn-subrow">
         <input type="number" step="0.01" min="0" placeholder="量" class="ra-amount" style="flex:1 1 70px;" value="${data?escapeHtml(data.amount):''}">
-        <input type="text" list="adjunctUnitList" class="ra-unit" placeholder="単位" style="flex:0 0 58px;" value="${data&&data.unit?escapeHtml(data.unit):''}">
+        <input type="text" data-list="adjunctUnitList" class="ra-unit" placeholder="単位" style="flex:0 0 58px;" value="${data&&data.unit?escapeHtml(data.unit):''}">
         <select class="ra-timing" style="flex:1 1 100px;">
           <option value="仕込み時" ${data&&data.timing==='仕込み時'?'selected':''}>仕込み時</option>
           <option value="煮沸中" ${data&&data.timing==='煮沸中'?'selected':''}>煮沸中</option>
@@ -895,7 +905,7 @@ function addRow(containerId, type, data){
         </select>
       </div>`;
   } else if(type==='mineral'){
-    row.innerHTML = `<input type="text" placeholder="添加剤名" class="rm-name" list="mineralList" value="${data?escapeHtml(data.name):''}">
+    row.innerHTML = `<input type="text" placeholder="添加剤名" class="rm-name" data-list="mineralList" value="${data?escapeHtml(data.name):''}">
       <span class="amount-wrap" style="flex:0 0 92px;">
         <input type="number" step="0.1" min="0" placeholder="量" class="rm-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">g</span>
       </span>
@@ -1681,6 +1691,82 @@ function escapeHtml(s){
   if(s===undefined||s===null) return '';
   return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
+/* ---------------- Custom combobox (Safari doesn't reliably support <datalist>) ---------------- */
+let comboCurrentInput = null;
+
+function getComboEl(){
+  let dd = document.getElementById('comboDropdown');
+  if(!dd){
+    dd = document.createElement('div');
+    dd.id = 'comboDropdown';
+    document.body.appendChild(dd);
+  }
+  return dd;
+}
+
+function hideCombo(){
+  const dd = document.getElementById('comboDropdown');
+  if(dd) dd.style.display = 'none';
+  comboCurrentInput = null;
+}
+
+function showComboFor(input){
+  const listId = input.getAttribute('data-list');
+  if(!listId) return;
+  const datalist = document.getElementById(listId);
+  if(!datalist) return;
+  const query = input.value.toLowerCase();
+  const allOpts = [...datalist.options].map(o=>o.value);
+  const opts = query ? allOpts.filter(v=>v.toLowerCase().includes(query)) : allOpts;
+  if(!opts.length){ hideCombo(); return; }
+
+  const dd = getComboEl();
+  dd.innerHTML = opts.slice(0,50).map(v=>`<div class="combo-item">${escapeHtml(v)}</div>`).join('');
+
+  const rect = input.getBoundingClientRect();
+  dd.style.left = (rect.left + window.scrollX) + 'px';
+  dd.style.top = (rect.bottom + window.scrollY + 3) + 'px';
+  dd.style.width = rect.width + 'px';
+  dd.style.display = 'block';
+  comboCurrentInput = input;
+
+  [...dd.children].forEach((el,i)=>{
+    // mousedown fires before the input's blur, so selection registers reliably (incl. touch)
+    el.addEventListener('mousedown', (e)=>{
+      e.preventDefault();
+      input.value = opts[i];
+      input.dispatchEvent(new Event('input', {bubbles:true}));
+      input.dispatchEvent(new Event('change', {bubbles:true}));
+      hideCombo();
+    });
+  });
+}
+
+document.addEventListener('focus', (e)=>{
+  if(e.target && e.target.matches && e.target.matches('input[data-list]')){
+    showComboFor(e.target);
+  }
+}, true);
+
+document.addEventListener('input', (e)=>{
+  if(e.target && e.target.matches && e.target.matches('input[data-list]')){
+    showComboFor(e.target);
+  }
+});
+
+document.addEventListener('click', (e)=>{
+  if(e.target.closest && e.target.closest('#comboDropdown')) return;
+  if(e.target.matches && e.target.matches('input[data-list]')) return;
+  hideCombo();
+});
+
+window.addEventListener('scroll', ()=>{
+  if(comboCurrentInput) showComboFor(comboCurrentInput);
+}, true);
+window.addEventListener('resize', ()=>{
+  if(comboCurrentInput) showComboFor(comboCurrentInput);
+});
 
 loadBatches();
 
