@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>湾岸ブリューイング 仕込み記録</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1b1815;
+  --surface:#242019;
+  --surface-2:#2d2820;
+  --border:#413a2d;
+  --copper:#c17817;
+  --copper-bright:#e0972e;
+  --hop:#7a9b5f;
+  --hop-bright:#9bc47f;
+  --text:#ece4d5;
+  --text-muted:#9a9080;
+  --danger:#b5563e;
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(193,120,23,0.10), transparent),
+    var(--bg);
+  color:var(--text);
+  font-family:'IBM Plex Sans JP', sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 80px;}
+
+/* ---------- Header ---------- */
+header{
+  display:flex;align-items:center;gap:14px;
+  padding:6px 2px 22px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:22px;
+}
+.mark{
+  width:44px;height:44px;flex:none;
+}
+h1{
+  font-family:'Fraunces', serif;
+  font-optical-sizing:auto;
+  font-weight:600;
+  font-size:1.5rem;
+  letter-spacing:0.01em;
+  margin:0;
+  line-height:1.15;
+}
+header .sub{
+  font-size:0.72rem;
+  color:var(--text-muted);
+  letter-spacing:0.08em;
+  margin-top:2px;
+}
+
+/* ---------- Gauge (signature element) ---------- */
+.gauge-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 20px 14px;
+  margin-bottom:24px;
+  position:relative;
+  overflow:hidden;
+}
+.gauge-card::before{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(193,120,23,0.06), transparent 60%);
+  pointer-events:none;
+}
+.gauge-eyebrow{
+  font-size:0.68rem; letter-spacing:0.12em; color:var(--text-muted);
+  text-transform:uppercase; margin-bottom:2px;
+}
+.gauge-title{
+  font-family:'Fraunces', serif; font-weight:600; font-size:1.15rem; margin-bottom:14px;
+}
+.gauge-row{display:flex; align-items:center; gap:18px;}
+.gauge-svg{flex:none; width:150px; height:96px;}
+.gauge-stats{flex:1; display:flex; flex-direction:column; gap:8px;}
+.gauge-stat{display:flex; justify-content:space-between; align-items:baseline; font-size:0.82rem;}
+.gauge-stat .label{color:var(--text-muted);}
+.gauge-stat .val{font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:0.95rem;}
+.gauge-empty{color:var(--text-muted); font-size:0.85rem; padding:8px 0 4px;}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex; gap:4px; margin-bottom:18px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:4px;}
+.tab{
+  flex:1; text-align:center; padding:9px 6px; border-radius:7px;
+  font-size:0.85rem; font-weight:500; color:var(--text-muted); cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.tab.active{background:var(--copper); color:#1b1815;}
+
+.footer-links{
+  margin-top:36px; padding-top:16px; border-top:1px solid var(--border);
+  text-align:center; font-size:0.72rem; color:var(--text-muted);
+}
+.footer-link{cursor:pointer;}
+.footer-link:hover{color:var(--copper-bright);}
+.footer-sep{margin:0 8px;}
+.footer-note{
+  margin-top:12px; font-size:0.7rem; color:var(--text-muted); line-height:1.6;
+}
+.footer-note a{color:var(--copper-bright); text-decoration:none;}
+.footer-note a:hover{text-decoration:underline;}
+
+/* ---------- List ---------- */
+.batch-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:14px 16px; margin-bottom:10px; cursor:pointer;
+  transition:border-color .15s;
+}
+.batch-card:hover{border-color:var(--copper);}
+.batch-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+.batch-top-actions{display:flex; align-items:center; gap:8px; flex:none;}
+.card-copy-btn{
+  flex:none; width:26px; height:26px; border-radius:6px; border:1px solid var(--border);
+  background:var(--surface-2); color:var(--text-muted); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.card-copy-btn:hover{border-color:var(--copper); color:var(--copper-bright);}
+.batch-name{font-family:'Fraunces', serif; font-weight:600; font-size:1.05rem;}
+.batch-style{color:var(--text-muted); font-size:0.78rem; margin-top:2px;}
+.status-pill{
+  font-size:0.66rem; padding:3px 9px; border-radius:99px; white-space:nowrap;
+  border:1px solid; letter-spacing:0.03em;
+}
+.status-仕込み中{color:var(--copper-bright); border-color:var(--copper);}
+.status-発酵中{color:var(--hop-bright); border-color:var(--hop);}
+.status-完了{color:var(--text-muted); border-color:var(--border);}
+.batch-meta{
+  display:flex; gap:16px; margin-top:10px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--text-muted);
+}
+.batch-meta b{color:var(--text); font-weight:500;}
+.empty-state{
+  text-align:center; padding:50px 20px; color:var(--text-muted);
+}
+.empty-state .big{font-family:'Fraunces', serif; font-size:1.1rem; color:var(--text); margin-bottom:6px;}
+
+/* ---------- Form ---------- */
+.section{margin-bottom:22px;}
+.section-title{
+  font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--copper-bright);
+  margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);
+}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.mineral-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+@media (max-width:420px){ .mineral-grid{grid-template-columns:repeat(2,1fr);} }
+.field{margin-bottom:10px;}
+.field label{display:block; font-size:0.76rem; color:var(--text-muted); margin-bottom:4px;}
+input[type=text], input[type=date], input[type=number], textarea, select{
+  width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:7px; padding:9px 10px; font-size:0.9rem; font-family:'IBM Plex Sans JP', sans-serif;
+}
+input:focus, textarea:focus, select:focus{outline:2px solid var(--copper); outline-offset:0; border-color:var(--copper);}
+input[type=date]::-webkit-calendar-picker-indicator{
+  filter:invert(0.8) sepia(1) saturate(3) hue-rotate(0deg);
+  cursor:pointer;
+  opacity:0.85;
+}
+input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:1;}
+input[type=date]{color-scheme:dark;}
+input[type=time]::-webkit-calendar-picker-indicator{
+  filter:invert(0.8) sepia(1) saturate(3) hue-rotate(0deg);
+  cursor:pointer;
+  opacity:0.85;
+}
+input[type=time]{color-scheme:dark;}
+input[type=datetime-local]::-webkit-calendar-picker-indicator{
+  filter:invert(0.8) sepia(1) saturate(3) hue-rotate(0deg);
+  cursor:pointer;
+  opacity:0.85;
+}
+input[type=datetime-local]{color-scheme:dark;}
+textarea{min-height:70px; resize:vertical;}
+.abv-display{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
+  padding:9px 10px; font-size:0.95rem; font-family:'IBM Plex Mono', monospace;
+  color:var(--copper-bright); font-weight:500;
+}
+.dyn-row{display:flex; gap:8px; margin-bottom:8px; align-items:center;}
+.dyn-row input{flex:1;}
+.dyn-row select{flex:0 0 90px;}
+.hop-entry{
+  border:1px solid var(--border); border-radius:8px; padding:8px; margin-bottom:8px; background:var(--surface-2);
+}
+.hop-entry .dyn-row{margin-bottom:6px;}
+.dyn-subrow{display:flex; gap:8px; align-items:center;}
+.dyn-subrow select{flex:0 0 118px;}
+.dyn-subrow input{flex:0 0 64px;}
+.dyn-subrow .rh-unit{font-size:0.75rem; color:var(--text-muted);}
+
+.amount-wrap{
+  display:flex; align-items:center; background:var(--surface-2); border:1px solid var(--border);
+  border-radius:7px; overflow:hidden;
+}
+.amount-wrap:focus-within{outline:2px solid var(--copper); border-color:var(--copper);}
+.amount-wrap input{
+  border:none; background:transparent; min-width:0; flex:1; padding:9px 4px 9px 10px;
+}
+.amount-wrap input:focus{outline:none;}
+.amount-wrap .unit-suffix{
+  flex:none; padding:9px 8px 9px 2px; font-size:0.78rem; color:var(--text-muted);
+}
+.icon-btn{
+  flex:none; width:32px; height:32px; border-radius:7px; border:1px solid var(--border);
+  background:var(--surface-2); color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1;
+}
+.icon-btn:hover{border-color:var(--danger); color:var(--danger);}
+.add-row-btn{
+  background:none; border:1px dashed var(--border); color:var(--copper-bright);
+  border-radius:7px; padding:7px 12px; font-size:0.8rem; cursor:pointer; width:100%;
+}
+.add-row-btn:hover{border-color:var(--copper);}
+
+.actions{display:flex; gap:10px; margin-top:26px; padding-bottom:20px; flex-wrap:wrap;}
+.actions .btn{flex:1 1 120px;}
+.btn{
+  flex:1; padding:12px; border-radius:8px; border:none; font-size:0.92rem; font-weight:600;
+  cursor:pointer; font-family:'IBM Plex Sans JP', sans-serif;
+}
+.btn-primary{background:var(--copper); color:#1b1815;}
+.btn-complete{background:var(--hop); color:#1b1815;}
+.btn-complete:hover{background:var(--hop-bright);}
+.btn-primary:hover{background:var(--copper-bright);}
+.btn-ghost{background:var(--surface-2); color:var(--text); border:1px solid var(--border);}
+.btn-danger{background:none; color:var(--danger); border:1px solid var(--border);}
+.btn-danger:hover{border-color:var(--danger);}
+
+/* ---------- Detail view ---------- */
+.detail-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;}
+.back-link{color:var(--copper-bright); font-size:0.82rem; cursor:pointer; margin-bottom:14px; display:inline-block;}
+.detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:14px 0;}
+.detail-item{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
+.detail-item .l{font-size:0.68rem; color:var(--text-muted); letter-spacing:0.05em;}
+.detail-item .v{font-family:'IBM Plex Mono', monospace; font-size:1rem; margin-top:2px;}
+.detail-list{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:14px;}
+.detail-list .row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.85rem;}
+.detail-list .row:last-child{border-bottom:none;}
+.notes-box{white-space:pre-wrap; font-size:0.88rem; line-height:1.6; color:var(--text);}
+
+.sched-note{font-size:0.76rem; color:var(--text-muted); margin-top:8px; line-height:1.5;}
+.sched-complete-check{
+  display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--surface);
+  border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.9rem;
+}
+.sched-complete-check input{width:18px; height:18px; accent-color:var(--hop); flex:none; cursor:pointer;}
+.sched-row{
+  display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:12px 14px; margin-bottom:8px;
+}
+.sched-row.sched-dryhop{border-color:var(--hop);}
+.sched-dot{width:8px; height:8px; border-radius:50%; background:var(--copper); flex:none;}
+.sched-dryhop .sched-dot{background:var(--hop);}
+.sched-label{flex:1; font-size:0.9rem;}
+.sched-label .sub{font-size:0.72rem; color:var(--text-muted); margin-top:2px;}
+.sched-planned{
+  flex:0 0 76px; font-family:'IBM Plex Mono', monospace; font-size:0.95rem; text-align:center;
+  color:var(--copper-bright);
+}
+.sched-actual{flex:0 0 110px;}
+.sched-actual input{padding:7px 8px; font-size:0.85rem;}
+.sched-empty{color:var(--text-muted); font-size:0.85rem; text-align:center; padding:30px 10px;}
+
+@media (max-width:420px){
+  .grid2{grid-template-columns:1fr;}
+  .detail-grid{grid-template-columns:1fr 1fr;}
+}
+[hidden]{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg class="mark" viewBox="0 0 44 44" fill="none">
+      <rect x="1" y="1" width="42" height="42" rx="8" stroke="#c17817" stroke-width="1.4"/>
+      <path d="M14 30V16h4.5a4 4 0 0 1 0 8H14M25 16v14M25 16h4a3.5 3.5 0 0 1 0 7h-4M25 23l4.5 7" stroke="#ece4d5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>湾岸ブリューイング</h1>
+      <div class="sub">仕込み記録 BREW LOG</div>
+    </div>
+  </header>
+
+  <!-- Gauge: featured latest batch -->
+  <div class="gauge-card" id="gaugeCard"></div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="list">記録一覧</div>
+    <div class="tab" data-tab="new">新規仕込み</div>
+    <div class="tab" data-tab="schedule">仕込みスケジュール</div>
+  </div>
+
+  <div id="viewList"></div>
+
+  <div id="viewForm" hidden>
+    <div class="section">
+      <div class="section-title">基本情報</div>
+      <div class="field"><label>バッチ名</label><input type="text" id="f_batchName" placeholder="例）第12仕込み・APA"></div>
+      <div class="grid2">
+        <div class="field"><label>スタイル</label><input type="text" id="f_style" list="styleList" placeholder="例）American Pale Ale"></div>
+        <div class="field"><label>仕込み日</label><input type="date" id="f_brewDate"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>担当</label><input type="text" id="f_brewer" list="brewerList" placeholder="例）湾岸太郎"></div>
+        <div class="field"><label>バッチサイズ (L)</label><input type="number" step="0.1" min="0" id="f_batchSize"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">仕込み工程</div>
+      <div class="grid2">
+        <div class="field"><label>目標 OG</label><input type="number" step="0.001" min="1.000" id="f_targetOG" placeholder="1.050"></div>
+        <div class="field"><label>実測 OG</label><input type="number" step="0.001" min="1.000" id="f_actualOG" placeholder="1.050"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>糖化温度 (℃)</label><input type="number" step="0.1" min="0" id="f_mashTemp" class="prefill60" placeholder="60"></div>
+        <div class="field"><label>糖化時間 (分)</label><input type="number" min="0" id="f_mashTime" class="prefill60" placeholder="60"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>煮沸時間 (分)</label><input type="number" min="60" id="f_boilTime"></div>
+        <div class="field"><label>仕込み水量 (L)</label><input type="number" step="0.1" min="0" id="f_waterVolume"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">水質調整</div>
+      <div class="grid2">
+        <div class="field"><label>水源</label><input type="text" id="f_waterSource" list="waterSourceList" placeholder="例）水道水"></div>
+        <div class="field"><label>仕込み水 pH</label><input type="number" step="0.01" min="0" max="14" id="f_waterPh" placeholder="例）7.2"></div>
+      </div>
+      <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin:4px 0 6px;">目標ミネラル分（ppm）</label>
+      <div class="mineral-grid">
+        <div class="field"><label>Ca²⁺</label><input type="number" step="1" min="0" id="f_mCa"></div>
+        <div class="field"><label>Mg²⁺</label><input type="number" step="1" min="0" id="f_mMg"></div>
+        <div class="field"><label>Na⁺</label><input type="number" step="1" min="0" id="f_mNa"></div>
+        <div class="field"><label>Cl⁻</label><input type="number" step="1" min="0" id="f_mCl"></div>
+        <div class="field"><label>SO4²⁻</label><input type="number" step="1" min="0" id="f_mSO4"></div>
+        <div class="field"><label>HCO3⁻</label><input type="number" step="1" min="0" id="f_mHCO3"></div>
+      </div>
+      <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin:10px 0 6px;">ミネラル・酸添加剤</label>
+      <div id="mineralRows"></div>
+      <button type="button" class="add-row-btn" onclick="addRow('mineralRows','mineral')">＋ 添加剤を追加</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">原材料 — モルト</div>
+      <div id="fermentableRows"></div>
+      <button type="button" class="add-row-btn" onclick="addRow('fermentableRows','fermentable')">＋ モルトを追加</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">原材料 — ホップ</div>
+      <div id="hopRows"></div>
+      <button type="button" class="add-row-btn" onclick="addRow('hopRows','hop')">＋ ホップを追加</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">副原料（フルーツ・スパイス・加糖など）</div>
+      <div id="adjunctRows"></div>
+      <button type="button" class="add-row-btn" onclick="addRow('adjunctRows','adjunct')">＋ 副原料を追加</button>
+    </div>
+
+    <div class="section">
+      <div class="field"><label>酵母</label><input type="text" id="f_yeast" list="yeastList" placeholder="例）US-05"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">発酵</div>
+      <div class="grid2">
+        <div class="field"><label>発酵開始日</label><input type="date" id="f_fermentStart"></div>
+        <div class="field"><label>発酵温度 (℃)</label><input type="number" step="0.1" min="0" id="f_fermentTemp" class="prefill10" placeholder="10"></div>
+      </div>
+      <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin-bottom:6px;">比重・pH測定ログ</label>
+      <div id="gravityRows"></div>
+      <button type="button" class="add-row-btn" onclick="addRow('gravityRows','gravity')">＋ 測定を追加</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">パッケージング</div>
+      <div class="grid2">
+        <div class="field"><label>FG（最終比重）</label><input type="number" step="0.001" min="1.000" id="f_fg" placeholder="1.010"></div>
+        <div class="field"><label>ABV（自動計算）</label><div id="f_abvDisplay" class="abv-display">—</div></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>パッケージング日</label><input type="date" id="f_packageDate"></div>
+        <div class="field"><label>CO2ボリューム (vol)</label><input type="number" step="0.1" min="0" id="f_co2vol" placeholder="2.4"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>形態</label>
+          <select id="f_packageType">
+            <option value="">選択</option>
+            <option value="瓶">瓶</option>
+            <option value="缶">缶</option>
+            <option value="樽">樽</option>
+            <option value="ケグ">ケグ</option>
+          </select>
+        </div>
+        <div class="field"><label>1単位あたりの量 (ml)</label><input type="number" step="1" min="0" id="f_unitVolume" placeholder="例）330"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>数量</label><input type="number" step="1" min="0" id="f_quantity" placeholder="例）24"></div>
+        <div class="field"><label>合計容量（自動計算）</label><div id="f_totalVolDisplay" class="abv-display">—</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">メモ</div>
+      <textarea id="f_notes" placeholder="工程中の気づき、トラブル、フレーバーメモなど"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="cancelForm()">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveBatch()">保存する</button>
+    </div>
+  </div>
+
+  <div id="viewDetail" hidden></div>
+
+  <div id="viewSchedule" hidden>
+    <div class="section">
+      <div class="section-title">対象バッチ</div>
+      <div class="field">
+        <select id="sch_batchSelect" onchange="renderSchedule()"></select>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>仕込み開始日時</label><input type="datetime-local" id="sch_startTime" onchange="onScheduleStartChange()"></div>
+      </div>
+      <div class="sched-note">糖化・煮沸時間、ホップ投入タイミングをもとに予定時刻を自動計算します。各工程の実際の時刻は下の「実績」欄に入力してください。</div>
+    </div>
+    <div id="sch_timeline"></div>
+    <div id="sch_dryhops"></div>
+    <div class="section">
+      <label class="sched-complete-check">
+        <input type="checkbox" id="sch_completed">
+        <span>この仕込みを完了にする</span>
+      </label>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveScheduleView()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="styleList">
+    <option value="Pale Ale">
+    <option value="American Pale Ale (APA)">
+    <option value="India Pale Ale (IPA)">
+    <option value="Session IPA">
+    <option value="New England IPA (NEIPA)">
+    <option value="American Amber Ale">
+    <option value="Brown Ale">
+    <option value="Porter">
+    <option value="Stout">
+    <option value="Imperial Stout">
+    <option value="Wheat Beer / Weizen">
+    <option value="Belgian Witbier">
+    <option value="Saison">
+    <option value="Belgian Dubbel">
+    <option value="Belgian Tripel">
+    <option value="Pilsner">
+    <option value="Helles Lager">
+    <option value="Vienna Lager">
+    <option value="Marzen / Oktoberfest">
+    <option value="Sour Ale">
+    <option value="Fruit Beer">
+    <option value="Barleywine">
+  </datalist>
+
+  <datalist id="brewerList">
+    <option value="湾岸太郎">
+  </datalist>
+
+  <datalist id="maltList">
+    <option value="Pale Ale Malt (2条)">
+    <option value="Pilsner Malt">
+    <option value="Munich Malt">
+    <option value="Vienna Malt">
+    <option value="Wheat Malt">
+    <option value="Crystal / Caramel 20L">
+    <option value="Crystal / Caramel 40L">
+    <option value="Crystal / Caramel 60L">
+    <option value="Crystal / Caramel 120L">
+    <option value="Carapils / Dextrine Malt">
+    <option value="Chocolate Malt">
+    <option value="Roasted Barley">
+    <option value="Black Malt">
+    <option value="Biscuit Malt">
+    <option value="Honey Malt">
+    <option value="Flaked Oats">
+    <option value="Flaked Wheat">
+    <option value="Rice Hulls">
+  </datalist>
+
+  <datalist id="hopList">
+    <option value="Cascade">
+    <option value="Centennial">
+    <option value="Citra">
+    <option value="Mosaic">
+    <option value="Simcoe">
+    <option value="Amarillo">
+    <option value="Chinook">
+    <option value="Columbus (CTZ)">
+    <option value="Nelson Sauvin">
+    <option value="Galaxy">
+    <option value="Motueka">
+    <option value="Saaz">
+    <option value="Hallertau Mittelfrüh">
+    <option value="Tettnang">
+    <option value="Perle">
+    <option value="Fuggle">
+    <option value="East Kent Goldings">
+    <option value="Sorachi Ace">
+    <option value="IBUKI">
+    <option value="MURAKAMI SEVEN">
+  </datalist>
+
+  <datalist id="waterSourceList">
+    <option value="水道水">
+    <option value="RO水">
+    <option value="RO水＋ミネラル添加">
+    <option value="井戸水">
+    <option value="ボトルドウォーター">
+  </datalist>
+
+  <datalist id="mineralList">
+    <option value="石膏 (CaSO4・硫酸カルシウム)">
+    <option value="塩化カルシウム (CaCl2)">
+    <option value="エプソムソルト (MgSO4・硫酸マグネシウム)">
+    <option value="食塩 (NaCl)">
+    <option value="重曹 (NaHCO3)">
+    <option value="炭酸カルシウム (CaCO3・チョーク)">
+    <option value="乳酸 (Lactic Acid)">
+    <option value="リン酸 (Phosphoric Acid)">
+    <option value="塩化マグネシウム (MgCl2)">
+  </datalist>
+
+  <datalist id="adjunctList">
+    <option value="オレンジピール">
+    <option value="コリアンダーシード">
+    <option value="ラクトース（乳糖）">
+    <option value="蜂蜜">
+    <option value="黒糖">
+    <option value="キャンディシュガー">
+    <option value="ゆず">
+    <option value="柚子皮">
+    <option value="山椒">
+    <option value="生姜">
+    <option value="シナモン">
+    <option value="バニラビーンズ">
+    <option value="コーヒー豆">
+    <option value="カカオニブ">
+    <option value="オークチップ">
+    <option value="フルーツピューレ">
+    <option value="ラズベリー">
+    <option value="桃">
+  </datalist>
+
+  <datalist id="yeastList">
+    <option value="Fermentis US-05">
+    <option value="Fermentis S-04">
+    <option value="Fermentis T-58">
+    <option value="Fermentis WB-06">
+    <option value="Lallemand Nottingham">
+    <option value="Lallemand London ESB">
+    <option value="Lallemand BRY-97">
+    <option value="Wyeast 1056 American Ale">
+    <option value="Wyeast 1214 Belgian Abbey">
+    <option value="Wyeast 3711 French Saison">
+    <option value="White Labs WLP001 California Ale">
+    <option value="White Labs WLP300 Hefeweizen">
+    <option value="White Labs WLP800 Pilsner Lager">
+  </datalist>
+
+  <div class="footer-links">
+    <span class="footer-link" onclick="exportCSV()">CSV書き出し (Excel用)</span>
+    <span class="footer-sep">・</span>
+    <span class="footer-link" onclick="exportJSON()">バックアップを書き出す</span>
+    <span class="footer-sep">・</span>
+    <label class="footer-link">
+      バックアップを読み込む
+      <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importJSON(this.files[0])">
+    </label>
+    <span class="footer-sep">・</span>
+    <label class="footer-link">
+      レシピを取り込む (BeerXML)
+      <input type="file" id="importBeerXML" accept=".xml,text/xml,application/xml" style="display:none" onchange="importBeerXML(this.files[0])">
+    </label>
+    <div class="footer-note">
+      <a href="https://www.brewersfriend.com/" target="_blank" rel="noopener">Brewer's Friendでレシピを探す ↗</a><br>
+      レシピページ右上の「Export」→「BeerXML」からダウンロードしたファイルを、上の「レシピを取り込む」で選択してください。
+    </div>
+  </div>
+
+</div>
+
+<script>
+let batches = [];
+let editingId = null;
+let currentTab = 'list';
+
+const $ = id => document.getElementById(id);
+
+function sampleBatch(){
+  return {
+    id: 'sample-bass-pale-ale-clone',
+    batchName: 'Bass Pale Ale Clone（見本）',
+    style: 'Special/Best/Premium Bitter',
+    brewDate: '2026-07-20',
+    brewer: '湾岸太郎',
+    batchSize: '22.71',
+    targetOG: '1.054',
+    actualOG: '1.053',
+    mashTemp: '67',
+    mashTime: '60',
+    boilTime: '60',
+    waterVolume: '26.5',
+    waterSource: '水道水',
+    waterPh: '7.2',
+    mCa: '90', mMg: '5', mNa: '15', mCl: '75', mSO4: '150', mHCO3: '130',
+    fermentables: [
+      { name: 'Pale 2-Row', amount: '3.18' },
+      { name: 'Crystal 60L', amount: '0.45' },
+      { name: 'Honey Malt', amount: '0.11' },
+      { name: 'Roasted Barley', amount: '0.02' }
+    ],
+    hops: [
+      { name: 'Challenger', amount: '28', timingType: 'boil', timingValue: '60' },
+      { name: 'Northdown', amount: '28', timingType: 'boil', timingValue: '5' }
+    ],
+    adjuncts: [
+      { name: 'Flaked Corn', amount: '0.91 kg', timing: '仕込み時' }
+    ],
+    minerals: [],
+    yeast: 'White Labs WLP007 Dry English Ale Yeast',
+    fermentStart: '2026-07-21',
+    fermentTemp: '19',
+    gravityLog: [
+      { date: '2026-07-21', gravity: '1.054', ph: '' },
+      { date: '2026-07-24', gravity: '1.028', ph: '4.4' },
+      { date: '2026-07-28', gravity: '1.015', ph: '4.2' },
+      { date: '2026-08-02', gravity: '1.013', ph: '4.1' }
+    ],
+    fg: '1.013',
+    packageDate: '2026-08-04',
+    co2vol: '2.45',
+    unitVolume: '330',
+    packageType: '瓶',
+    quantity: '68',
+    notes: 'これは操作方法を確認していただくための見本レコードです（BeerXMLのBass Pale Ale Cloneをもとに作成、実測値はサンプルです）。不要であれば削除して問題ありません。\n目標値: ABV 5.31% / IBU 33.47 / SRM 11.01 / Efficiency 83%'
+  };
+}
+
+async function loadBatches(){
+  try{
+    const r = await window.storage.get('wangan-batches', false);
+    batches = r ? JSON.parse(r.value) : [];
+  }catch(e){ batches = []; }
+
+  let alreadySeeded = true;
+  try{
+    await window.storage.get('wangan-seeded', false);
+  }catch(e){
+    alreadySeeded = false;
+  }
+
+  if(!alreadySeeded){
+    if(!batches.some(b=>b.id==='sample-bass-pale-ale-clone')){
+      batches.push(sampleBatch());
+      await persist();
+    }
+    try{ await window.storage.set('wangan-seeded', '1', false); }catch(e){}
+  }
+
+  renderGauge();
+  renderList();
+}
+
+async function persist(){
+  try{
+    await window.storage.set('wangan-batches', JSON.stringify(batches), false);
+  }catch(e){ console.error('storage error', e); }
+}
+
+function uid(){ return 'b' + Date.now() + Math.random().toString(36).slice(2,7); }
+
+function statusOf(b){
+  if(b.completed===true) return '完了';
+  if(b.completed===false) return b.fermentStart ? '発酵中' : '仕込み中';
+  if(b.fg) return '完了';
+  if(b.fermentStart) return '発酵中';
+  return '仕込み中';
+}
+
+function abv(og, fg){
+  if(!og || !fg) return null;
+  return ((og - fg) * 131.25).toFixed(1);
+}
+
+function attenuation(og, current){
+  if(!og || !current || og<=1) return 0;
+  const pct = ((og - current) / (og - 1)) * 100;
+  return Math.max(0, Math.min(100, pct));
+}
+
+function latestGravity(b){
+  if(b.fg) return b.fg;
+  if(b.gravityLog && b.gravityLog.length){
+    return b.gravityLog[b.gravityLog.length-1].gravity;
+  }
+  return b.actualOG || b.targetOG || null;
+}
+
+/* ---------------- Gauge ---------------- */
+function renderGauge(){
+  const el = $('gaugeCard');
+  if(!batches.length){
+    el.innerHTML = `<div class="gauge-eyebrow">CURRENT BATCH</div>
+      <div class="gauge-empty">まだ仕込み記録がありません。「新規仕込み」から最初の記録を追加してください。</div>`;
+    return;
+  }
+  const active = [...batches].filter(b=>statusOf(b)!=='完了').sort((a,b)=>(b.brewDate||'').localeCompare(a.brewDate||''))[0]
+    || [...batches].sort((a,b)=>(b.brewDate||'').localeCompare(a.brewDate||''))[0];
+
+  const og = parseFloat(active.actualOG || active.targetOG || 0);
+  const cur = parseFloat(latestGravity(active) || og);
+  const pct = attenuation(og, cur);
+  const angle = -90 + (pct/100)*180; // -90 to 90
+  const rad = angle * Math.PI/180;
+  const cx=75, cy=80, r=58;
+  const nx = cx + r*Math.sin(rad);
+  const ny = cy - r*Math.cos(rad);
+
+  el.innerHTML = `
+    <div class="gauge-eyebrow">CURRENT BATCH — ${statusOf(active)}</div>
+    <div class="gauge-title">${escapeHtml(active.batchName||'(名称未設定)')}</div>
+    <div class="gauge-row">
+      <svg class="gauge-svg" viewBox="0 0 150 96">
+        <path d="M 17 80 A 58 58 0 0 1 133 80" fill="none" stroke="#413a2d" stroke-width="10" stroke-linecap="round"/>
+        <path d="M 17 80 A 58 58 0 0 1 133 80" fill="none" stroke="#c17817" stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="${(pct/100)*182.2} 182.2"/>
+        <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#ece4d5" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="${cx}" cy="${cy}" r="4" fill="#ece4d5"/>
+        <text x="75" y="93" text-anchor="middle" fill="#9a9080" font-size="9" font-family="IBM Plex Mono, monospace">${pct.toFixed(0)}% 減衰</text>
+      </svg>
+      <div class="gauge-stats">
+        <div class="gauge-stat"><span class="label">OG</span><span class="val">${og?og.toFixed(3):'—'}</span></div>
+        <div class="gauge-stat"><span class="label">現在比重</span><span class="val">${cur?parseFloat(cur).toFixed(3):'—'}</span></div>
+        <div class="gauge-stat"><span class="label">ABV(推定)</span><span class="val">${abv(og,cur) ? abv(og,cur)+' %' : '—'}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- List ---------------- */
+function renderList(){
+  const el = $('viewList');
+  if(!batches.length){
+    el.innerHTML = `<div class="empty-state"><div class="big">記録はまだありません</div>仕込みを行ったら「新規仕込み」タブから記録しましょう。</div>`;
+    return;
+  }
+  const sorted = [...batches].sort((a,b)=>(b.brewDate||'').localeCompare(a.brewDate||''));
+  el.innerHTML = sorted.map(b=>{
+    const st = statusOf(b);
+    const a = abv(b.actualOG||b.targetOG, b.fg);
+    return `<div class="batch-card" onclick="openDetail('${b.id}')">
+      <div class="batch-top">
+        <div>
+          <div class="batch-name">${escapeHtml(b.batchName||'(名称未設定)')}</div>
+          <div class="batch-style">${escapeHtml(b.style||'')}</div>
+        </div>
+        <div class="batch-top-actions">
+          <span class="status-pill status-${st}">${st}</span>
+          <button type="button" class="card-copy-btn" title="コピーして新規仕込み" onclick="event.stopPropagation(); duplicateBatch('${b.id}')">
+            <svg viewBox="0 0 20 20" width="15" height="15" fill="none"><rect x="7" y="7" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="batch-meta">
+        <span>${b.brewDate||'日付未設定'}${b.brewStartTime?' '+b.brewStartTime+'〜':''}</span>
+        <span>OG <b>${b.actualOG||b.targetOG||'—'}</b></span>
+        <span>FG <b>${b.fg||'—'}</b></span>
+        <span>ABV <b>${a?a+'%':'—'}</b></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------------- Dynamic rows ---------------- */
+function hopLabel(h){
+  if(h.timingType==='dryhop') return h.timingValue ? `発酵${h.timingValue}日目 ドライホップ` : 'ドライホップ';
+  return h.timingValue ? `煮沸終了${h.timingValue}分前` : '煮沸投入';
+}
+
+function updateHopUnit(sel){
+  const entry = sel.closest('.hop-entry');
+  const valInput = entry.querySelector('.rh-timingvalue');
+  const unitSpan = entry.querySelector('.rh-unit');
+  if(sel.value==='dryhop'){
+    valInput.placeholder = '日数';
+    unitSpan.textContent = '日目に投入';
+  } else {
+    valInput.placeholder = '分';
+    unitSpan.textContent = '煮沸終了前';
+  }
+}
+
+function addRow(containerId, type, data){
+  const c = $(containerId);
+  const row = document.createElement('div');
+  row.className = 'dyn-row';
+  if(type==='fermentable'){
+    row.innerHTML = `<input type="text" placeholder="モルト名" class="rf-name" list="maltList" value="${data?escapeHtml(data.name):''}">
+      <span class="amount-wrap" style="flex:0 0 92px;">
+        <input type="number" step="0.01" min="0" placeholder="量" class="rf-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">kg</span>
+      </span>
+      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+  } else if(type==='hop'){
+    row.className = 'hop-entry';
+    const timingType = data && data.timingType ? data.timingType : 'boil';
+    const timingValue = data && data.timingValue !== undefined ? data.timingValue : '';
+    row.innerHTML = `
+      <div class="dyn-row">
+        <input type="text" placeholder="ホップ名" class="rh-name" list="hopList" value="${data?escapeHtml(data.name):''}">
+        <span class="amount-wrap" style="flex:0 0 74px;">
+          <input type="number" step="1" min="0" placeholder="量" class="rh-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">g</span>
+        </span>
+        <button type="button" class="icon-btn" onclick="this.closest('.hop-entry').remove()">✕</button>
+      </div>
+      <div class="dyn-subrow">
+        <select class="rh-timingtype" onchange="updateHopUnit(this)">
+          <option value="boil" ${timingType==='boil'?'selected':''}>煮沸投入</option>
+          <option value="dryhop" ${timingType==='dryhop'?'selected':''}>ドライホップ</option>
+        </select>
+        <input type="number" min="0" step="1" class="rh-timingvalue" placeholder="${timingType==='dryhop'?'日数':'分'}" value="${escapeHtml(timingValue)}">
+        <span class="rh-unit">${timingType==='dryhop'?'日目に投入':'煮沸終了前'}</span>
+      </div>`;
+  } else if(type==='adjunct'){
+    row.innerHTML = `<input type="text" placeholder="副原料名" class="ra-name" list="adjunctList" value="${data?escapeHtml(data.name):''}">
+      <input type="text" placeholder="量（例 500g/3個）" class="ra-amount" style="flex:0 0 130px;" value="${data?escapeHtml(data.amount):''}">
+      <select class="ra-timing">
+        <option value="仕込み時" ${data&&data.timing==='仕込み時'?'selected':''}>仕込み時</option>
+        <option value="煮沸中" ${data&&data.timing==='煮沸中'?'selected':''}>煮沸中</option>
+        <option value="一次発酵中" ${data&&data.timing==='一次発酵中'?'selected':''}>一次発酵中</option>
+        <option value="二次発酵時" ${data&&data.timing==='二次発酵時'?'selected':''}>二次発酵時</option>
+        <option value="パッケージング時" ${data&&data.timing==='パッケージング時'?'selected':''}>パッケージング時</option>
+      </select>
+      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+  } else if(type==='mineral'){
+    row.innerHTML = `<input type="text" placeholder="添加剤名" class="rm-name" list="mineralList" value="${data?escapeHtml(data.name):''}">
+      <span class="amount-wrap" style="flex:0 0 92px;">
+        <input type="number" step="0.1" min="0" placeholder="量" class="rm-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">g</span>
+      </span>
+      <select class="rm-timing">
+        <option value="仕込み水" ${data&&data.timing==='仕込み水'?'selected':''}>仕込み水</option>
+        <option value="スパージ水" ${data&&data.timing==='スパージ水'?'selected':''}>スパージ水</option>
+        <option value="煮沸中" ${data&&data.timing==='煮沸中'?'selected':''}>煮沸中</option>
+      </select>
+      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+  } else if(type==='gravity'){
+    row.innerHTML = `<input type="date" class="rg-date" style="flex:0 0 130px;" value="${data?data.date:''}">
+      <input type="number" step="0.001" min="1.000" placeholder="比重" class="rg-val" style="flex:0 0 80px;" value="${data?data.gravity:''}">
+      <input type="number" step="0.01" min="0" max="14" placeholder="pH" class="rg-ph" style="flex:0 0 70px;" value="${data&&data.ph?data.ph:''}">
+      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+  }
+  c.appendChild(row);
+}
+
+function collectRows(containerId, type){
+  const rows = [...$(containerId).children];
+  if(type==='fermentable'){
+    return rows.map(r=>({name:r.querySelector('.rf-name').value, amount:r.querySelector('.rf-amount').value}))
+      .filter(x=>x.name||x.amount);
+  }
+  if(type==='hop'){
+    const entries = [...$(containerId).children];
+    return entries.map(r=>({
+        name:r.querySelector('.rh-name').value,
+        amount:r.querySelector('.rh-amount').value,
+        timingType:r.querySelector('.rh-timingtype').value,
+        timingValue:r.querySelector('.rh-timingvalue').value
+      }))
+      .filter(x=>x.name||x.amount);
+  }
+  if(type==='adjunct'){
+    return rows.map(r=>({name:r.querySelector('.ra-name').value, amount:r.querySelector('.ra-amount').value, timing:r.querySelector('.ra-timing').value}))
+      .filter(x=>x.name||x.amount);
+  }
+  if(type==='mineral'){
+    return rows.map(r=>({name:r.querySelector('.rm-name').value, amount:r.querySelector('.rm-amount').value, timing:r.querySelector('.rm-timing').value}))
+      .filter(x=>x.name||x.amount);
+  }
+  if(type==='gravity'){
+    return rows.map(r=>({date:r.querySelector('.rg-date').value, gravity:r.querySelector('.rg-val').value, ph:r.querySelector('.rg-ph').value}))
+      .filter(x=>x.date||x.gravity||x.ph)
+      .sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  }
+}
+
+/* ---------------- Form ---------------- */
+function resetForm(){
+  ['batchName','style','brewDate','brewer','batchSize','targetOG','actualOG','mashTemp','mashTime',
+   'boilTime','waterVolume','waterSource','waterPh','mCa','mMg','mNa','mCl','mSO4','mHCO3',
+   'yeast','fermentStart','fermentTemp','fg','packageDate','co2vol','packageType','unitVolume','quantity','notes']
+   .forEach(k=>{ const el = $('f_'+k); if(el) el.value=''; });
+  $('fermentableRows').innerHTML='';
+  $('hopRows').innerHTML='';
+  $('adjunctRows').innerHTML='';
+  $('mineralRows').innerHTML='';
+  $('gravityRows').innerHTML='';
+  addRow('fermentableRows','fermentable');
+  addRow('hopRows','hop');
+}
+
+function openNewForm(){
+  editingId = null;
+  resetForm();
+  $('f_abvDisplay').textContent = '—';
+  $('f_totalVolDisplay').textContent = '—';
+  showView('form');
+}
+
+function populateFormFields(b){
+  $('fermentableRows').innerHTML=''; $('hopRows').innerHTML=''; $('adjunctRows').innerHTML=''; $('mineralRows').innerHTML=''; $('gravityRows').innerHTML='';
+  $('f_batchName').value=b.batchName||'';
+  $('f_style').value=b.style||'';
+  $('f_brewDate').value=b.brewDate||'';
+  $('f_brewer').value=b.brewer||'';
+  $('f_batchSize').value=b.batchSize||'';
+  $('f_targetOG').value=b.targetOG||'';
+  $('f_actualOG').value=b.actualOG||'';
+  $('f_mashTemp').value=b.mashTemp||'';
+  $('f_mashTime').value=b.mashTime||'';
+  $('f_boilTime').value=b.boilTime||'';
+  $('f_waterVolume').value=b.waterVolume||'';
+  $('f_waterSource').value=b.waterSource||'';
+  $('f_waterPh').value=b.waterPh||'';
+  $('f_mCa').value=b.mCa||'';
+  $('f_mMg').value=b.mMg||'';
+  $('f_mNa').value=b.mNa||'';
+  $('f_mCl').value=b.mCl||'';
+  $('f_mSO4').value=b.mSO4||'';
+  $('f_mHCO3').value=b.mHCO3||'';
+  $('f_yeast').value=b.yeast||'';
+  $('f_fermentStart').value=b.fermentStart||'';
+  $('f_fermentTemp').value=b.fermentTemp||'';
+  $('f_fg').value=b.fg||'';
+  $('f_packageDate').value=b.packageDate||'';
+  $('f_co2vol').value=b.co2vol||'';
+  $('f_unitVolume').value=b.unitVolume||'';
+  $('f_packageType').value=b.packageType||'';
+  $('f_quantity').value=b.quantity||'';
+  $('f_notes').value=b.notes||'';
+  (b.fermentables||[{}]).forEach(x=>addRow('fermentableRows','fermentable',x));
+  (b.hops||[{}]).forEach(x=>addRow('hopRows','hop',x));
+  (b.adjuncts||[]).forEach(x=>addRow('adjunctRows','adjunct',x));
+  (b.minerals||[]).forEach(x=>addRow('mineralRows','mineral',x));
+  (b.gravityLog||[]).forEach(x=>addRow('gravityRows','gravity',x));
+  if(!$('fermentableRows').children.length) addRow('fermentableRows','fermentable');
+  if(!$('hopRows').children.length) addRow('hopRows','hop');
+  updateAbvDisplay();
+  updateTotalVolDisplay();
+}
+
+function openEditForm(id){
+  const b = batches.find(x=>x.id===id);
+  if(!b) return;
+  editingId = id;
+  resetForm();
+  populateFormFields(b);
+  showView('form');
+}
+
+function duplicateBatch(id){
+  const src = batches.find(x=>x.id===id);
+  if(!src) return;
+  editingId = null;
+  resetForm();
+  const copy = {
+    ...src,
+    batchName: (src.batchName||'') + ' のコピー',
+    brewDate: '', brewer: src.brewer,
+    actualOG: '', fg: '', completed: false,
+    fermentStart: '', fermentTemp: '',
+    gravityLog: [],
+    packageDate: '', quantity: '',
+    fermentables: (src.fermentables||[]).map(x=>({...x})),
+    hops: (src.hops||[]).map(x=>({...x})),
+    adjuncts: (src.adjuncts||[]).map(x=>({...x})),
+    minerals: (src.minerals||[]).map(x=>({...x})),
+  };
+  populateFormFields(copy);
+  showView('form');
+}
+
+function scaleFreeAmount(amountStr, ratio){
+  if(!amountStr) return amountStr;
+  const m = String(amountStr).match(/^([\d.]+)\s*(.*)$/);
+  if(!m) return amountStr;
+  const num = parseFloat(m[1]);
+  if(isNaN(num)) return amountStr;
+  return round2(num*ratio) + (m[2] ? (' '+m[2]) : '');
+}
+
+function scaleDuplicateBatch(id){
+  const src = batches.find(x=>x.id===id);
+  if(!src) return;
+  const oldSize = parseFloat(src.batchSize);
+  if(!oldSize){
+    alert('元のバッチに「バッチサイズ」が入力されていないため、比率を計算できません。先に編集画面でバッチサイズを入力してください。');
+    return;
+  }
+  const input = prompt(`新しい仕込み量 (L) を入力してください\n（元のレシピ：${oldSize} L）`, oldSize);
+  if(input===null) return;
+  const newSize = parseFloat(input);
+  if(!newSize || newSize<=0){ alert('正しい数値を入力してください。'); return; }
+  const ratio = newSize/oldSize;
+
+  editingId = null;
+  resetForm();
+  const copy = {
+    ...src,
+    batchName: (src.batchName||'') + ` (${newSize}Lスケール)`,
+    brewDate: '', brewer: src.brewer,
+    actualOG: '', fg: '', completed: false,
+    fermentStart: '', fermentTemp: '',
+    gravityLog: [],
+    packageDate: '', quantity: '',
+    batchSize: String(round2(newSize)),
+    waterVolume: src.waterVolume ? String(round2(parseFloat(src.waterVolume)*ratio)) : '',
+    fermentables: (src.fermentables||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
+    hops: (src.hops||[]).map(x=>({...x, amount: x.amount!=='' ? String(Math.round((parseFloat(x.amount)||0)*ratio)) : x.amount})),
+    adjuncts: (src.adjuncts||[]).map(x=>({...x, amount: scaleFreeAmount(x.amount, ratio)})),
+    minerals: (src.minerals||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
+    notes: (src.notes ? src.notes+'\n\n' : '') + `※元レシピ（${oldSize}L）を${newSize}Lにスケーリング（${round2(ratio)}倍）。原材料量は自動換算済み。糖化温度・煮沸時間・目標OG・ミネラル目標値(ppm)は換算していないのでそのままご確認ください。`,
+  };
+  populateFormFields(copy);
+  showView('form');
+  alert(`原材料の量を${round2(ratio)}倍にスケーリングしました。保存前に内容を確認してください。`);
+}
+
+function cancelForm(){
+  showView(editingId ? 'detail' : 'list');
+  if(editingId){ openDetail(editingId); }
+}
+
+async function saveBatch(){
+  const b = {
+    id: editingId || uid(),
+    batchName: $('f_batchName').value,
+    style: $('f_style').value,
+    brewDate: $('f_brewDate').value,
+    brewer: $('f_brewer').value,
+    batchSize: $('f_batchSize').value,
+    targetOG: $('f_targetOG').value,
+    actualOG: $('f_actualOG').value,
+    mashTemp: $('f_mashTemp').value,
+    mashTime: $('f_mashTime').value,
+    boilTime: $('f_boilTime').value,
+    waterVolume: $('f_waterVolume').value,
+    waterSource: $('f_waterSource').value,
+    waterPh: $('f_waterPh').value,
+    mCa: $('f_mCa').value,
+    mMg: $('f_mMg').value,
+    mNa: $('f_mNa').value,
+    mCl: $('f_mCl').value,
+    mSO4: $('f_mSO4').value,
+    mHCO3: $('f_mHCO3').value,
+    fermentables: collectRows('fermentableRows','fermentable'),
+    hops: collectRows('hopRows','hop'),
+    adjuncts: collectRows('adjunctRows','adjunct'),
+    minerals: collectRows('mineralRows','mineral'),
+    yeast: $('f_yeast').value,
+    fermentStart: $('f_fermentStart').value,
+    fermentTemp: $('f_fermentTemp').value,
+    gravityLog: collectRows('gravityRows','gravity'),
+    fg: $('f_fg').value,
+    packageDate: $('f_packageDate').value,
+    co2vol: $('f_co2vol').value,
+    unitVolume: $('f_unitVolume').value,
+    packageType: $('f_packageType').value,
+    quantity: $('f_quantity').value,
+    notes: $('f_notes').value,
+  };
+  if(!b.batchName){ alert('バッチ名を入力してください'); return; }
+  const idx = batches.findIndex(x=>x.id===b.id);
+  if(idx>=0){
+    b.brewStartTime = batches[idx].brewStartTime;
+    b.scheduleActuals = batches[idx].scheduleActuals;
+    b.completed = batches[idx].completed;
+    batches[idx]=b;
+  } else {
+    batches.push(b);
+  }
+  await persist();
+  editingId = null;
+  renderGauge();
+  renderList();
+  showView('list');
+}
+
+/* ---------------- Detail ---------------- */
+function openDetail(id){
+  const b = batches.find(x=>x.id===id);
+  if(!b) return;
+  const a = abv(b.actualOG||b.targetOG, b.fg);
+  const schedSteps = computeScheduleSteps(b);
+  const schedStartDate = parseStartDateTime(b.brewStartTime);
+  const schedDryhops = computeDryHopSchedule(b);
+  const schedActuals = b.scheduleActuals || {};
+  const el = $('viewDetail');
+  el.dataset.id = id;
+  el.innerHTML = `
+    <span class="back-link" onclick="showView('list')">← 一覧に戻る</span>
+    <div class="detail-head">
+      <div>
+        <div class="batch-name" style="font-size:1.3rem;">${escapeHtml(b.batchName||'')}</div>
+        <div class="batch-style">${escapeHtml(b.style||'')} ・ ${b.brewDate||''}</div>
+      </div>
+      <span class="status-pill status-${statusOf(b)}">${statusOf(b)}</span>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="l">OG</div><div class="v">${b.actualOG||b.targetOG||'—'}</div></div>
+      <div class="detail-item"><div class="l">FG</div><div class="v">${b.fg||'—'}</div></div>
+      <div class="detail-item"><div class="l">ABV(推定)</div><div class="v">${a?a+'%':'—'}</div></div>
+      <div class="detail-item"><div class="l">バッチサイズ</div><div class="v">${b.batchSize?b.batchSize+' L':'—'}</div></div>
+      <div class="detail-item"><div class="l">糖化</div><div class="v">${b.mashTemp?b.mashTemp+'℃ / '+(b.mashTime||'—')+'分':'—'}</div></div>
+      <div class="detail-item"><div class="l">煮沸</div><div class="v">${b.boilTime?b.boilTime+'分':'—'}</div></div>
+    </div>
+    ${(b.fermentables&&b.fermentables.length) ? `<div class="detail-list">${b.fermentables.map(f=>`<div class="row"><span>${escapeHtml(f.name)}</span><span>${escapeHtml(f.amount)} kg</span></div>`).join('')}</div>` : ''}
+    ${(b.hops&&b.hops.length) ? `<div class="detail-list">${b.hops.map(h=>`<div class="row"><span>${escapeHtml(h.name)} <span style="color:var(--text-muted)">(${escapeHtml(hopLabel(h))})</span></span><span>${escapeHtml(h.amount)} g</span></div>`).join('')}</div>` : ''}
+    ${(b.adjuncts&&b.adjuncts.length) ? `<div class="detail-list">${b.adjuncts.map(a=>`<div class="row"><span>${escapeHtml(a.name)} <span style="color:var(--text-muted)">(${escapeHtml(a.timing||'')})</span></span><span>${escapeHtml(a.amount)}</span></div>`).join('')}</div>` : ''}
+    ${(b.waterSource||b.waterPh||b.mCa||b.mMg||b.mNa||b.mCl||b.mSO4||b.mHCO3||(b.minerals&&b.minerals.length)) ? `<div class="detail-list">
+      ${b.waterSource?`<div class="row"><span>水源</span><span>${escapeHtml(b.waterSource)}</span></div>`:''}
+      ${b.waterPh?`<div class="row"><span>仕込み水pH</span><span>${escapeHtml(b.waterPh)}</span></div>`:''}
+      ${(b.mCa||b.mMg||b.mNa||b.mCl||b.mSO4||b.mHCO3)?`<div class="row"><span>目標ミネラル(ppm)</span><span>Ca${b.mCa||0} Mg${b.mMg||0} Na${b.mNa||0} Cl${b.mCl||0} SO4${b.mSO4||0} HCO3${b.mHCO3||0}</span></div>`:''}
+      ${(b.minerals||[]).map(m=>`<div class="row"><span>${escapeHtml(m.name)} <span style="color:var(--text-muted)">(${escapeHtml(m.timing||'')})</span></span><span>${escapeHtml(m.amount)} g</span></div>`).join('')}
+    </div>` : ''}
+    ${b.yeast ? `<div class="detail-list"><div class="row"><span>酵母</span><span>${escapeHtml(b.yeast)}</span></div>
+      <div class="row"><span>発酵開始</span><span>${b.fermentStart||'—'}</span></div>
+      <div class="row"><span>発酵温度</span><span>${b.fermentTemp?b.fermentTemp+'℃':'—'}</span></div></div>` : ''}
+    ${(b.gravityLog&&b.gravityLog.length) ? `<div class="detail-list">${b.gravityLog.map(g=>`<div class="row"><span>${g.date}</span><span>${g.gravity||'—'}${g.ph?' ・ pH '+g.ph:''}</span></div>`).join('')}</div>` : ''}
+    ${(b.packageDate||b.packageType) ? `<div class="detail-list"><div class="row"><span>パッケージング</span><span>${b.packageDate||'—'} ・ ${b.packageType||''} ${b.quantity||''}${b.unitVolume?' × '+b.unitVolume+'ml':''}</span></div>${(b.quantity&&b.unitVolume)?`<div class="row"><span>合計容量</span><span>${(parseFloat(b.quantity)*parseFloat(b.unitVolume)/1000).toFixed(2)} L</span></div>`:''}${b.co2vol?`<div class="row"><span>CO2ボリューム</span><span>${escapeHtml(b.co2vol)} vol</span></div>`:''}</div>` : ''}
+    ${(schedSteps.length||schedDryhops.length) ? `<div class="section"><div class="section-title">仕込みスケジュール</div>
+      ${b.brewStartTime?`<div class="detail-list"><div class="row"><span>仕込み開始日時</span><span>${escapeHtml(b.brewStartTime.replace('T',' '))}</span></div></div>`:''}
+      ${schedSteps.length?`<div class="detail-list">${schedSteps.map(s=>`<div class="row"><span>${escapeHtml(s.label)}</span><span>予定 ${formatStepDisplay(s.date, schedStartDate)}${schedActuals[s.key]?' ／ 実績 '+escapeHtml(schedActuals[s.key]):''}</span></div>`).join('')}</div>`:''}
+      ${schedDryhops.length?`<div class="detail-list">${schedDryhops.map(s=>`<div class="row"><span>${escapeHtml(s.label)}</span><span>予定 ${s.dateStr}${schedActuals[s.key]?' ／ 実績 '+escapeHtml(schedActuals[s.key]):''}</span></div>`).join('')}</div>`:''}
+    </div>` : ''}
+    ${b.notes ? `<div class="section"><div class="section-title">メモ</div><div class="notes-box">${escapeHtml(b.notes)}</div></div>` : ''}
+    <div class="actions">
+      <button class="btn btn-danger" onclick="deleteBatch('${b.id}')">削除</button>
+      <button class="btn btn-ghost" onclick="duplicateBatch('${b.id}')">コピーして新規仕込み</button>
+      <button class="btn btn-ghost" onclick="scaleDuplicateBatch('${b.id}')">仕込み量を変えてコピー</button>
+      ${statusOf(b)==='完了'
+        ? `<button class="btn btn-ghost" onclick="unmarkCompleted('${b.id}')">完了を取り消す</button>`
+        : `<button class="btn btn-complete" onclick="markCompleted('${b.id}')">仕込み完了にする</button>`}
+      <button class="btn btn-primary" onclick="openEditForm('${b.id}')">編集する</button>
+    </div>
+  `;
+  showView('detail');
+}
+
+async function deleteBatch(id){
+  if(!confirm('この記録を削除しますか？元に戻せません。')) return;
+  batches = batches.filter(x=>x.id!==id);
+  await persist();
+  renderGauge(); renderList();
+  showView('list');
+}
+
+async function markCompleted(id){
+  const b = batches.find(x=>x.id===id);
+  if(!b) return;
+  b.completed = true;
+  await persist();
+  renderGauge(); renderList();
+  openDetail(id);
+}
+
+async function unmarkCompleted(id){
+  const b = batches.find(x=>x.id===id);
+  if(!b) return;
+  b.completed = false;
+  await persist();
+  renderGauge(); renderList();
+  openDetail(id);
+}
+
+/* ---------------- View switching ---------------- */
+function showView(name){
+  $('viewList').hidden = name!=='list';
+  $('viewForm').hidden = name!=='form';
+  $('viewDetail').hidden = name!=='detail';
+  $('viewSchedule').hidden = name!=='schedule';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(name==='list') document.querySelector('.tab[data-tab="list"]').classList.add('active');
+  if(name==='form') document.querySelector('.tab[data-tab="new"]').classList.add('active');
+  if(name==='schedule') document.querySelector('.tab[data-tab="schedule"]').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    if(t.dataset.tab==='new'){ openNewForm(); }
+    else if(t.dataset.tab==='schedule'){ openScheduleView(); }
+    else{ showView('list'); }
+  });
+});
+
+/* ---------------- Schedule ---------------- */
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+function parseStartDateTime(dt){
+  if(!dt) return null;
+  const d = new Date(dt);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function addMinutes(date, min){
+  return new Date(date.getTime() + min*60000);
+}
+
+function formatStepDisplay(date, startDate){
+  if(!date) return '—';
+  const sameDay = startDate && date.getFullYear()===startDate.getFullYear() && date.getMonth()===startDate.getMonth() && date.getDate()===startDate.getDate();
+  const hh = pad2(date.getHours()), mm = pad2(date.getMinutes());
+  return sameDay ? `${hh}:${mm}` : `${date.getMonth()+1}/${date.getDate()} ${hh}:${mm}`;
+}
+
+function timeOfDayValue(date){
+  if(!date) return '';
+  return `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+}
+
+function todayDateValue(){
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+
+function dateStrToInputValue(dateStr){
+  // dateStr like "2026/08/04" -> "2026-08-04"
+  if(!dateStr) return '';
+  return dateStr.replace(/\//g,'-');
+}
+
+function openScheduleView(){
+  const sel = $('sch_batchSelect');
+  const sorted = [...batches].sort((a,b)=>(b.brewDate||'').localeCompare(a.brewDate||''));
+  sel.innerHTML = sorted.map(b=>`<option value="${b.id}">${escapeHtml(b.batchName||'(名称未設定)')} ${b.brewDate?'・'+b.brewDate:''}</option>`).join('');
+  if(!sorted.length){
+    $('sch_timeline').innerHTML = '<div class="sched-empty">仕込み記録がまだありません。先に「新規仕込み」からバッチを作成してください。</div>';
+    $('sch_dryhops').innerHTML='';
+    $('sch_startTime').value='';
+    $('sch_completed').checked=false;
+    showView('schedule');
+    return;
+  }
+  renderSchedule();
+  showView('schedule');
+}
+
+function currentScheduleBatch(){
+  const id = $('sch_batchSelect').value;
+  return batches.find(b=>b.id===id);
+}
+
+function onScheduleStartChange(){
+  const b = currentScheduleBatch();
+  if(!b) return;
+  b.brewStartTime = $('sch_startTime').value;
+  persist();
+  renderTimeline(b);
+  renderList();
+  renderGauge();
+}
+
+function saveScheduleActual(key, value){
+  const b = currentScheduleBatch();
+  if(!b) return;
+  if(!b.scheduleActuals) b.scheduleActuals = {};
+  b.scheduleActuals[key] = value;
+  persist();
+  renderList();
+}
+
+function renderSchedule(){
+  const b = currentScheduleBatch();
+  if(!b) return;
+  const displayStart = b.brewStartTime || `${b.brewDate || todayDateValue()}T09:00`;
+  $('sch_startTime').value = displayStart;
+  $('sch_completed').checked = statusOf(b)==='完了';
+  renderTimeline({...b, brewStartTime: displayStart});
+}
+
+async function saveScheduleView(){
+  const b = currentScheduleBatch();
+  if(!b) return;
+  b.brewStartTime = $('sch_startTime').value;
+  b.completed = $('sch_completed').checked;
+  await persist();
+  renderGauge(); renderList();
+  renderSchedule();
+  alert('保存しました。');
+}
+
+function computeScheduleSteps(b){
+  const startDate = parseStartDateTime(b.brewStartTime);
+  if(!startDate) return [];
+  const mashTime = parseFloat(b.mashTime)||0;
+  const boilTime = parseFloat(b.boilTime)||0;
+  const mashOutOffset = mashTime;
+  const boilStartOffset = mashOutOffset;
+  const boilEndOffset = boilStartOffset + boilTime;
+
+  let steps = [
+    {key:'mashIn', label:'仕込み開始（マッシュイン）', sub:'', offset:0},
+    {key:'mashOut', label:'糖化終了', sub:mashTime?`糖化 ${mashTime}分`:'', offset:mashOutOffset},
+    {key:'boilStart', label:'煮沸開始', sub:'', offset:boilStartOffset},
+  ];
+  (b.hops||[]).filter(h=>h.timingType!=='dryhop').forEach((h,i)=>{
+    const v = parseFloat(h.timingValue)||0;
+    steps.push({key:`hop_${i}`, label:`ホップ投入：${h.name||'(名称未設定)'}`, sub:h.timingValue?`煮沸終了${v}分前 ・ ${h.amount||''}g`:'投入時刻未設定', offset: boilEndOffset - v});
+  });
+  steps.push({key:'boilEnd', label:'煮沸終了', sub:boilTime?`煮沸 ${boilTime}分`:'', offset:boilEndOffset});
+  steps.push({key:'chillPitch', label:'冷却・酵母投入', sub:b.yeast?b.yeast:'', offset:boilEndOffset});
+  steps.sort((a,b2)=>a.offset-b2.offset);
+  steps.forEach(s=>{ s.date = addMinutes(startDate, s.offset); });
+  return steps;
+}
+
+function computeDryHopSchedule(b){
+  const dryhops = (b.hops||[]).filter(h=>h.timingType==='dryhop');
+  if(!dryhops.length) return [];
+  const fStart = b.fermentStart ? new Date(b.fermentStart+'T00:00:00') : null;
+  return dryhops.map((h,i)=>{
+    const days = parseFloat(h.timingValue)||0;
+    let dateStr = `発酵${days}日目（発酵開始日を入力すると日付表示）`;
+    if(fStart){
+      const d = new Date(fStart); d.setDate(d.getDate()+days);
+      dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+    }
+    return {key:`dryhop_${i}`, label:`ドライホップ：${h.name||'(名称未設定)'}`, sub:`発酵${days}日目 ・ ${h.amount||''}g`, dateStr, hasDate: !!fStart};
+  });
+}
+
+function renderTimeline(b){
+  const timeline = $('sch_timeline');
+  const dryhopEl = $('sch_dryhops');
+  const actuals = b.scheduleActuals || {};
+  const steps = computeScheduleSteps(b);
+  const startDate = parseStartDateTime(b.brewStartTime);
+
+  if(!steps.length){
+    timeline.innerHTML = '<div class="sched-empty">仕込み開始日時を入力すると、工程スケジュールが自動計算されます。</div>';
+  } else {
+    timeline.innerHTML = steps.map(s=>{
+      const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : timeOfDayValue(s.date);
+      return `
+      <div class="sched-row">
+        <div class="sched-dot"></div>
+        <div class="sched-label">${escapeHtml(s.label)}${s.sub?`<div class="sub">${escapeHtml(s.sub)}</div>`:''}</div>
+        <div class="sched-planned">${formatStepDisplay(s.date, startDate)}</div>
+        <div class="sched-actual"><input type="time" value="${val}" onchange="saveScheduleActual('${s.key}', this.value)"></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Dry hop schedule (date-based, separate from time-of-day timeline)
+  const dryhops = computeDryHopSchedule(b);
+  if(dryhops.length){
+    dryhopEl.innerHTML = `<div class="section-title" style="margin-top:22px;">ドライホップ予定</div>` +
+      (b.fermentStart ? '' : `<div class="sched-note">発酵開始日を入力すると、実際の投入日が計算されます。</div>`) +
+      dryhops.map(s=>{
+        const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : (s.hasDate ? dateStrToInputValue(s.dateStr) : '');
+        return `<div class="sched-row sched-dryhop">
+          <div class="sched-dot"></div>
+          <div class="sched-label">${escapeHtml(s.label)}<div class="sub">${escapeHtml(s.sub)}</div></div>
+          <div class="sched-planned">${escapeHtml(s.dateStr)}</div>
+          <div class="sched-actual"><input type="date" value="${val}" onchange="saveScheduleActual('${s.key}', this.value)"></div>
+        </div>`;
+      }).join('');
+  } else {
+    dryhopEl.innerHTML = '';
+  }
+}
+
+/* ---------------- Export / Import ---------------- */
+function downloadBlob(content, filename, mime){
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function csvEscape(v){
+  if(v===undefined||v===null) return '';
+  const s = String(v).replace(/"/g,'""');
+  return /[",\n]/.test(s) ? `"${s}"` : s;
+}
+
+function exportableBatches(){
+  return batches.filter(b=>b.id!=='sample-bass-pale-ale-clone');
+}
+
+function exportCSV(){
+  const target = exportableBatches();
+  if(!target.length){ alert('記録がありません'); return; }
+  const headers = ['バッチ名','スタイル','仕込み日','担当','バッチサイズL','目標OG','実測OG','FG','ABV(%)',
+    '糖化温度','糖化時間','煮沸時間','仕込み水量L','水源','仕込み水pH','Ca(ppm)','Mg(ppm)','Na(ppm)','Cl(ppm)','SO4(ppm)','HCO3(ppm)','ミネラル添加剤',
+    'モルト','ホップ','副原料','酵母','発酵開始日','発酵温度',
+    '比重・pHログ','仕込み開始日時','工程スケジュール(予定/実績)','ドライホップ予定(予定/実績)',
+    'パッケージング日','CO2ボリューム','形態','1単位あたりの量(ml)','数量','合計容量L','ステータス','メモ'];
+  const lines = [headers.map(csvEscape).join(',')];
+  [...target].sort((a,b)=>(a.brewDate||'').localeCompare(b.brewDate||'')).forEach(b=>{
+    const ferm = (b.fermentables||[]).map(f=>`${f.name} ${f.amount}kg`).join(' / ');
+    const hops = (b.hops||[]).map(h=>`${h.name} ${h.amount}g(${hopLabel(h)})`).join(' / ');
+    const adj = (b.adjuncts||[]).map(a=>`${a.name} ${a.amount}(${a.timing||''})`).join(' / ');
+    const minerals = (b.minerals||[]).map(m=>`${m.name} ${m.amount}g(${m.timing||''})`).join(' / ');
+    const gravLog = (b.gravityLog||[]).map(g=>`${g.date} SG${g.gravity||''}${g.ph?' pH'+g.ph:''}`).join(' / ');
+    const a = abv(b.actualOG||b.targetOG, b.fg);
+    const totalVol = (b.quantity&&b.unitVolume) ? (parseFloat(b.quantity)*parseFloat(b.unitVolume)/1000).toFixed(2) : '';
+    const schedActuals = b.scheduleActuals || {};
+    const schedStartDate = parseStartDateTime(b.brewStartTime);
+    const schedSteps = computeScheduleSteps(b).map(s=>`${s.label} 予定${formatStepDisplay(s.date, schedStartDate)}${schedActuals[s.key]?'/実績'+schedActuals[s.key]:''}`).join(' / ');
+    const schedDryhops = computeDryHopSchedule(b).map(s=>`${s.label} 予定${s.dateStr}${schedActuals[s.key]?'/実績'+schedActuals[s.key]:''}`).join(' / ');
+    lines.push([b.batchName,b.style,b.brewDate,b.brewer,b.batchSize,b.targetOG,b.actualOG,b.fg,a||'',
+      b.mashTemp,b.mashTime,b.boilTime,b.waterVolume,b.waterSource,b.waterPh,b.mCa,b.mMg,b.mNa,b.mCl,b.mSO4,b.mHCO3,minerals,
+      ferm,hops,adj,b.yeast,b.fermentStart,b.fermentTemp,
+      gravLog,b.brewStartTime,schedSteps,schedDryhops,
+      b.packageDate,b.co2vol,b.packageType,b.unitVolume,b.quantity,totalVol,statusOf(b),b.notes].map(csvEscape).join(','));
+  });
+  // BOM for Excel (Japanese text)
+  downloadBlob('\uFEFF'+lines.join('\r\n'), '仕込み記録_' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv;charset=utf-8');
+}
+
+function exportJSON(){
+  const target = exportableBatches();
+  if(!target.length){ alert('記録がありません'); return; }
+  downloadBlob(JSON.stringify(target, null, 2), '仕込み記録バックアップ_' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+}
+
+function importJSON(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e)=>{
+    try{
+      const imported = JSON.parse(e.target.result);
+      if(!Array.isArray(imported)) throw new Error('invalid format');
+      const merge = confirm(`${imported.length}件のバッチを読み込みます。\nOK＝既存データに追加 / キャンセル＝既存データを置き換え`);
+      if(merge){
+        const existingIds = new Set(batches.map(b=>b.id));
+        imported.forEach(b=>{ if(!b.id || existingIds.has(b.id)) b.id = uid(); batches.push(b); });
+      } else {
+        batches = imported;
+      }
+      await persist();
+      renderGauge(); renderList();
+      showView('list');
+      alert('読み込みが完了しました');
+    }catch(err){
+      alert('読み込みに失敗しました。正しいJSONファイルか確認してください。');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------------- BeerXML recipe import ---------------- */
+function xmlChildText(parent, tagNames){
+  if(!parent) return '';
+  const wanted = tagNames.map(t=>t.toUpperCase());
+  for(const child of parent.children){
+    if(wanted.includes(child.tagName.toUpperCase())) return child.textContent.trim();
+  }
+  return '';
+}
+function xmlChild(parent, tagNames){
+  if(!parent) return null;
+  const wanted = tagNames.map(t=>t.toUpperCase());
+  for(const child of parent.children){
+    if(wanted.includes(child.tagName.toUpperCase())) return child;
+  }
+  return null;
+}
+function xmlChildren(parent, tagNames){
+  if(!parent) return [];
+  const wanted = tagNames.map(t=>t.toUpperCase());
+  return [...parent.children].filter(c=>wanted.includes(c.tagName.toUpperCase()));
+}
+function round2(n){ return Math.round(n*100)/100; }
+
+function parseBeerXML(xmlString){
+  const doc = new DOMParser().parseFromString(xmlString, 'text/xml');
+  if(doc.querySelector('parsererror')) throw new Error('XML parse error');
+  // Recipes may be under <RECIPES><RECIPE>...</RECIPE></RECIPES> or a bare <RECIPE>
+  let recipeNodes = [...doc.getElementsByTagName('RECIPE')];
+  if(!recipeNodes.length) recipeNodes = [...doc.getElementsByTagName('recipe')];
+  if(!recipeNodes.length) throw new Error('レシピが見つかりません');
+
+  return recipeNodes.map(r=>{
+    const name = xmlChildText(r, ['NAME']) || '(名称未設定)';
+    const styleNode = xmlChild(r, ['STYLE']);
+    const style = styleNode ? xmlChildText(styleNode, ['NAME']) : '';
+    const brewer = xmlChildText(r, ['BREWER']);
+    const batchSize = xmlChildText(r, ['BATCH_SIZE']);
+    const boilSize = xmlChildText(r, ['BOIL_SIZE']);
+    const boilTime = xmlChildText(r, ['BOIL_TIME']);
+    const og = xmlChildText(r, ['OG']);
+    const fg = xmlChildText(r, ['FG']);
+    const ibu = xmlChildText(r, ['IBU']);
+    const abv = xmlChildText(r, ['EST_ABV','ABV']);
+    const color = xmlChildText(r, ['EST_COLOR','COLOR']);
+    const carbonation = xmlChildText(r, ['CARBONATION']);
+
+    // Fermentables -> malt vs adjunct
+    const fermentables = [];
+    const adjuncts = [];
+    const fermsWrap = xmlChild(r, ['FERMENTABLES']);
+    xmlChildren(fermsWrap, ['FERMENTABLE']).forEach(f=>{
+      const fname = xmlChildText(f, ['NAME']);
+      const amountKg = parseFloat(xmlChildText(f, ['AMOUNT']))||0;
+      const type = (xmlChildText(f, ['TYPE'])||'').toLowerCase();
+      if(type==='grain' || type===''){
+        fermentables.push({name: fname, amount: String(round2(amountKg))});
+      } else {
+        adjuncts.push({name: fname, amount: round2(amountKg)+' kg', timing: '仕込み時'});
+      }
+    });
+
+    // Hops
+    const hops = [];
+    const hopsWrap = xmlChild(r, ['HOPS']);
+    xmlChildren(hopsWrap, ['HOP']).forEach(h=>{
+      const hname = xmlChildText(h, ['NAME']);
+      const amountG = (parseFloat(xmlChildText(h, ['AMOUNT']))||0) * 1000;
+      const use = (xmlChildText(h, ['USE'])||'').toLowerCase();
+      const time = xmlChildText(h, ['TIME']);
+      if(use.includes('dry')){
+        hops.push({name: hname, amount: String(Math.round(amountG)), timingType:'dryhop', timingValue: String(Math.round(parseFloat(time)||0))});
+      } else {
+        hops.push({name: hname, amount: String(Math.round(amountG)), timingType:'boil', timingValue: String(Math.round(parseFloat(time)||0))});
+      }
+    });
+
+    // Yeast (first only)
+    const yeastsWrap = xmlChild(r, ['YEASTS']);
+    const yeastNode = xmlChildren(yeastsWrap, ['YEAST'])[0];
+    let yeast = '';
+    if(yeastNode){
+      const lab = xmlChildText(yeastNode, ['LABORATORY']);
+      const pid = xmlChildText(yeastNode, ['PRODUCT_ID']);
+      const yname = xmlChildText(yeastNode, ['NAME']);
+      yeast = [lab, pid, yname].filter(Boolean).join(' ');
+    }
+
+    // Mash steps
+    const mashWrap = xmlChild(r, ['MASH']);
+    const stepsWrap = xmlChild(mashWrap, ['MASH_STEPS']);
+    const steps = xmlChildren(stepsWrap, ['MASH_STEP']).map(s=>({
+      name: xmlChildText(s, ['NAME']),
+      temp: parseFloat(xmlChildText(s, ['STEP_TEMP']))||0,
+      time: parseFloat(xmlChildText(s, ['STEP_TIME']))||0
+    }));
+    let mashTemp = '', mashTime = '';
+    let mashNote = '';
+    if(steps.length){
+      const primary = steps.reduce((a,b)=> (b.time>a.time?b:a), steps[0]);
+      mashTemp = String(round2(primary.temp));
+      mashTime = String(round2(primary.time));
+      if(steps.length>1){
+        mashNote = 'マッシュステップ: ' + steps.map(s=>`${s.name||''} ${round2(s.temp)}°C ${round2(s.time)}分`).join(' → ');
+      }
+    }
+
+    const notesParts = [];
+    notesParts.push(`BeerXMLから取り込み${brewer?'（原レシピ作者: '+brewer+'）':''}`);
+    const targets = [];
+    if(fg) targets.push('目標FG '+fg);
+    if(abv) targets.push('ABV '+round2(parseFloat(abv))+'%');
+    if(ibu) targets.push('IBU '+round2(parseFloat(ibu)));
+    if(color) targets.push('色 '+round2(parseFloat(color))+' (SRM/EBC換算は元ツール依存)');
+    if(targets.length) notesParts.push(targets.join(' / '));
+    if(mashNote) notesParts.push(mashNote);
+    if(adjuncts.length) notesParts.push('※Grain以外の原材料（砂糖・エキス等）は副原料として取り込みました。');
+
+    return {
+      id: uid(),
+      batchName: name,
+      style: style,
+      brewDate: '',
+      brewer: '',
+      batchSize: batchSize ? String(round2(parseFloat(batchSize))) : '',
+      targetOG: og || '',
+      actualOG: '',
+      mashTemp, mashTime,
+      boilTime: boilTime ? String(Math.round(parseFloat(boilTime))) : '',
+      waterVolume: boilSize ? String(round2(parseFloat(boilSize))) : '',
+      fermentables, hops, adjuncts,
+      yeast,
+      fermentStart: '', fermentTemp: '',
+      gravityLog: [],
+      fg: '',
+      packageDate: '',
+      co2vol: carbonation || '',
+      unitVolume: '',
+      packageType: '', quantity: '',
+      notes: notesParts.join('\n')
+    };
+  });
+}
+
+function importBeerXML(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e)=>{
+    try{
+      const imported = parseBeerXML(e.target.result);
+      if(!imported.length) throw new Error('no recipes');
+      batches.push(...imported);
+      await persist();
+      renderGauge(); renderList();
+      showView('list');
+      alert(`${imported.length}件のレシピを取り込みました：\n` + imported.map(b=>'・'+b.batchName).join('\n'));
+    }catch(err){
+      alert('レシピの取り込みに失敗しました。Brewer\'s Friendの「Export > BeerXML」で書き出したファイルか確認してください。');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function escapeHtml(s){
+  if(s===undefined||s===null) return '';
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+loadBatches();
+
+document.querySelectorAll('.prefill60').forEach(el=>{
+  el.addEventListener('focus', function(){
+    if(this.value==='') this.value = '60';
+  });
+});
+
+document.querySelectorAll('.prefill10').forEach(el=>{
+  el.addEventListener('focus', function(){
+    if(this.value==='') this.value = '10';
+  });
+});
+
+function updateAbvDisplay(){
+  const og = parseFloat($('f_actualOG').value || $('f_targetOG').value);
+  const fg = parseFloat($('f_fg').value);
+  const disp = $('f_abvDisplay');
+  if(og && fg){
+    disp.textContent = abv(og, fg) + ' %';
+  } else {
+    disp.textContent = '—';
+  }
+}
+['f_actualOG','f_targetOG','f_fg'].forEach(id=>{
+  $(id).addEventListener('input', updateAbvDisplay);
+});
+
+function updateTotalVolDisplay(){
+  const qty = parseFloat($('f_quantity').value);
+  const unitMl = parseFloat($('f_unitVolume').value);
+  const disp = $('f_totalVolDisplay');
+  if(qty && unitMl){
+    disp.textContent = (qty * unitMl / 1000).toFixed(2) + ' L';
+  } else {
+    disp.textContent = '—';
+  }
+}
+['f_quantity','f_unitVolume'].forEach(id=>{
+  $(id).addEventListener('input', updateTotalVolDisplay);
+});
+</script>
+</body>
+</html>
