@@ -422,6 +422,17 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
 .inv-row-delete{
   color:var(--danger); font-size:0.72rem; cursor:pointer; flex:none; padding-left:10px; opacity:0.85;
 }
+.ship-batch-summary{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:8px 16px; margin-bottom:14px;
+  background:var(--surface); border:1px solid var(--copper); border-radius:8px; padding:12px 14px;
+}
+.ship-batch-summary-item{display:flex; justify-content:space-between; align-items:baseline; font-size:0.82rem;}
+.ship-batch-summary-item .l{color:var(--text-muted);}
+.ship-batch-summary-item .v{font-family:'IBM Plex Mono', monospace; font-weight:500;}
+.ship-batch-summary-item .v.loss{color:var(--danger);}
+.ship-batch-summary-item .v.shipped{color:var(--hop-bright);}
+.ship-batch-summary-item.total{grid-column:1 / -1; border-top:1px solid var(--border); padding-top:8px; margin-top:2px;}
+.ship-batch-summary-item.total .v{color:var(--copper-bright); font-size:1rem;}
 .ship-pkg-card{
   background:var(--surface); border:1px solid var(--border); border-radius:8px;
   padding:12px 14px; margin-bottom:10px;
@@ -631,7 +642,7 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
       <button type="button" class="add-row-btn" onclick="addRow('gravityRows','gravity')">＋ 測定を追加</button>
     </details>
 
-    <details class="section">
+    <details class="section" open>
       <summary class="section-title">パッケージング</summary>
       <div class="grid2">
         <div class="field"><label>FG（最終比重）</label><input type="number" step="0.001" min="1.000" id="f_fg" placeholder="1.010"></div>
@@ -651,6 +662,7 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
       <div id="packageRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('packageRows','package')">＋ 容器を追加</button>
       <div class="field" style="margin-top:10px;"><label>合計容量（自動計算）</label><div id="f_totalVolDisplay" class="abv-display">—</div></div>
+      <div class="field" style="margin-top:10px;"><label>欠減・移出を除いた量（自動計算）</label><div id="f_netVolDisplay" class="abv-display">—</div></div>
     </details>
 
     <div id="formInvDeductArea"></div>
@@ -1226,9 +1238,36 @@ async function deleteShipmentLot(batchId, pkgIndex, lotId){
   openDetail(batchId);
 }
 
+function batchVolumeSummary(b){
+  const packages = getPackages(b);
+  let total = 0, lossVol = 0, shippedVol = 0;
+  packages.forEach(pkg=>{
+    const unitL = (parseFloat(pkg.unitVolume)||0)/1000;
+    const qty = parseFloat(pkg.quantity)||0;
+    const pkgVol = unitL*qty;
+    total += pkgVol;
+    const isLossType = pkg.type && pkg.type.indexOf('欠減')===0;
+    if(isLossType) lossVol += pkgVol;
+    shipmentLotsFor(pkg).forEach(l=>{
+      const lotVol = unitL * (parseFloat(l.quantity)||0);
+      if(l.status==='shipped') shippedVol += lotVol;
+      else if(l.status==='loss') lossVol += lotVol;
+    });
+  });
+  const remaining = Math.max(0, total - lossVol - shippedVol);
+  return {total, lossVol, shippedVol, remaining};
+}
+
 function renderPackageShipments(b){
   const packages = getPackages(b);
   if(!packages.length) return '';
+  const bvs = batchVolumeSummary(b);
+  const batchSummaryHtml = `<div class="ship-batch-summary">
+    <div class="ship-batch-summary-item"><span class="l">仕込み全体の合計容量</span><span class="v">${bvs.total.toFixed(2)} L</span></div>
+    <div class="ship-batch-summary-item"><span class="l">欠減</span><span class="v loss">−${bvs.lossVol.toFixed(2)} L</span></div>
+    <div class="ship-batch-summary-item"><span class="l">課税移出済み</span><span class="v shipped">−${bvs.shippedVol.toFixed(2)} L</span></div>
+    <div class="ship-batch-summary-item total"><span class="l">欠減・移出を除く残り</span><span class="v">${bvs.remaining.toFixed(2)} L</span></div>
+  </div>`;
   const cards = packages.map((pkg, pkgIndex)=>{
     const sum = shipmentSummary(pkg);
     const lots = shipmentLotsFor(pkg);
@@ -1277,7 +1316,7 @@ function renderPackageShipments(b){
     </div>`;
   }).join('');
 
-  return `<div class="section"><div class="section-title">出荷管理（課税移出・欠減）</div>${cards}</div>`;
+  return `<div class="section"><div class="section-title">出荷管理（課税移出・欠減）</div>${batchSummaryHtml}${cards}</div>`;
 }
 
 function renderShipmentForm(batchId, pkgIndex, lot, pkg){
@@ -2264,6 +2303,7 @@ function openNewForm(){
   resetForm();
   $('f_abvDisplay').textContent = '—';
   $('f_totalVolDisplay').textContent = '—';
+  $('f_netVolDisplay').textContent = '—';
   renderFormInvDeductArea(null);
   refreshAllInvSelectColors();
   showView('form');
@@ -3496,13 +3536,37 @@ function updateAbvDisplay(){
 function updateTotalVolDisplay(){
   const rows = [...document.querySelectorAll('#packageRows > *')];
   let total = 0;
+  let lossVol = 0;
   rows.forEach(r=>{
+    const typeEl = r.querySelector('.rp-type');
     const qty = parseFloat(r.querySelector('.rp-qty').value);
     const unitMl = parseFloat(r.querySelector('.rp-unitvol').value);
-    if(qty && unitMl) total += qty * unitMl / 1000;
+    if(qty && unitMl){
+      const vol = qty * unitMl / 1000;
+      total += vol;
+      if(typeEl && typeEl.value && typeEl.value.indexOf('欠減')===0) lossVol += vol;
+    }
   });
   const disp = $('f_totalVolDisplay');
   disp.textContent = total>0 ? total.toFixed(2)+' L' : '—';
+
+  const netDisp = $('f_netVolDisplay');
+  if(netDisp){
+    let shippedVol = 0;
+    if(editingId){
+      const savedBatch = batches.find(x=>x.id===editingId);
+      if(savedBatch){
+        getPackages(savedBatch).forEach(pkg=>{
+          const unitL = (parseFloat(pkg.unitVolume)||0)/1000;
+          shipmentLotsFor(pkg).filter(l=>l.status==='shipped').forEach(l=>{
+            shippedVol += unitL * (parseFloat(l.quantity)||0);
+          });
+        });
+      }
+    }
+    const net = Math.max(0, total - lossVol - shippedVol);
+    netDisp.textContent = total>0 ? `${net.toFixed(2)} L（全容量から欠減${lossVol.toFixed(2)}L・移出済み${shippedVol.toFixed(2)}Lを除く）` : '—';
+  }
 }
 document.addEventListener('input', (e)=>{
   if(e.target.closest && e.target.closest('#packageRows')) updateTotalVolDisplay();
