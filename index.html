@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>仕込み記録</title>
+<title>Japan Brewer's Record</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -43,7 +45,16 @@ header{
   display:flex;align-items:center;gap:14px;
   padding:6px 2px 22px;
   border-bottom:1px solid var(--border);
-  margin-bottom:22px;
+  margin-bottom:0;
+}
+.mock-banner{
+  background:rgba(181,86,62,0.12); border:1px solid var(--danger); border-radius:0 0 8px 8px;
+  color:var(--danger); font-size:0.78rem; font-weight:500; text-align:center;
+  padding:7px 12px; margin:0; letter-spacing:0.02em;
+}
+.version-line{
+  text-align:center; font-size:0.68rem; color:var(--text-muted); font-family:'IBM Plex Mono', monospace;
+  margin:6px 0 22px;
 }
 .mark{
   width:44px;height:44px;flex:none;
@@ -87,13 +98,24 @@ header .sub{
 .gauge-title{
   font-family:'Fraunces', serif; font-weight:600; font-size:1.15rem; margin-bottom:14px;
 }
-.gauge-row{display:flex; align-items:center; gap:18px;}
+.gauge-row{display:flex; align-items:flex-start; gap:18px; flex-wrap:wrap; justify-content:center;}
+.gauge-col{flex:none; display:flex; flex-direction:column; align-items:center; width:150px;}
 .gauge-svg{flex:none; width:150px; height:96px;}
-.gauge-stats{flex:1; display:flex; flex-direction:column; gap:8px;}
-.gauge-stat{display:flex; justify-content:space-between; align-items:baseline; font-size:0.82rem;}
+.gauge-stats{flex:0 1 170px; display:flex; flex-direction:column; gap:8px; padding-top:8px;}
+.gauge-stat{display:flex; justify-content:space-between; align-items:baseline; font-size:0.82rem; gap:10px;}
 .gauge-stat .label{color:var(--text-muted);}
 .gauge-stat .val{font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:0.95rem;}
 .gauge-empty{color:var(--text-muted); font-size:0.85rem; padding:8px 0 4px;}
+.gauge-legend{
+  font-size:0.6rem; color:var(--text-muted); line-height:1.6; margin-top:2px;
+  display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:3px; text-align:center;
+}
+.gauge-legend .dot{width:6px; height:6px; border-radius:50%; flex:none; margin-left:5px;}
+.gauge-legend .dot:first-child{margin-left:0;}
+.spark-wrap{flex:0 1 130px; min-width:100px;}
+.spark-label{font-size:0.68rem; color:var(--text-muted); letter-spacing:0.04em; margin-bottom:4px;}
+.spark-svg{width:100%; max-width:130px; height:40px; display:block;}
+.spark-range{display:flex; justify-content:space-between; font-size:0.65rem; color:var(--text-muted); font-family:'IBM Plex Mono', monospace; max-width:130px; margin-top:2px;}
 
 /* ---------- Tabs ---------- */
 .tabs{display:flex; gap:4px; margin-bottom:18px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:4px;}
@@ -153,6 +175,26 @@ header .sub{
   display:flex; gap:16px; margin-top:10px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--text-muted);
 }
 .batch-meta b{color:var(--text); font-weight:500;}
+.inv-list-row{
+  display:flex; align-items:center; gap:8px; margin-top:10px; padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.inv-list-status{font-size:0.74rem; color:var(--hop-bright); font-weight:500;}
+.inv-list-btn{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-muted);
+  border-radius:6px; padding:5px 10px; font-size:0.72rem; cursor:pointer;
+  font-family:'IBM Plex Sans JP', sans-serif;
+}
+.inv-list-btn:hover{border-color:var(--copper); color:var(--copper-bright);}
+.inv-list-unlinked-badge{
+  font-size:0.72rem; color:var(--danger); margin-left:auto;
+}
+.inv-unlinked-warning{
+  background:rgba(181,86,62,0.1); border:1px solid var(--danger); border-radius:8px;
+  padding:10px 12px; font-size:0.78rem; color:var(--text); line-height:1.6; margin:12px 0;
+}
+.inv-opt-unlinked{ color:var(--danger); }
+select.inv-select-unlinked{ color:var(--danger) !important; }
 .empty-state{
   text-align:center; padding:50px 20px; color:var(--text-muted);
 }
@@ -176,6 +218,7 @@ input[type=text], input[type=date], input[type=number], textarea, select{
   border-radius:7px; padding:9px 10px; font-size:0.9rem; font-family:'IBM Plex Sans JP', sans-serif;
 }
 input:focus, textarea:focus, select:focus{outline:2px solid var(--copper); outline-offset:0; border-color:var(--copper);}
+select:disabled{opacity:0.75; cursor:not-allowed; background:var(--surface);}
 input[type=date]::-webkit-calendar-picker-indicator{
   filter:invert(0.8) sepia(1) saturate(3) hue-rotate(0deg);
   cursor:pointer;
@@ -248,6 +291,14 @@ textarea{min-height:70px; resize:vertical;}
 .amount-wrap .unit-suffix{
   flex:none; padding:9px 8px 9px 2px; font-size:0.78rem; color:var(--text-muted);
 }
+.inv-amount-over{
+  border-color:var(--danger) !important; background:rgba(181,86,62,0.14) !important;
+}
+.inv-amount-over .unit-suffix{ color:var(--danger); }
+input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(181,86,62,0.14) !important; }
+.inv-warning-text{
+  color:var(--danger); font-size:0.74rem; margin-top:-2px; margin-bottom:6px; font-weight:500;
+}
 .icon-btn{
   flex:none; width:32px; height:32px; border-radius:7px; border:1px solid var(--border);
   background:var(--surface-2); color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1;
@@ -314,6 +365,49 @@ textarea{min-height:70px; resize:vertical;}
 .sched-cal-btn-disabled{opacity:0.3; cursor:default; pointer-events:none;}
 .sched-actual input{padding:7px 8px; font-size:0.85rem; color:var(--hop-bright); font-family:'IBM Plex Mono', monospace; font-weight:500;}
 .sched-empty{color:var(--text-muted); font-size:0.85rem; text-align:center; padding:30px 10px;}
+
+.inv-intro{
+  background:var(--surface); border:1px solid var(--copper); border-radius:8px;
+  padding:14px 16px; margin-bottom:18px;
+}
+.inv-deduct-callout{
+  background:linear-gradient(135deg, rgba(122,155,95,0.14), rgba(122,155,95,0.04));
+  border:1.5px solid var(--hop); border-radius:10px; padding:16px; margin:20px 0;
+}
+.inv-deduct-callout-title{font-family:'Fraunces', serif; font-weight:600; font-size:1rem; color:var(--hop-bright); margin-bottom:6px;}
+.inv-deduct-callout-desc{font-size:0.8rem; color:var(--text-muted); line-height:1.6; margin-bottom:12px;}
+.inv-deduct-callout.done{border-color:var(--border); background:var(--surface);}
+.inv-deduct-callout.done .inv-deduct-callout-title{color:var(--text-muted);}
+.inv-intro-title{font-family:'Fraunces', serif; font-weight:600; font-size:0.95rem; margin-bottom:8px; color:var(--copper-bright);}
+.inv-intro-item{font-size:0.8rem; color:var(--text); line-height:1.6; margin-bottom:4px;}
+.inv-intro-item:last-child{margin-bottom:0;}
+.inv-intro-item b{color:var(--copper-bright);}
+.inv-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  padding:12px 14px; margin-bottom:10px;
+}
+.inv-card-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+.inv-card-name{font-family:'Fraunces', serif; font-weight:600; font-size:1rem;}
+.inv-card-stock{font-family:'IBM Plex Mono', monospace; font-size:0.95rem; color:var(--hop-bright); white-space:nowrap;}
+.inv-card-stock.inv-stock-low{color:var(--danger);}
+.inv-card-actions{display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;}
+.inv-action-btn{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:7px; padding:7px 12px; font-size:0.78rem; cursor:pointer;
+  font-family:'IBM Plex Sans JP', sans-serif;
+}
+.inv-action-btn:hover{border-color:var(--copper); color:var(--copper-bright);}
+.inv-action-btn.inv-action-danger:hover{border-color:var(--danger); color:var(--danger);}
+.inv-row-delete{
+  color:var(--danger); font-size:0.72rem; cursor:pointer; flex:none; padding-left:10px; opacity:0.85;
+}
+.inv-row-delete:hover{opacity:1; text-decoration:underline;}
+.inv-history{margin-top:10px;}
+.inv-receipt-form{
+  margin-top:10px; padding:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+}
+.inv-receipt-form .grid2{margin-bottom:0;}
+.inv-receipt-form .field{margin-bottom:8px;}
 .sched-col-header{
   display:flex; align-items:center; gap:12px; padding:0 14px; margin-bottom:6px;
   font-size:0.66rem; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;
@@ -343,13 +437,20 @@ textarea{min-height:70px; resize:vertical;}
   <header>
     <svg class="mark" viewBox="0 0 44 44" fill="none">
       <rect x="1" y="1" width="42" height="42" rx="8" stroke="#c17817" stroke-width="1.4"/>
-      <path d="M14 30V16h4.5a4 4 0 0 1 0 8H14M25 16v14M25 16h4a3.5 3.5 0 0 1 0 7h-4M25 23l4.5 7" stroke="#ece4d5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M27.5 14.5 q9 0 9 8.5 q0 8.5 -9 8.5" fill="none" stroke="#ece4d5" stroke-width="2" stroke-linecap="round"/>
+      <rect x="9.5" y="12.5" width="18" height="21" rx="1.8" fill="#c17817" stroke="#ece4d5" stroke-width="2"/>
+      <path d="M9.5 12.5 q0 -5.5 4.5 -5.5 q2.4 0 3.4 1.7 q1.2 -2 4 -1.3 q3.4 1 2.7 5.1 q-0.3 2 -1.6 2.7 q0 0.15 0 0.3 h-13 q0 -0.15 0 -0.3 q-1 -0.7 -0.5 -2.6 q0.1 -0.5 0.5 -1.1 z" fill="#ece4d5"/>
+      <line x1="12.5" y1="20" x2="24.5" y2="20" stroke="#1b1815" stroke-width="1.1" opacity="0.35"/>
+      <line x1="12.5" y1="26" x2="24.5" y2="26" stroke="#1b1815" stroke-width="1.1" opacity="0.35"/>
     </svg>
     <div>
-      <h1>仕込み記録</h1>
-      <div class="sub">BREW LOG</div>
+      <h1>Japan Brewer's Record</h1>
+      <div class="sub">BREWING &amp; INVENTORY LEDGER</div>
     </div>
   </header>
+
+  <div class="mock-banner">※これは試作版です</div>
+  <div class="version-line">(20260808 更新)</div>
 
   <!-- Gauge: featured latest batch -->
   <div class="gauge-card" id="gaugeCard"></div>
@@ -358,6 +459,7 @@ textarea{min-height:70px; resize:vertical;}
     <div class="tab active" data-tab="list">記録一覧</div>
     <div class="tab" data-tab="new">新規仕込み</div>
     <div class="tab" data-tab="schedule">仕込みスケジュール</div>
+    <div class="tab" data-tab="inventory">原材料受渡簿</div>
   </div>
 
   <div id="viewList"></div>
@@ -428,10 +530,31 @@ textarea{min-height:70px; resize:vertical;}
       <div class="section-title">副原料（フルーツ・スパイス・加糖など）</div>
       <div id="adjunctRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('adjunctRows','adjunct')">＋ 副原料を追加</button>
+      <div class="sched-note">※在庫と連携しても、ここで保存しただけでは受渡簿から差し引かれません。保存後、バッチ詳細画面の「在庫から消費を記録」を押した時点で反映されます。</div>
     </div>
 
     <div class="section">
-      <div class="field"><label>酵母</label><input type="text" id="f_yeast" data-list="yeastList" placeholder="例）US-05"></div>
+      <div class="section-title">酵母</div>
+      <div class="hop-entry" id="yeastEntry">
+        <div class="dyn-row">
+          <input type="text" placeholder="酵母名" id="f_yeast" data-list="yeastList" value="" style="flex:1;">
+        </div>
+        <div class="dyn-subrow">
+          <span class="amount-wrap" style="flex:0 0 92px;">
+            <input type="number" step="0.1" min="0" placeholder="量" id="f_yeastAmount">
+          </span>
+          <select id="f_yeastUnit" style="flex:0 0 84px;">
+            <option value="g">g</option>
+            <option value="包">包</option>
+            <option value="パック">パック</option>
+            <option value="ml">ml</option>
+            <option value="個">個</option>
+          </select>
+        </div>
+        <div class="dyn-subrow">
+          <select class="f-yeast-inv" id="f_yeastInv" style="flex:1;" onchange="onInvLinkChange(this,'#yeastEntry','#f_yeast','#f_yeastAmount','#f_yeastUnit')"></select>
+        </div>
+      </div>
     </div>
 
     <div class="section">
@@ -460,6 +583,8 @@ textarea{min-height:70px; resize:vertical;}
       <button type="button" class="add-row-btn" onclick="addRow('packageRows','package')">＋ 容器を追加</button>
       <div class="field" style="margin-top:10px;"><label>合計容量（自動計算）</label><div id="f_totalVolDisplay" class="abv-display">—</div></div>
     </div>
+
+    <div id="formInvDeductArea"></div>
 
     <div class="section">
       <div class="section-title">メモ</div>
@@ -528,6 +653,42 @@ textarea{min-height:70px; resize:vertical;}
       <div class="actions">
         <button class="btn btn-primary" onclick="saveScheduleView()">保存</button>
       </div>
+    </div>
+  </div>
+
+  <div id="viewInventory" hidden>
+    <div class="inv-intro">
+      <div class="inv-intro-title">ここで入力する内容は3つです</div>
+      <div class="inv-intro-item"><b>① 品目</b>：モルト・ホップ・酵母・副原料の名前（単位は自動）</div>
+      <div class="inv-intro-item"><b>② 入荷記録</b>：仕入れた日・数量・仕入れ先・金額（品目ごとに何度でも）</div>
+      <div class="inv-intro-item"><b>③ 消費の連携</b>：仕込み記録側で品目を選んでおくと、「在庫から消費を記録」した時に②から自動で差し引かれます</div>
+    </div>
+    <div class="section">
+      <div class="section-title">モルト在庫</div>
+      <div id="inv_fermentable"></div>
+      <div id="inv_addform_fermentable"></div>
+      <button type="button" class="add-row-btn" onclick="openAddItemForm('fermentable')">＋ モルトの品目を追加</button>
+    </div>
+    <div class="section">
+      <div class="section-title">ホップ在庫</div>
+      <div id="inv_hop"></div>
+      <div id="inv_addform_hop"></div>
+      <button type="button" class="add-row-btn" onclick="openAddItemForm('hop')">＋ ホップの品目を追加</button>
+    </div>
+    <div class="section">
+      <div class="section-title">酵母在庫</div>
+      <div id="inv_yeast"></div>
+      <div id="inv_addform_yeast"></div>
+      <button type="button" class="add-row-btn" onclick="openAddItemForm('yeast')">＋ 酵母の品目を追加</button>
+    </div>
+    <div class="section">
+      <div class="section-title">副原料在庫</div>
+      <div id="inv_adjunct"></div>
+      <div id="inv_addform_adjunct"></div>
+      <button type="button" class="add-row-btn" onclick="openAddItemForm('adjunct')">＋ 副原料の品目を追加</button>
+    </div>
+    <div class="section">
+      <button type="button" class="add-row-btn" onclick="exportInventoryCSV()">📄 原材料受渡簿をCSV書き出し</button>
     </div>
   </div>
 
@@ -602,6 +763,15 @@ textarea{min-height:70px; resize:vertical;}
     <option value="Sorachi Ace">
     <option value="IBUKI">
     <option value="MURAKAMI SEVEN">
+  </datalist>
+
+  <datalist id="supplierList">
+    <option value="大西商事">
+    <option value="片岡物産">
+    <option value="E.A.T.">
+    <option value="BET">
+    <option value="セティ">
+    <option value="ホクセイプロダクツ">
   </datalist>
 
   <datalist id="waterSourceList">
@@ -697,8 +867,10 @@ textarea{min-height:70px; resize:vertical;}
 
 <script>
 let batches = [];
+let inventory = [];
 let editingId = null;
 let currentTab = 'list';
+let formIsOpen = false; // true whenever a new/existing batch form has unsaved work in progress
 
 const $ = id => document.getElementById(id);
 
@@ -759,6 +931,11 @@ async function loadBatches(){
     batches = r ? JSON.parse(r.value) : [];
   }catch(e){ batches = []; }
 
+  try{
+    const r = await window.storage.get('wangan-inventory', false);
+    inventory = r ? JSON.parse(r.value) : [];
+  }catch(e){ inventory = []; }
+
   let alreadySeeded = true;
   try{
     await window.storage.get('wangan-seeded', false);
@@ -776,6 +953,13 @@ async function loadBatches(){
 
   renderGauge();
   renderList();
+}
+
+async function persistInventory(){
+  try{
+    await window.storage.set('wangan-inventory', JSON.stringify(inventory), false);
+  }catch(e){ console.error('inventory storage error', e); }
+  maybeAutoBackup();
 }
 
 async function persist(){
@@ -803,7 +987,7 @@ async function maybeAutoBackup(){
       index = r ? JSON.parse(r.value) : [];
     }catch(e){ index = []; }
 
-    await window.storage.set(`wangan-backup-${today}`, JSON.stringify(batches), false);
+    await window.storage.set(`wangan-backup-${today}`, JSON.stringify({batches, inventory}), false);
     index = index.filter(d=>d!==today);
     index.push(today);
     while(index.length > AUTO_BACKUP_MAX){
@@ -829,13 +1013,21 @@ async function restoreFromAutoBackup(){
   const choice = prompt(`復元するバックアップの日付を入力してください（既存のデータは上書きされます）\n\n利用可能な日付:\n${list.join('\n')}`, list[0]);
   if(!choice) return;
   if(!index.includes(choice)){ alert('その日付のバックアップは見つかりませんでした。'); return; }
-  if(!confirm(`${choice}時点のバックアップに復元します。現在の記録は上書きされます。よろしいですか？`)) return;
+  if(!confirm(`${choice}時点のバックアップに復元します。仕込み記録・原材料受渡簿とも現在の内容は上書きされます。よろしいですか？`)) return;
   try{
     const r = await window.storage.get(`wangan-backup-${choice}`, false);
     const restored = r ? JSON.parse(r.value) : null;
-    if(!Array.isArray(restored)) throw new Error('invalid backup data');
-    batches = restored;
+    if(Array.isArray(restored)){
+      // legacy backup format: batches only
+      batches = restored;
+    } else if(restored && Array.isArray(restored.batches)){
+      batches = restored.batches;
+      if(Array.isArray(restored.inventory)){ inventory = restored.inventory; }
+    } else {
+      throw new Error('invalid backup data');
+    }
     await window.storage.set('wangan-batches', JSON.stringify(batches), false);
+    await persistInventory();
     renderGauge(); renderList();
     showView('list');
     alert(`${choice}時点のバックアップから復元しました。`);
@@ -857,6 +1049,536 @@ function totalPackageVolume(b){
     const qty = parseFloat(p.quantity), unitMl = parseFloat(p.unitVolume);
     return sum + (qty && unitMl ? qty*unitMl/1000 : 0);
   }, 0);
+}
+
+/* ---------------- Inventory (原材料受渡簿) ---------------- */
+const INV_CATEGORY_LABEL = {fermentable:'モルト', hop:'ホップ', adjunct:'副原料', yeast:'酵母'};
+const INV_DEFAULT_UNIT = {fermentable:'kg', hop:'g'};
+
+function invStock(item){
+  const received = (item.receipts||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
+  const used = (item.consumptions||[]).reduce((s,c)=>s+(parseFloat(c.amount)||0),0);
+  return Math.round((received-used)*1000)/1000;
+}
+
+function invItemsByCategory(cat){
+  return inventory.filter(i=>i.category===cat).sort((a,b)=>(a.name||'').localeCompare(b.name||'', 'ja'));
+}
+
+let openAddItemFormCategory = null;
+
+function openAddItemForm(category){
+  openAddItemFormCategory = (openAddItemFormCategory===category) ? null : category;
+  renderInventory();
+}
+
+async function submitInventoryItem(category){
+  const nameEl = document.getElementById('newitem-name-'+category);
+  const name = nameEl.value.trim();
+  if(!name){ alert('品目名を入力してください。'); return; }
+  let unit = INV_DEFAULT_UNIT[category];
+  if(category==='adjunct'||category==='yeast'){
+    const unitEl = document.getElementById('newitem-unit-'+category);
+    unit = unitEl.value || 'g';
+  }
+  inventory.push({id:uid(), category, name, unit, receipts:[], consumptions:[]});
+  openAddItemFormCategory = null;
+  await persistInventory();
+  renderInventory();
+}
+
+async function deleteInventoryItem(id){
+  const item = inventory.find(i=>i.id===id);
+  if(!item) return;
+  if(!confirm(`「${item.name}」を削除しますか？入荷・消費の履歴も削除されます。連携していた仕込みの原材料は「在庫と未連携」に戻ります。`)) return;
+  inventory = inventory.filter(i=>i.id!==id);
+
+  // Unlink any batch rows that referenced the deleted item so the display
+  // (and unlinked-material warnings) stay consistent, instead of leaving a
+  // stale invId that no longer resolves to anything.
+  let touchedAnyBatch = false;
+  batches.forEach(b=>{
+    const clearRow = r=>{ if(r.invId===id){ delete r.invId; touchedAnyBatch = true; } };
+    (b.fermentables||[]).forEach(clearRow);
+    (b.hops||[]).forEach(clearRow);
+    (b.adjuncts||[]).forEach(clearRow);
+    if(b.yeastInvId===id){ b.yeastInvId = undefined; touchedAnyBatch = true; }
+  });
+
+  await persistInventory();
+  if(touchedAnyBatch) await persist();
+  renderList();
+  if(editingId) renderFormInvDeductArea(editingId);
+  renderInventory();
+}
+
+let openReceiptFormItemId = null;
+
+function openReceiptForm(itemId){
+  openReceiptFormItemId = (openReceiptFormItemId===itemId) ? null : itemId;
+  renderInventory();
+}
+
+async function submitInventoryReceipt(itemId){
+  const item = inventory.find(i=>i.id===itemId);
+  if(!item) return;
+  const dateEl = document.getElementById('rcpt-date-'+itemId);
+  const amountEl = document.getElementById('rcpt-amount-'+itemId);
+  const supplierEl = document.getElementById('rcpt-supplier-'+itemId);
+  const priceEl = document.getElementById('rcpt-price-'+itemId);
+  const amount = parseFloat(amountEl.value);
+  if(!amount || amount<=0){ alert('数量を入力してください。'); return; }
+  item.receipts.push({
+    id: uid(),
+    date: dateEl.value || todayDateValue(),
+    amount,
+    supplier: supplierEl.value || '',
+    price: priceEl.value ? parseFloat(priceEl.value) : ''
+  });
+  openReceiptFormItemId = null;
+  await persistInventory();
+  renderInventory();
+}
+
+async function deleteInventoryReceipt(itemId, receiptId){
+  const item = inventory.find(i=>i.id===itemId);
+  if(!item) return;
+  if(!confirm('この入荷記録を削除しますか？')) return;
+  item.receipts = item.receipts.filter(r=>r.id!==receiptId);
+  await persistInventory();
+  renderInventory();
+}
+
+async function deleteInventoryConsumption(itemId, consumptionId){
+  const item = inventory.find(i=>i.id===itemId);
+  if(!item) return;
+  const target = (item.consumptions||[]).find(c=>c.id===consumptionId);
+  if(!target) return;
+  if(!confirm('この消費記録を削除しますか？（在庫の残量が増え、対応する原材料の行は「在庫と未連携」に戻ります）')) return;
+  const batchId = target.batchId;
+  item.consumptions = (item.consumptions||[]).filter(c=>c.id!==consumptionId);
+  await persistInventory();
+
+  if(batchId){
+    const b = batches.find(x=>x.id===batchId);
+    if(b){
+      // Unlink just the material row(s) in this batch that referenced this
+      // specific inventory item, so that one ingredient reverts to
+      // "在庫と未連携" without touching other still-consumed ingredients.
+      let rowUnlinked = false;
+      const unlinkRow = r=>{ if(r.invId===itemId){ delete r.invId; rowUnlinked = true; } };
+      (b.fermentables||[]).forEach(unlinkRow);
+      (b.hops||[]).forEach(unlinkRow);
+      (b.adjuncts||[]).forEach(unlinkRow);
+      if(b.yeastInvId===itemId){ b.yeastInvId = undefined; rowUnlinked = true; }
+
+      // If no consumption records remain for this batch across any
+      // inventory item, also clear its overall "在庫と連携済" status.
+      const stillHasConsumptions = inventory.some(it=>(it.consumptions||[]).some(c=>c.batchId===batchId));
+      if(!stillHasConsumptions && b.inventoryDeducted){
+        b.inventoryDeducted = false;
+      }
+
+      if(rowUnlinked || !stillHasConsumptions){
+        await persist();
+        renderList();
+        if(editingId===batchId) renderFormInvDeductArea(batchId);
+      }
+    }
+  }
+  renderInventory();
+}
+
+function toggleInvHistory(itemId){
+  const el = document.getElementById('inv-history-'+itemId);
+  if(el) el.hidden = !el.hidden;
+}
+
+function invSelectOptions(category, selectedId){
+  const items = invItemsByCategory(category);
+  let html = `<option value="" class="inv-opt-unlinked">在庫と未連携</option>`;
+  html += items.map(i=>`<option value="${i.id}" ${selectedId===i.id?'selected':''}>${escapeHtml(i.name)}（在庫 ${invStock(i)}${escapeHtml(i.unit)}）</option>`).join('');
+  return html;
+}
+
+function invLinkedMaxAttr(invId){
+  if(!invId) return '';
+  const item = inventory.find(i=>i.id===invId);
+  if(!item) return '';
+  const stock = invStock(item);
+  return ` max="${stock>0?stock:0}"`;
+}
+
+function onInvLinkChange(selectEl, entrySelector, nameSelector, amountSelector, unitSelector){
+  selectEl.classList.toggle('inv-select-unlinked', selectEl.value==='');
+  const entry = selectEl.closest(entrySelector);
+  if(!entry) return;
+  const nameInput = entry.querySelector(nameSelector);
+  const amountInput = entry.querySelector(amountSelector);
+  const unitInput = unitSelector ? entry.querySelector(unitSelector) : null;
+  const invId = selectEl.value;
+  if(!invId){
+    if(amountInput){ amountInput.removeAttribute('max'); updateInvAmountWarning(amountInput); }
+    if(unitInput){ unitInput.disabled = false; }
+    if(editingId) renderFormInvDeductArea(editingId);
+    return;
+  }
+  const item = inventory.find(i=>i.id===invId);
+  if(!item) return;
+  if(nameInput) nameInput.value = item.name;
+  if(amountInput){
+    const stock = invStock(item);
+    amountInput.max = stock>0 ? stock : 0;
+  }
+  if(unitInput){
+    lockUnitSelectToItem(unitInput, item.unit);
+  }
+  if(amountInput) updateInvAmountWarning(amountInput);
+  if(editingId) renderFormInvDeductArea(editingId);
+}
+
+function lockUnitSelectToItem(unitInput, unit){
+  if(![...unitInput.options].some(o=>o.value===unit)){
+    const opt = document.createElement('option');
+    opt.value = unit; opt.textContent = unit;
+    unitInput.appendChild(opt);
+  }
+  unitInput.value = unit;
+  unitInput.disabled = true;
+}
+
+function refreshAllInvSelectColors(){
+  document.querySelectorAll('.rf-inv, .rh-inv, .ra-inv, #f_yeastInv').forEach(sel=>{
+    sel.classList.toggle('inv-select-unlinked', sel.value==='');
+  });
+}
+
+function invRowUnit(el){
+  if(el.classList.contains('rf-amount')) return 'kg';
+  if(el.classList.contains('rh-amount')) return 'g';
+  if(el.classList.contains('ra-amount')){
+    const entry = el.closest('.adjunct-entry');
+    const unitSel = entry && entry.querySelector('.ra-unit');
+    return unitSel ? unitSel.value : '';
+  }
+  if(el.id==='f_yeastAmount'){
+    const unitSel = document.getElementById('f_yeastUnit');
+    return unitSel ? unitSel.value : '';
+  }
+  return '';
+}
+
+function updateInvAmountWarning(el){
+  if(!el) return;
+  const hasMax = el.hasAttribute('max');
+  const max = parseFloat(el.getAttribute('max'));
+  const val = parseFloat(el.value);
+  const over = hasMax && !isNaN(val) && !isNaN(max) && val > max;
+  const wrap = el.closest('.amount-wrap');
+  const target = wrap || el;
+  target.classList.toggle('inv-amount-over', over);
+
+  const entry = el.closest('.ferm-entry, .hop-entry, .adjunct-entry');
+  if(entry){
+    let warnEl = entry.querySelector('.inv-warning-text');
+    if(over){
+      if(!warnEl){
+        warnEl = document.createElement('div');
+        warnEl.className = 'inv-warning-text';
+        const subrow = entry.querySelector('.dyn-subrow');
+        if(subrow){ subrow.insertAdjacentElement('afterend', warnEl); }
+        else{ entry.appendChild(warnEl); }
+      }
+      const unit = invRowUnit(el);
+      const excess = Math.round((val-max)*100)/100;
+      warnEl.textContent = `⚠ 在庫(${max}${unit})を${excess}${unit}超えています`;
+      warnEl.hidden = false;
+    } else if(warnEl){
+      warnEl.hidden = true;
+    }
+  }
+}
+
+document.addEventListener('input', (e)=>{
+  const el = e.target;
+  if(el.matches && el.matches('.rf-amount, .rh-amount, .ra-amount, #f_yeastAmount')){
+    updateInvAmountWarning(el);
+  }
+});
+
+function refreshAllInvAmountWarnings(){
+  document.querySelectorAll('.rf-amount, .rh-amount, .ra-amount, #f_yeastAmount').forEach(updateInvAmountWarning);
+}
+
+function openInventoryView(){
+  renderInventory();
+  showView('inventory');
+}
+
+const INV_NAME_DATALIST = {fermentable:'maltList', hop:'hopList', adjunct:'adjunctList', yeast:'yeastList'};
+
+function renderInventory(){
+  ['fermentable','hop','adjunct','yeast'].forEach(cat=>{
+    const container = $('inv_'+cat);
+    const items = invItemsByCategory(cat);
+    if(!items.length){
+      container.innerHTML = `<div class="sched-empty">まだ品目が登録されていません。</div>`;
+    } else {
+      container.innerHTML = items.map(item=>{
+        const stock = invStock(item);
+        const receiptsHtml = (item.receipts||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(r=>
+          `<div class="row"><span>${escapeHtml(r.date)} 入荷 ${r.amount}${escapeHtml(item.unit)}${r.supplier?' ・ '+escapeHtml(r.supplier):''}${r.price?' ・ ¥'+Number(r.price).toLocaleString():''}</span><span class="inv-row-delete" onclick="deleteInventoryReceipt('${item.id}','${r.id}')">削除</span></div>`
+        ).join('');
+        const consumptionsHtml = (item.consumptions||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(c=>
+          `<div class="row"><span>${escapeHtml(c.date)} 消費 ${c.amount}${escapeHtml(item.unit)} ・ ${escapeHtml(c.batchName||'(削除済みバッチ)')}</span><span class="inv-row-delete" onclick="deleteInventoryConsumption('${item.id}','${c.id}')">削除</span></div>`
+        ).join('');
+        const receiptFormHtml = openReceiptFormItemId===item.id ? `
+          <div class="inv-receipt-form">
+            <div class="grid2">
+              <div class="field"><label>仕入れ日</label><input type="date" id="rcpt-date-${item.id}" value="${todayDateValue()}"></div>
+              <div class="field"><label>数量 (${escapeHtml(item.unit)})</label><input type="number" step="0.01" min="0" id="rcpt-amount-${item.id}" placeholder="例）25"></div>
+            </div>
+            <div class="grid2">
+              <div class="field"><label>仕入れ先</label><input type="text" id="rcpt-supplier-${item.id}" data-list="supplierList" placeholder="例）大西商事"></div>
+              <div class="field"><label>金額 (円)</label><input type="number" step="1" min="0" id="rcpt-price-${item.id}" placeholder="例）12500"></div>
+            </div>
+            <div class="actions" style="margin-top:6px;">
+              <button type="button" class="btn btn-ghost" onclick="openReceiptForm('${item.id}')">キャンセル</button>
+              <button type="button" class="btn btn-primary" onclick="submitInventoryReceipt('${item.id}')">追加する</button>
+            </div>
+          </div>` : '';
+        return `<div class="inv-card">
+          <div class="inv-card-top">
+            <div class="inv-card-name">${escapeHtml(item.name)}</div>
+            <div class="inv-card-stock ${stock<=0?'inv-stock-low':''}">${stock} ${escapeHtml(item.unit)}</div>
+          </div>
+          <div class="inv-card-actions">
+            <button type="button" class="inv-action-btn" onclick="openReceiptForm('${item.id}')">＋ 入荷を記録</button>
+            <button type="button" class="inv-action-btn" onclick="toggleInvHistory('${item.id}')">履歴を見る</button>
+            <button type="button" class="inv-action-btn inv-action-danger" onclick="deleteInventoryItem('${item.id}')">削除</button>
+          </div>
+          ${receiptFormHtml}
+          <div class="inv-history" id="inv-history-${item.id}" hidden>
+            ${receiptsHtml ? `<div class="detail-list">${receiptsHtml}</div>` : '<div class="sched-note">入荷記録はまだありません。</div>'}
+            ${consumptionsHtml ? `<div class="detail-list">${consumptionsHtml}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    const addFormContainer = $('inv_addform_'+cat);
+    if(openAddItemFormCategory===cat){
+      const yeastUnitOptions = `<option value="g">g</option><option value="包">包</option><option value="パック">パック</option><option value="ml">ml</option><option value="個">個</option>`;
+      const adjunctUnitOptions = `<option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="L">L</option><option value="個">個</option>`;
+      const unitFieldHtml = (cat==='adjunct'||cat==='yeast') ? `
+        <div class="field"><label>単位</label>
+          <select id="newitem-unit-${cat}">
+            ${cat==='yeast' ? yeastUnitOptions : adjunctUnitOptions}
+          </select>
+        </div>` : '';
+      addFormContainer.innerHTML = `
+        <div class="inv-receipt-form">
+          <div class="${(cat==='adjunct'||cat==='yeast')?'grid2':''}">
+            <div class="field"><label>品目名</label><input type="text" id="newitem-name-${cat}" data-list="${INV_NAME_DATALIST[cat]}" placeholder="例）${cat==='fermentable'?'Pale Ale Malt (2条)':cat==='hop'?'Cascade':cat==='yeast'?'US-05':'蜂蜜'}"></div>
+            ${unitFieldHtml}
+          </div>
+          <div class="actions" style="margin-top:6px;">
+            <button type="button" class="btn btn-ghost" onclick="openAddItemForm('${cat}')">キャンセル</button>
+            <button type="button" class="btn btn-primary" onclick="submitInventoryItem('${cat}')">追加する</button>
+          </div>
+        </div>`;
+    } else {
+      addFormContainer.innerHTML = '';
+    }
+  });
+}
+
+async function deductInventoryForBatch(batchId, context){
+  const b = batches.find(x=>x.id===batchId);
+  if(!b) return;
+  if(b.inventoryDeducted){ alert('この仕込みはすでに在庫から消費済みです。'); return; }
+
+  const yeastRow = b.yeastInvId ? {invId:b.yeastInvId, amount:b.yeastAmount} : null;
+  const linkedRows = [
+    ...(b.fermentables||[]),
+    ...(b.hops||[]),
+    ...(b.adjuncts||[]),
+    ...(yeastRow ? [yeastRow] : [])
+  ].filter(r=>r.invId);
+
+  const errors = [];
+  linkedRows.forEach(row=>{
+    const item = inventory.find(i=>i.id===row.invId);
+    if(!item) return;
+    const amt = parseFloat(row.amount)||0;
+    if(amt<=0) return;
+    const stock = invStock(item);
+    if(amt > stock){
+      errors.push(`${item.name}：必要 ${amt}${item.unit} ／ 在庫 ${stock}${item.unit}（${(amt-stock).toFixed(2)}${item.unit}不足）`);
+    }
+  });
+  if(errors.length){
+    alert('在庫が不足しているため、消費を記録できませんでした。\n\n' + errors.join('\n') + '\n\n原材料受渡簿で入荷を追加するか、使用量を見直してください。');
+    return;
+  }
+
+  const today = todayDateValue();
+  let count = 0;
+  const applyRow = (row, amountFn)=>{
+    if(!row.invId) return;
+    const item = inventory.find(i=>i.id===row.invId);
+    if(!item) return;
+    const amt = amountFn(row);
+    if(!amt) return;
+    item.consumptions.push({id:uid(), date:today, amount:amt, batchId:b.id, batchName:b.batchName});
+    count++;
+  };
+  (b.fermentables||[]).forEach(f=>applyRow(f, r=>parseFloat(r.amount)||0));
+  (b.hops||[]).forEach(h=>applyRow(h, r=>parseFloat(r.amount)||0));
+  (b.adjuncts||[]).forEach(a=>applyRow(a, r=>parseFloat(r.amount)||0));
+  if(yeastRow) applyRow(yeastRow, r=>parseFloat(r.amount)||0);
+  if(!count){
+    alert('在庫と連携している原材料がありません。モルト・ホップ・酵母・副原料の各項目にある「在庫と連携」欄から品目を選んでください。');
+    return;
+  }
+  b.inventoryDeducted = true;
+  await persistInventory();
+  await persist();
+  renderList();
+  if(context==='form'){ renderFormInvDeductArea(batchId); }
+  else if(context==='list'){ /* already re-rendered via renderList() above */ }
+  else { openDetail(batchId); }
+  alert(`${count}件の原材料を在庫から差し引きました。`);
+}
+
+async function undoInventoryDeduction(batchId, context){
+  const b = batches.find(x=>x.id===batchId);
+  if(!b) return;
+  if(!confirm('在庫からの消費記録を取り消しますか？')) return;
+  inventory.forEach(item=>{
+    item.consumptions = (item.consumptions||[]).filter(c=>c.batchId!==batchId);
+  });
+  b.inventoryDeducted = false;
+  await persistInventory();
+  await persist();
+  renderList();
+  if(context==='form'){ renderFormInvDeductArea(batchId); }
+  else if(context==='list'){ /* already re-rendered via renderList() above */ }
+  else { openDetail(batchId); }
+}
+
+async function syncInventoryForBatch(batchId, context){
+  const b = batches.find(x=>x.id===batchId);
+  if(!b) return;
+  if(!b.inventoryDeducted){ alert('この仕込みはまだ在庫から消費記録されていません。'); return; }
+
+  const yeastRow = b.yeastInvId ? {invId:b.yeastInvId, amount:b.yeastAmount} : null;
+  const linkedRows = [
+    ...(b.fermentables||[]), ...(b.hops||[]), ...(b.adjuncts||[]),
+    ...(yeastRow ? [yeastRow] : [])
+  ].filter(r=>r.invId);
+
+  const desired = {};
+  linkedRows.forEach(r=>{
+    const amt = parseFloat(r.amount)||0;
+    desired[r.invId] = (desired[r.invId]||0) + amt;
+  });
+
+  const existingByItem = {};
+  inventory.forEach(item=>{
+    const recs = (item.consumptions||[]).filter(c=>c.batchId===batchId);
+    if(recs.length) existingByItem[item.id] = recs.reduce((s,c)=>s+(parseFloat(c.amount)||0), 0);
+  });
+
+  const allItemIds = new Set([...Object.keys(desired), ...Object.keys(existingByItem)]);
+  if(!allItemIds.size){
+    alert('在庫と連携している原材料がありません。');
+    return;
+  }
+
+  const errors = [];
+  allItemIds.forEach(id=>{
+    const item = inventory.find(i=>i.id===id);
+    if(!item) return;
+    const oldAmt = existingByItem[id]||0;
+    const newAmt = desired[id]||0;
+    const delta = newAmt - oldAmt; // positive = needs additional stock beyond what's already reserved
+    if(delta > 0){
+      const availableStock = invStock(item); // current stock already excludes oldAmt
+      if(delta > availableStock){
+        errors.push(`${item.name}：追加で必要 ${round2(delta)}${item.unit} ／ 在庫 ${availableStock}${item.unit}`);
+      }
+    }
+  });
+  if(errors.length){
+    alert('在庫が不足しているため更新できませんでした。\n\n' + errors.join('\n') + '\n\n原材料受渡簿で入荷を追加するか、使用量を見直してください。');
+    return;
+  }
+
+  const today = todayDateValue();
+  let changed = 0;
+  allItemIds.forEach(id=>{
+    const item = inventory.find(i=>i.id===id);
+    if(!item) return;
+    const oldAmt = existingByItem[id]||0;
+    const newAmt = desired[id]||0;
+    if(oldAmt===newAmt) return;
+    changed++;
+    item.consumptions = (item.consumptions||[]).filter(c=>c.batchId!==batchId);
+    if(newAmt>0){
+      item.consumptions.push({id:uid(), date:today, amount:newAmt, batchId:b.id, batchName:b.batchName});
+    }
+  });
+
+  if(!changed){
+    alert('受渡簿の消費記録はすでに現在の内容と一致しています。');
+    return;
+  }
+  await persistInventory();
+  renderList();
+  if(context==='form'){ renderFormInvDeductArea(batchId); }
+  else if(context==='list'){ /* already re-rendered via renderList() above */ }
+  else { openDetail(batchId); }
+  alert(`${changed}件の原材料について、受渡簿の消費記録を現在の仕込み内容に更新しました。`);
+}
+
+function getUnlinkedMaterials(b){
+  const list = [];
+  (b.fermentables||[]).forEach(r=>{ if(r.name && !r.invId) list.push(r.name); });
+  (b.hops||[]).forEach(r=>{ if(r.name && !r.invId) list.push(r.name); });
+  (b.adjuncts||[]).forEach(r=>{ if(r.name && !r.invId) list.push(r.name); });
+  if(b.yeast && !b.yeastInvId) list.push(b.yeast);
+  return list;
+}
+
+function renderFormInvDeductArea(id){
+  const area = $('formInvDeductArea');
+  if(!area) return;
+  const b = id ? batches.find(x=>x.id===id) : null;
+  if(!b){ area.innerHTML = ''; return; }
+  const linkedCount = [...(b.fermentables||[]), ...(b.hops||[]), ...(b.adjuncts||[])].filter(r=>r.invId).length + (b.yeastInvId?1:0);
+  const unlinked = getUnlinkedMaterials(b);
+  const unlinkedNote = unlinked.length
+    ? `<div class="inv-unlinked-warning">⚠ 未連携の原材料：${unlinked.map(escapeHtml).join('、')}<br>外部レシピの取り込みなどで在庫と自動連携できなかったものです。最終的には各行の「在庫と連携」で品目を選んでください。</div>`
+    : '';
+  if(b.inventoryDeducted){
+    area.innerHTML = `<div class="inv-deduct-callout done">
+      <div class="inv-deduct-callout-title">✓ 在庫から消費済み</div>
+      <div class="inv-deduct-callout-desc">この仕込みで使った原材料は、すでに原材料受渡簿から差し引かれています。使用量を後から編集した場合は「消費記録を更新」を押してください（画面の内容を自動で保存してから反映します）。</div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" onclick="undoInventoryFromFormBtn('${id}')">取り消す</button>
+        <button type="button" class="btn btn-complete" onclick="syncInventoryFromFormBtn('${id}')">消費記録を更新</button>
+      </div>
+    </div>${unlinkedNote}`;
+  } else if(linkedCount>0){
+    area.innerHTML = `<div class="inv-deduct-callout">
+      <div class="inv-deduct-callout-title">📦 原材料受渡簿から消費を記録できます</div>
+      <div class="inv-deduct-callout-desc">在庫と連携した原材料が${linkedCount}件あります。実際に仕込んだら、このボタンで受渡簿の残量を差し引いてください（押すと画面の内容を自動で保存してから実行します）。</div>
+      <button type="button" class="btn btn-complete" onclick="deductInventoryFromFormBtn('${id}')">在庫から消費を記録</button>
+    </div>${unlinkedNote}`;
+  } else {
+    area.innerHTML = `<div class="sched-note">※モルト・ホップ・副原料の各行で「在庫と連携」を選ぶと、ここに消費記録ボタンが表示されます。</div>${unlinkedNote}`;
+  }
 }
 
 function statusOf(b){
@@ -887,6 +1609,41 @@ function latestGravity(b){
 }
 
 /* ---------------- Gauge ---------------- */
+function renderGravitySparkline(active, og){
+  const points = [];
+  if(active.brewDate && og){ points.push({date: active.brewDate, value: og}); }
+  (active.gravityLog||[]).forEach(g=>{
+    const v = parseFloat(g.gravity);
+    if(g.date && !isNaN(v)) points.push({date: g.date, value: v});
+  });
+  points.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  // de-dupe same-date entries, keep the last
+  const byDate = {};
+  points.forEach(p=>{ byDate[p.date]=p.value; });
+  const pts = Object.keys(byDate).sort().map(d=>byDate[d]);
+  if(pts.length<2) return '';
+
+  const w=130, h=34, padX=4, padY=4;
+  const min = Math.min(...pts), max = Math.max(...pts);
+  const range = (max-min) || 0.001;
+  const x = i => padX + (i/(pts.length-1))*(w-padX*2);
+  const y = v => padY + (1-((v-min)/range))*(h-padY*2); // higher gravity = higher on chart (less fermented)
+  const coords = pts.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const areaCoords = `${x(0).toFixed(1)},${h-padY} ${coords} ${x(pts.length-1).toFixed(1)},${h-padY}`;
+  const lastX = x(pts.length-1), lastY = y(pts[pts.length-1]);
+
+  return `
+    <div class="spark-wrap">
+      <div class="spark-label">比重の推移</div>
+      <svg class="spark-svg" viewBox="0 0 ${w} ${h}">
+        <polygon points="${areaCoords}" fill="#7a9b5f" opacity="0.15"/>
+        <polyline points="${coords}" fill="none" stroke="#7a9b5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.6" fill="#9bc47f"/>
+      </svg>
+      <div class="spark-range"><span>${max.toFixed(3)}</span><span>${min.toFixed(3)}</span></div>
+    </div>`;
+}
+
 function renderGauge(){
   const el = $('gaugeCard');
   if(!batches.length){
@@ -906,18 +1663,39 @@ function renderGauge(){
   const nx = cx + r*Math.sin(rad);
   const ny = cy - r*Math.cos(rad);
 
+  // Typical apparent attenuation zones: <65% still fermenting / stuck risk,
+  // 65–85% normal finished range for most ale/lager yeasts, >85% unusually
+  // high (very attenuative yeast, or worth double-checking the reading).
+  const ARC_LEN = 182.2;
+  const zoneLow = 65, zoneHigh = 85;
+  const lenAt = p => (p/100)*ARC_LEN;
+  const zones = [
+    {from:0, to:zoneLow, color:'#5a5245'},
+    {from:zoneLow, to:zoneHigh, color:'#7a9b5f'},
+    {from:zoneHigh, to:100, color:'#b5563e'},
+  ];
+  const zonesSvg = zones.map(z=>{
+    const start = lenAt(z.from), segLen = lenAt(z.to)-lenAt(z.from);
+    return `<path d="M 17 80 A 58 58 0 0 1 133 80" fill="none" stroke="${z.color}" stroke-width="10"
+      stroke-dasharray="${segLen} ${ARC_LEN-segLen}" stroke-dashoffset="${-start}" opacity="0.45"/>`;
+  }).join('');
+
   el.innerHTML = `
     <div class="gauge-eyebrow">CURRENT BATCH — ${statusOf(active)}</div>
     <div class="gauge-title">${escapeHtml(active.batchName||'(名称未設定)')}</div>
     <div class="gauge-row">
-      <svg class="gauge-svg" viewBox="0 0 150 96">
-        <path d="M 17 80 A 58 58 0 0 1 133 80" fill="none" stroke="#413a2d" stroke-width="10" stroke-linecap="round"/>
-        <path d="M 17 80 A 58 58 0 0 1 133 80" fill="none" stroke="#c17817" stroke-width="10" stroke-linecap="round"
-          stroke-dasharray="${(pct/100)*182.2} 182.2"/>
-        <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#ece4d5" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="${cx}" cy="${cy}" r="4" fill="#ece4d5"/>
-        <text x="75" y="93" text-anchor="middle" fill="#9a9080" font-size="9" font-family="IBM Plex Mono, monospace">${pct.toFixed(0)}% ATTENUATION</text>
-      </svg>
+      <div class="gauge-col">
+        <svg class="gauge-svg" viewBox="0 0 150 96">
+          ${zonesSvg}
+          <path d="M 17 80 A 58 58 0 0 1 133 80" fill="none" stroke="#ece4d5" stroke-width="4" stroke-linecap="round"
+            stroke-dasharray="${lenAt(pct)} ${ARC_LEN-lenAt(pct)}"/>
+          <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#ece4d5" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="${cx}" cy="${cy}" r="4" fill="#ece4d5"/>
+          <text x="75" y="93" text-anchor="middle" fill="#9a9080" font-size="9" font-family="IBM Plex Mono, monospace">${pct.toFixed(0)}% ATTENUATION</text>
+        </svg>
+        <div class="gauge-legend"><span class="dot" style="background:#5a5245"></span>〜65%発酵中<span class="dot" style="background:#7a9b5f"></span>65-85%標準<span class="dot" style="background:#b5563e"></span>85%〜高め</div>
+      </div>
+      ${renderGravitySparkline(active, og)}
       <div class="gauge-stats">
         <div class="gauge-stat"><span class="label">OG</span><span class="val">${og?og.toFixed(3):'—'}</span></div>
         <div class="gauge-stat"><span class="label">現在比重</span><span class="val">${cur?parseFloat(cur).toFixed(3):'—'}</span></div>
@@ -938,6 +1716,11 @@ function renderList(){
   el.innerHTML = sorted.map(b=>{
     const st = statusOf(b);
     const a = abv(b.actualOG||b.targetOG, b.fg);
+    const invActionHtml = b.inventoryDeducted
+      ? `<span class="inv-list-status">✓ 在庫と連携済</span><button type="button" class="inv-list-btn" onclick="event.stopPropagation(); undoInventoryDeduction('${b.id}','list')">在庫と連携を外す</button>`
+      : `<button type="button" class="inv-list-btn" onclick="event.stopPropagation(); deductInventoryForBatch('${b.id}','list')">在庫と連携</button>`;
+    const unlinkedCount = getUnlinkedMaterials(b).length;
+    const unlinkedBadge = (unlinkedCount>0) ? `<span class="inv-list-unlinked-badge">⚠ 在庫と未連携${unlinkedCount}件</span>` : '';
     return `<div class="batch-card" onclick="openDetail('${b.id}')">
       <div class="batch-top">
         <div>
@@ -957,6 +1740,7 @@ function renderList(){
         <span>FG <b>${b.fg||'—'}</b></span>
         <span>ABV <b>${a?a+'%':'—'}</b></span>
       </div>
+      <div class="inv-list-row">${invActionHtml}${unlinkedBadge}</div>
     </div>`;
   }).join('');
 }
@@ -985,11 +1769,18 @@ function addRow(containerId, type, data){
   const row = document.createElement('div');
   row.className = 'dyn-row';
   if(type==='fermentable'){
-    row.innerHTML = `<input type="text" placeholder="モルト名" class="rf-name" data-list="maltList" value="${data?escapeHtml(data.name):''}">
-      <span class="amount-wrap" style="flex:0 0 92px;">
-        <input type="number" step="0.01" min="0" placeholder="量" class="rf-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">kg</span>
-      </span>
-      <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
+    row.className = 'ferm-entry';
+    row.innerHTML = `
+      <div class="dyn-row">
+        <input type="text" placeholder="モルト名" class="rf-name" data-list="maltList" value="${data?escapeHtml(data.name):''}">
+        <span class="amount-wrap" style="flex:0 0 92px;">
+          <input type="number" step="0.01" min="0" placeholder="量" class="rf-amount"${invLinkedMaxAttr(data&&data.invId)} value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">kg</span>
+        </span>
+        <button type="button" class="icon-btn" onclick="this.closest('.ferm-entry').remove()">✕</button>
+      </div>
+      <div class="dyn-subrow">
+        <select class="rf-inv" style="flex:1;" onchange="onInvLinkChange(this,'.ferm-entry','.rf-name','.rf-amount')">${invSelectOptions('fermentable', data&&data.invId)}</select>
+      </div>`;
   } else if(type==='hop'){
     row.className = 'hop-entry';
     const timingType = data && data.timingType ? data.timingType : 'boil';
@@ -998,7 +1789,7 @@ function addRow(containerId, type, data){
       <div class="dyn-row">
         <input type="text" placeholder="ホップ名" class="rh-name" data-list="hopList" value="${data?escapeHtml(data.name):''}">
         <span class="amount-wrap" style="flex:0 0 74px;">
-          <input type="number" step="1" min="0" placeholder="量" class="rh-amount" value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">g</span>
+          <input type="number" step="1" min="0" placeholder="量" class="rh-amount"${invLinkedMaxAttr(data&&data.invId)} value="${data?escapeHtml(data.amount):''}"><span class="unit-suffix">g</span>
         </span>
         <button type="button" class="icon-btn" onclick="this.closest('.hop-entry').remove()">✕</button>
       </div>
@@ -1009,22 +1800,29 @@ function addRow(containerId, type, data){
         </select>
         <input type="number" min="0" step="1" class="rh-timingvalue" placeholder="${timingType==='dryhop'?'日数':'分'}" value="${escapeHtml(timingValue)}">
         <span class="rh-unit">${timingType==='dryhop'?'日目に投入':'煮沸終了前'}</span>
+      </div>
+      <div class="dyn-subrow">
+        <select class="rh-inv" style="flex:1;" onchange="onInvLinkChange(this,'.hop-entry','.rh-name','.rh-amount')">${invSelectOptions('hop', data&&data.invId)}</select>
       </div>`;
   } else if(type==='adjunct'){
     row.className = 'adjunct-entry';
+    const raInvItem = (data && data.invId) ? inventory.find(i=>i.id===data.invId) : null;
+    const raUnit = raInvItem ? raInvItem.unit : ((data && data.unit) || 'g');
+    const raUnitDisabled = raInvItem ? 'disabled' : '';
     row.innerHTML = `
       <div class="dyn-row">
         <input type="text" placeholder="副原料名" class="ra-name" data-list="adjunctList" value="${data?escapeHtml(data.name):''}">
         <button type="button" class="icon-btn" onclick="this.closest('.adjunct-entry').remove()">✕</button>
       </div>
       <div class="dyn-subrow">
-        <input type="number" step="0.01" min="0" placeholder="量" class="ra-amount" style="flex:1 1 70px;" value="${data?escapeHtml(data.amount):''}">
-        <select class="ra-unit" style="flex:0 0 68px;">
-          <option value="g" ${(!data||!data.unit||data.unit==='g')?'selected':''}>g</option>
-          <option value="kg" ${data&&data.unit==='kg'?'selected':''}>kg</option>
-          <option value="ml" ${data&&data.unit==='ml'?'selected':''}>ml</option>
-          <option value="L" ${data&&data.unit==='L'?'selected':''}>L</option>
-          <option value="個" ${data&&data.unit==='個'?'selected':''}>個</option>
+        <input type="number" step="0.01" min="0" placeholder="量" class="ra-amount"${invLinkedMaxAttr(data&&data.invId)} style="flex:1 1 70px;" value="${data?escapeHtml(data.amount):''}">
+        <select class="ra-unit" style="flex:0 0 68px;" ${raUnitDisabled}>
+          <option value="g" ${raUnit==='g'?'selected':''}>g</option>
+          <option value="kg" ${raUnit==='kg'?'selected':''}>kg</option>
+          <option value="ml" ${raUnit==='ml'?'selected':''}>ml</option>
+          <option value="L" ${raUnit==='L'?'selected':''}>L</option>
+          <option value="個" ${raUnit==='個'?'selected':''}>個</option>
+          ${!['g','kg','ml','L','個'].includes(raUnit) ? `<option value="${escapeHtml(raUnit)}" selected>${escapeHtml(raUnit)}</option>` : ''}
         </select>
         <select class="ra-timing" style="flex:1 1 100px;">
           <option value="仕込み時" ${data&&data.timing==='仕込み時'?'selected':''}>仕込み時</option>
@@ -1033,6 +1831,9 @@ function addRow(containerId, type, data){
           <option value="二次発酵時" ${data&&data.timing==='二次発酵時'?'selected':''}>二次発酵時</option>
           <option value="パッケージング時" ${data&&data.timing==='パッケージング時'?'selected':''}>パッケージング時</option>
         </select>
+      </div>
+      <div class="dyn-subrow">
+        <select class="ra-inv" style="flex:1;" onchange="onInvLinkChange(this,'.adjunct-entry','.ra-name','.ra-amount','.ra-unit')">${invSelectOptions('adjunct', data&&data.invId)}</select>
       </div>`;
   } else if(type==='mineral'){
     row.innerHTML = `<input type="text" placeholder="添加剤名" class="rm-name" data-list="mineralList" value="${data?escapeHtml(data.name):''}">
@@ -1057,12 +1858,13 @@ function addRow(containerId, type, data){
       <button type="button" class="icon-btn" onclick="this.parentElement.remove()">✕</button>`;
   }
   c.appendChild(row);
+  refreshAllInvSelectColors();
 }
 
 function collectRows(containerId, type){
   const rows = [...$(containerId).children];
   if(type==='fermentable'){
-    return rows.map(r=>({name:r.querySelector('.rf-name').value, amount:r.querySelector('.rf-amount').value}))
+    return rows.map(r=>({name:r.querySelector('.rf-name').value, amount:r.querySelector('.rf-amount').value, invId:r.querySelector('.rf-inv').value||undefined}))
       .filter(x=>x.name||x.amount);
   }
   if(type==='hop'){
@@ -1071,12 +1873,13 @@ function collectRows(containerId, type){
         name:r.querySelector('.rh-name').value,
         amount:r.querySelector('.rh-amount').value,
         timingType:r.querySelector('.rh-timingtype').value,
-        timingValue:r.querySelector('.rh-timingvalue').value
+        timingValue:r.querySelector('.rh-timingvalue').value,
+        invId:r.querySelector('.rh-inv').value||undefined
       }))
       .filter(x=>x.name||x.amount);
   }
   if(type==='adjunct'){
-    return rows.map(r=>({name:r.querySelector('.ra-name').value, amount:r.querySelector('.ra-amount').value, unit:r.querySelector('.ra-unit').value, timing:r.querySelector('.ra-timing').value}))
+    return rows.map(r=>({name:r.querySelector('.ra-name').value, amount:r.querySelector('.ra-amount').value, unit:r.querySelector('.ra-unit').value, timing:r.querySelector('.ra-timing').value, invId:r.querySelector('.ra-inv').value||undefined}))
       .filter(x=>x.name||x.amount);
   }
   if(type==='mineral'){
@@ -1098,8 +1901,13 @@ function collectRows(containerId, type){
 function resetForm(){
   ['batchName','style','brewDate','brewer','batchSize','targetOG','actualOG','mashTemp','mashTime',
    'boilTime','waterVolume','waterSource','waterPh','mCa','mMg','mNa','mCl','mSO4','mHCO3',
-   'yeast','fermentStart','fermentTemp','fg','packageDate','co2vol','notes']
+   'yeast','yeastAmount','fermentStart','fermentTemp','fg','packageDate','co2vol','notes']
    .forEach(k=>{ const el = $('f_'+k); if(el) el.value=''; });
+  $('f_yeastUnit').value = 'g';
+  $('f_yeastUnit').disabled = false;
+  $('f_yeastInv').innerHTML = invSelectOptions('yeast', undefined);
+  $('f_yeastAmount').removeAttribute('max');
+  updateInvAmountWarning($('f_yeastAmount'));
   $('fermentableRows').innerHTML='';
   $('hopRows').innerHTML='';
   $('adjunctRows').innerHTML='';
@@ -1113,9 +1921,12 @@ function resetForm(){
 
 function openNewForm(){
   editingId = null;
+  formIsOpen = true;
   resetForm();
   $('f_abvDisplay').textContent = '—';
   $('f_totalVolDisplay').textContent = '—';
+  renderFormInvDeductArea(null);
+  refreshAllInvSelectColors();
   showView('form');
 }
 
@@ -1141,6 +1952,20 @@ function populateFormFields(b){
   $('f_mSO4').value=b.mSO4||'';
   $('f_mHCO3').value=b.mHCO3||'';
   $('f_yeast').value=b.yeast||'';
+  $('f_yeastAmount').value=b.yeastAmount||'';
+  $('f_yeastUnit').disabled = false;
+  $('f_yeastUnit').value=b.yeastUnit||'g';
+  $('f_yeastInv').innerHTML = invSelectOptions('yeast', b.yeastInvId);
+  if(b.yeastInvId){
+    const yItem = inventory.find(i=>i.id===b.yeastInvId);
+    if(yItem){
+      const stock = invStock(yItem);
+      $('f_yeastAmount').max = stock>0?stock:0;
+      lockUnitSelectToItem($('f_yeastUnit'), yItem.unit);
+    }
+  } else {
+    $('f_yeastAmount').removeAttribute('max');
+  }
   $('f_fermentStart').value=b.fermentStart||'';
   $('f_fermentTemp').value=b.fermentTemp||'';
   $('f_fg').value=b.fg||'';
@@ -1159,14 +1984,18 @@ function populateFormFields(b){
   if(!$('packageRows').children.length) addRow('packageRows','package');
   updateAbvDisplay();
   updateTotalVolDisplay();
+  refreshAllInvAmountWarnings();
+  refreshAllInvSelectColors();
 }
 
 function openEditForm(id){
   const b = batches.find(x=>x.id===id);
   if(!b) return;
   editingId = id;
+  formIsOpen = true;
   resetForm();
   populateFormFields(b);
+  renderFormInvDeductArea(id);
   showView('form');
 }
 
@@ -1174,6 +2003,7 @@ function duplicateBatch(id){
   const src = batches.find(x=>x.id===id);
   if(!src) return;
   editingId = null;
+  formIsOpen = true;
   resetForm();
   const copy = {
     ...src,
@@ -1189,6 +2019,7 @@ function duplicateBatch(id){
     minerals: (src.minerals||[]).map(x=>({...x})),
   };
   populateFormFields(copy);
+  renderFormInvDeductArea(null);
   showView('form');
 }
 
@@ -1216,6 +2047,7 @@ function scaleDuplicateBatch(id){
   const ratio = newSize/oldSize;
 
   editingId = null;
+  formIsOpen = true;
   resetForm();
   const copy = {
     ...src,
@@ -1231,21 +2063,24 @@ function scaleDuplicateBatch(id){
     hops: (src.hops||[]).map(x=>({...x, amount: x.amount!=='' ? String(Math.round((parseFloat(x.amount)||0)*ratio)) : x.amount})),
     adjuncts: (src.adjuncts||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
     minerals: (src.minerals||[]).map(x=>({...x, amount: x.amount!=='' ? String(round2((parseFloat(x.amount)||0)*ratio)) : x.amount})),
+    yeastAmount: src.yeastAmount!=='' && src.yeastAmount!==undefined ? String(round2((parseFloat(src.yeastAmount)||0)*ratio)) : src.yeastAmount,
     notes: (src.notes ? src.notes+'\n\n' : '') + `※元レシピ（${oldSize}L）を${newSize}Lにスケーリング（${round2(ratio)}倍）。原材料量は自動換算済み。糖化温度・煮沸時間・目標OG・ミネラル目標値(ppm)は換算していないのでそのままご確認ください。`,
   };
   populateFormFields(copy);
+  renderFormInvDeductArea(null);
   showView('form');
   alert(`原材料の量を${round2(ratio)}倍にスケーリングしました。保存前に内容を確認してください。`);
 }
 
 function cancelForm(){
+  formIsOpen = false;
   showView(editingId ? 'detail' : 'list');
   if(editingId){ openDetail(editingId); }
 }
 
-async function saveBatch(){
-  const b = {
-    id: editingId || uid(),
+function buildBatchFromForm(id){
+  return {
+    id: id || uid(),
     batchName: $('f_batchName').value,
     style: $('f_style').value,
     brewDate: $('f_brewDate').value,
@@ -1270,6 +2105,9 @@ async function saveBatch(){
     adjuncts: collectRows('adjunctRows','adjunct'),
     minerals: collectRows('mineralRows','mineral'),
     yeast: $('f_yeast').value,
+    yeastAmount: $('f_yeastAmount').value,
+    yeastUnit: $('f_yeastUnit').value,
+    yeastInvId: $('f_yeastInv').value || undefined,
     fermentStart: $('f_fermentStart').value,
     fermentTemp: $('f_fermentTemp').value,
     gravityLog: collectRows('gravityRows','gravity'),
@@ -1279,21 +2117,63 @@ async function saveBatch(){
     packages: collectRows('packageRows','package'),
     notes: $('f_notes').value,
   };
+}
+
+async function saveBatch(){
+  const b = buildBatchFromForm(editingId);
   if(!b.batchName){ alert('バッチ名を入力してください'); return; }
   const idx = batches.findIndex(x=>x.id===b.id);
   if(idx>=0){
     b.brewStartTime = batches[idx].brewStartTime;
     b.scheduleActuals = batches[idx].scheduleActuals;
     b.completed = batches[idx].completed;
+    b.inventoryDeducted = batches[idx].inventoryDeducted;
     batches[idx]=b;
   } else {
     batches.push(b);
   }
   await persist();
   editingId = null;
+  formIsOpen = false;
   renderGauge();
   renderList();
   showView('list');
+}
+
+// Silently writes the current form's values into the in-memory batch object
+// (without navigating away), so actions like "消費記録を更新" always compare
+// against what's actually on screen rather than stale saved data.
+async function saveFormInPlace(id){
+  if(!id) return null;
+  const idx = batches.findIndex(x=>x.id===id);
+  if(idx<0) return null;
+  const b = buildBatchFromForm(id);
+  if(!b.batchName){ alert('バッチ名を入力してください'); return null; }
+  b.brewStartTime = batches[idx].brewStartTime;
+  b.scheduleActuals = batches[idx].scheduleActuals;
+  b.completed = batches[idx].completed;
+  b.inventoryDeducted = batches[idx].inventoryDeducted;
+  batches[idx] = b;
+  await persist();
+  renderGauge();
+  renderList();
+  return b;
+}
+
+async function deductInventoryFromFormBtn(id){
+  const saved = await saveFormInPlace(id);
+  if(!saved) return;
+  await deductInventoryForBatch(id, 'form');
+}
+
+async function syncInventoryFromFormBtn(id){
+  const saved = await saveFormInPlace(id);
+  if(!saved) return;
+  await syncInventoryForBatch(id, 'form');
+}
+
+async function undoInventoryFromFormBtn(id){
+  await undoInventoryDeduction(id, 'form');
 }
 
 /* ---------------- Detail ---------------- */
@@ -1305,6 +2185,7 @@ function openDetail(id){
   const schedStartDate = parseStartDateTime(b.brewStartTime);
   const schedDryhops = computeDryHopSchedule(b);
   const schedActuals = b.scheduleActuals || {};
+  const unlinkedMaterials = getUnlinkedMaterials(b);
   const el = $('viewDetail');
   el.dataset.id = id;
   el.innerHTML = `
@@ -1316,6 +2197,7 @@ function openDetail(id){
       </div>
       <span class="status-pill status-${statusOf(b)}">${statusOf(b)}</span>
     </div>
+    ${unlinkedMaterials.length ? `<div class="inv-unlinked-warning">⚠ 未連携の原材料：${unlinkedMaterials.map(escapeHtml).join('、')}<br>編集画面の各行で「在庫と連携」を選ぶと、原材料受渡簿と連動します。</div>` : ''}
     <div class="detail-grid">
       <div class="detail-item"><div class="l">OG</div><div class="v">${b.actualOG||b.targetOG||'—'}</div></div>
       <div class="detail-item"><div class="l">FG</div><div class="v">${b.fg||'—'}</div></div>
@@ -1333,7 +2215,7 @@ function openDetail(id){
       ${(b.mCa||b.mMg||b.mNa||b.mCl||b.mSO4||b.mHCO3)?`<div class="row"><span>目標ミネラル(ppm)</span><span>Ca${b.mCa||0} Mg${b.mMg||0} Na${b.mNa||0} Cl${b.mCl||0} SO4${b.mSO4||0} HCO3${b.mHCO3||0}</span></div>`:''}
       ${(b.minerals||[]).map(m=>`<div class="row"><span>${escapeHtml(m.name)} <span style="color:var(--text-muted)">(${escapeHtml(m.timing||'')})</span></span><span>${escapeHtml(m.amount)} g</span></div>`).join('')}
     </div>` : ''}
-    ${b.yeast ? `<div class="detail-list"><div class="row"><span>酵母</span><span>${escapeHtml(b.yeast)}</span></div>
+    ${b.yeast ? `<div class="detail-list"><div class="row"><span>酵母</span><span>${escapeHtml(b.yeast)}${b.yeastAmount?' ・ '+escapeHtml(b.yeastAmount)+escapeHtml(b.yeastUnit||''):''}</span></div>
       <div class="row"><span>発酵開始</span><span>${b.fermentStart||'—'}</span></div>
       <div class="row"><span>発酵温度</span><span>${b.fermentTemp?b.fermentTemp+'℃':'—'}</span></div></div>` : ''}
     ${(b.gravityLog&&b.gravityLog.length) ? `<div class="detail-list">${b.gravityLog.map(g=>`<div class="row"><span>${g.date}</span><span>${g.gravity||'—'}${g.ph?' ・ pH '+g.ph:''}</span></div>`).join('')}</div>` : ''}
@@ -1353,6 +2235,9 @@ function openDetail(id){
       <button class="btn btn-danger" onclick="deleteBatch('${b.id}')">削除</button>
       <button class="btn btn-ghost" onclick="duplicateBatch('${b.id}')">コピーして新規仕込み</button>
       <button class="btn btn-ghost" onclick="scaleDuplicateBatch('${b.id}')">仕込み量を変えてコピー</button>
+      ${b.inventoryDeducted
+        ? `<button class="btn btn-ghost" onclick="undoInventoryDeduction('${b.id}')">在庫消費を取り消す</button><button class="btn btn-ghost" onclick="syncInventoryForBatch('${b.id}')">消費記録を更新</button>`
+        : `<button class="btn btn-complete" onclick="deductInventoryForBatch('${b.id}')">在庫から消費を記録</button>`}
       ${statusOf(b)==='完了'
         ? `<button class="btn btn-ghost" onclick="unmarkCompleted('${b.id}')">完了を取り消す</button>`
         : `<button class="btn btn-complete" onclick="markCompleted('${b.id}')">仕込み完了にする</button>`}
@@ -1394,17 +2279,26 @@ function showView(name){
   $('viewForm').hidden = name!=='form';
   $('viewDetail').hidden = name!=='detail';
   $('viewSchedule').hidden = name!=='schedule';
+  $('viewInventory').hidden = name!=='inventory';
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   if(name==='list') document.querySelector('.tab[data-tab="list"]').classList.add('active');
   if(name==='form') document.querySelector('.tab[data-tab="new"]').classList.add('active');
   if(name==='schedule') document.querySelector('.tab[data-tab="schedule"]').classList.add('active');
+  if(name==='inventory') document.querySelector('.tab[data-tab="inventory"]').classList.add('active');
   window.scrollTo(0,0);
 }
 
 document.querySelectorAll('.tab').forEach(t=>{
   t.addEventListener('click', ()=>{
-    if(t.dataset.tab==='new'){ openNewForm(); }
+    if(t.dataset.tab==='new'){
+      // If a form (new or existing) is already in progress, just show it
+      // again instead of wiping out unsaved input. Only start a fresh
+      // blank form if nothing was being edited yet.
+      if(formIsOpen){ showView('form'); }
+      else{ openNewForm(); }
+    }
     else if(t.dataset.tab==='schedule'){ openScheduleView(); }
+    else if(t.dataset.tab==='inventory'){ openInventoryView(); }
     else{ showView('list'); }
   });
 });
@@ -1745,6 +2639,44 @@ function exportableBatches(){
   return batches.filter(b=>b.id!=='sample-bass-pale-ale-clone');
 }
 
+function exportInventoryCSV(){
+  const rows = [];
+  inventory.forEach(item=>{
+    const catLabel = INV_CATEGORY_LABEL[item.category] || item.category;
+    (item.receipts||[]).forEach(r=>{
+      rows.push({
+        date: r.date, category: catLabel, name: item.name, type: '入荷（増）',
+        amount: parseFloat(r.amount)||0, unit: item.unit,
+        counterpart: r.supplier||'', price: r.price||''
+      });
+    });
+    (item.consumptions||[]).forEach(c=>{
+      rows.push({
+        date: c.date, category: catLabel, name: item.name, type: '消費（減）',
+        amount: -(parseFloat(c.amount)||0), unit: item.unit,
+        counterpart: c.batchName||'(削除済みバッチ)', price: ''
+      });
+    });
+  });
+  if(!rows.length){ alert('入荷・消費の記録がありません。'); return; }
+  rows.sort((a,b)=> String(a.date).localeCompare(String(b.date)) || String(a.name).localeCompare(String(b.name),'ja'));
+
+  // running balance per item, in date order
+  const balances = {};
+  rows.forEach(r=>{
+    const key = r.category+'|'+r.name;
+    balances[key] = (balances[key]||0) + r.amount;
+    r.balance = Math.round(balances[key]*1000)/1000;
+  });
+
+  const headers = ['日付','分類','品目名','区分','数量','単位','残高','仕入れ先／消費先','金額(円)'];
+  const lines = [headers.map(csvEscape).join(',')];
+  rows.forEach(r=>{
+    lines.push([r.date, r.category, r.name, r.type, r.amount, r.unit, r.balance, r.counterpart, r.price].map(csvEscape).join(','));
+  });
+  downloadBlob('\uFEFF'+lines.join('\r\n'), '原材料受渡簿_' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv;charset=utf-8');
+}
+
 function exportCSV(){
   const target = exportableBatches();
   if(!target.length){ alert('記録がありません'); return; }
@@ -1761,6 +2693,7 @@ function exportCSV(){
     const minerals = (b.minerals||[]).map(m=>`${m.name} ${m.amount}g(${m.timing||''})`).join(' / ');
     const gravLog = (b.gravityLog||[]).map(g=>`${g.date} SG${g.gravity||''}${g.ph?' pH'+g.ph:''}`).join(' / ');
     const a = abv(b.actualOG||b.targetOG, b.fg);
+    const yeastStr = b.yeast ? `${b.yeast}${b.yeastAmount?' '+b.yeastAmount+(b.yeastUnit||''):''}` : '';
     const packagesStr = getPackages(b).map(p=>`${p.type||''} ${p.quantity||''}${p.unitVolume?'×'+p.unitVolume+'ml':''}`).join(' / ');
     const totalVol = totalPackageVolume(b)>0 ? totalPackageVolume(b).toFixed(2) : '';
     const schedActuals = b.scheduleActuals || {};
@@ -1769,7 +2702,7 @@ function exportCSV(){
     const schedDryhops = computeDryHopSchedule(b).map(s=>`${s.label} 予定${s.dateStr}${schedActuals[s.key]?'/実績'+schedActuals[s.key]:''}`).join(' / ');
     lines.push([b.batchName,b.style,b.brewDate,b.brewer,b.batchSize,b.targetOG,b.actualOG,b.fg,a||'',
       b.mashTemp,b.mashTime,b.boilTime,b.waterVolume,b.waterSource,b.waterPh,b.mCa,b.mMg,b.mNa,b.mCl,b.mSO4,b.mHCO3,minerals,
-      ferm,hops,adj,b.yeast,b.fermentStart,b.fermentTemp,
+      ferm,hops,adj,yeastStr,b.fermentStart,b.fermentTemp,
       gravLog,b.brewStartTime,schedSteps,schedDryhops,
       b.packageDate,b.co2vol,packagesStr,totalVol,statusOf(b),b.notes].map(csvEscape).join(','));
   });
@@ -1778,9 +2711,10 @@ function exportCSV(){
 }
 
 function exportJSON(){
-  const target = exportableBatches();
-  if(!target.length){ alert('記録がありません'); return; }
-  downloadBlob(JSON.stringify(target, null, 2), '仕込み記録バックアップ_' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
+  const targetBatches = exportableBatches();
+  if(!targetBatches.length && !inventory.length){ alert('記録がありません'); return; }
+  const payload = { batches: targetBatches, inventory: inventory };
+  downloadBlob(JSON.stringify(payload, null, 2), '仕込み記録バックアップ_' + new Date().toISOString().slice(0,10) + '.json', 'application/json');
 }
 
 function importJSON(file){
@@ -1788,16 +2722,51 @@ function importJSON(file){
   const reader = new FileReader();
   reader.onload = async (e)=>{
     try{
-      const imported = JSON.parse(e.target.result);
-      if(!Array.isArray(imported)) throw new Error('invalid format');
-      const merge = confirm(`${imported.length}件のバッチを読み込みます。\nOK＝既存データに追加 / キャンセル＝既存データを置き換え`);
+      const parsed = JSON.parse(e.target.result);
+      let importedBatches, importedInventory;
+      if(Array.isArray(parsed)){
+        // legacy format: bare array of batches, no inventory
+        importedBatches = parsed;
+        importedInventory = null;
+      } else if(parsed && Array.isArray(parsed.batches)){
+        importedBatches = parsed.batches;
+        importedInventory = Array.isArray(parsed.inventory) ? parsed.inventory : null;
+      } else {
+        throw new Error('invalid format');
+      }
+      const invMsg = importedInventory ? `と原材料受渡簿${importedInventory.length}品目` : '';
+      const merge = confirm(`${importedBatches.length}件のバッチ${invMsg}を読み込みます。\nOK＝既存データに追加 / キャンセル＝既存データを置き換え`);
       if(merge){
         const existingIds = new Set(batches.map(b=>b.id));
-        imported.forEach(b=>{ if(!b.id || existingIds.has(b.id)) b.id = uid(); batches.push(b); });
+        const batchIdRemap = {}; // oldId -> newId, for any batch whose id had to change
+        importedBatches.forEach(b=>{
+          if(!b.id || existingIds.has(b.id)){
+            const newId = uid();
+            if(b.id) batchIdRemap[b.id] = newId;
+            b.id = newId;
+          }
+          existingIds.add(b.id);
+          batches.push(b);
+        });
+        const remapConsumptions = (invArr)=>{
+          invArr.forEach(item=>{
+            (item.consumptions||[]).forEach(c=>{
+              if(c.batchId && batchIdRemap[c.batchId]) c.batchId = batchIdRemap[c.batchId];
+            });
+          });
+        };
+        if(importedInventory){
+          remapConsumptions(importedInventory); // in case the imported inventory references batches from the same file
+          const existingInvIds = new Set(inventory.map(i=>i.id));
+          importedInventory.forEach(i=>{ if(!i.id || existingInvIds.has(i.id)) i.id = uid(); inventory.push(i); });
+        }
+        remapConsumptions(inventory); // also fix references in the inventory already present before this import
       } else {
-        batches = imported;
+        batches = importedBatches;
+        if(importedInventory) inventory = importedInventory;
       }
       await persist();
+      if(importedInventory) await persistInventory();
       renderGauge(); renderList();
       showView('list');
       alert('読み込みが完了しました');
