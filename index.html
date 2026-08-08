@@ -206,6 +206,25 @@ select.inv-select-unlinked{ color:var(--danger) !important; }
   font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--copper-bright);
   margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);
 }
+summary.section-title{
+  cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between;
+  user-select:none; margin-bottom:0; padding:10px 12px; border:1px solid var(--border); border-bottom:none;
+  border-radius:8px; background:var(--surface); transition:background 0.12s, border-color 0.12s;
+}
+summary.section-title:hover{ background:var(--surface-2); border-color:var(--copper); }
+details.section[open] > summary.section-title{
+  border-radius:8px 8px 0 0; border-bottom:1px solid var(--border); margin-bottom:0; background:var(--surface-2);
+}
+details.section[open]{
+  border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; padding:14px 12px 16px;
+}
+summary.section-title::-webkit-details-marker{ display:none; }
+summary.section-title::marker{ content:''; }
+summary.section-title::after{
+  content:'開く ▸'; display:inline-block; font-size:0.66rem; letter-spacing:0.04em; color:var(--copper-bright);
+  transition:transform 0.15s ease; margin-left:8px; text-transform:none; flex:none;
+}
+details[open] > summary.section-title::after{ content:'閉じる ▾'; }
 .grid2{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px;}
 .grid2 > .field{min-width:0;}
 .mineral-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
@@ -403,6 +422,33 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
 .inv-row-delete{
   color:var(--danger); font-size:0.72rem; cursor:pointer; flex:none; padding-left:10px; opacity:0.85;
 }
+.ship-pkg-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  padding:12px 14px; margin-bottom:10px;
+}
+.ship-pkg-title{font-family:'Fraunces', serif; font-weight:600; font-size:0.95rem; display:flex; justify-content:space-between; align-items:baseline;}
+.ship-pkg-total{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--text-muted); font-weight:400;}
+.ship-summary{display:flex; gap:12px; flex-wrap:wrap; font-size:0.72rem; margin:8px 0 10px; font-family:'IBM Plex Mono', monospace;}
+.ship-summary-item.shipped{color:var(--hop-bright);}
+.ship-summary-item.stored{color:var(--copper-bright);}
+.ship-summary-item.loss{color:var(--danger);}
+.ship-summary-item.unrecorded{color:var(--danger); opacity:0.7;}
+.ship-lot-row{border-top:1px solid var(--border); padding:8px 0;}
+.ship-lot-row:first-of-type{border-top:none;}
+.ship-lot-main{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:0.82rem;}
+.ship-lot-qty{font-family:'IBM Plex Mono', monospace; font-weight:500;}
+.ship-lot-status{font-size:0.68rem; padding:2px 8px; border-radius:99px; border:1px solid; white-space:nowrap;}
+.ship-lot-status.shipped{color:var(--hop-bright); border-color:var(--hop);}
+.ship-lot-status.stored{color:var(--copper-bright); border-color:var(--copper);}
+.ship-lot-status.loss{color:var(--danger); border-color:var(--danger);}
+.ship-lot-detail{color:var(--text-muted); font-size:0.78rem;}
+.ship-lot-note{color:var(--text-muted); font-size:0.76rem; font-style:italic;}
+.ship-lot-actions{display:flex; gap:10px; margin-top:4px;}
+.ship-lot-actions .footer-link{
+  font-size:0.72rem; background:none; border:none; padding:0; color:var(--text-muted);
+  font-family:'IBM Plex Sans JP', sans-serif;
+}
+.ship-lot-actions .footer-link:hover{color:var(--copper-bright);}
 .inv-row-delete:hover{opacity:1; text-decoration:underline;}
 .inv-history{margin-top:10px;}
 .inv-receipt-form{
@@ -418,6 +464,15 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
 .sched-col-header-planned{flex:0 0 76px; text-align:center; color:var(--copper-bright);}
 .sched-col-header-actual{flex:0 0 110px; text-align:center; color:var(--hop-bright);}
 .sched-col-header-cal{flex:0 0 30px;}
+
+.pkg-col-header{
+  display:flex; align-items:center; gap:8px; margin-bottom:4px;
+  font-size:0.64rem; color:var(--text-muted); letter-spacing:0.04em;
+}
+.pkg-col-header-type{flex:1 1 90px;}
+.pkg-col-header-unit{flex:0 0 66px; text-align:center;}
+.pkg-col-header-qty{flex:0 0 62px; text-align:center;}
+.pkg-col-header-del{flex:0 0 32px;}
 
 @media (max-width:420px){
   .grid2{grid-template-columns:1fr;}
@@ -467,8 +522,8 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
   <div id="viewList"></div>
 
   <div id="viewForm" hidden>
-    <div class="section">
-      <div class="section-title">基本情報</div>
+    <details class="section" open>
+      <summary class="section-title">基本情報</summary>
       <div class="field"><label>バッチ名</label><input type="text" id="f_batchName" placeholder="例）第12仕込み・APA"></div>
       <div class="grid2">
         <div class="field"><label>スタイル</label><input type="text" id="f_style" data-list="styleList" placeholder="例）American Pale Ale"></div>
@@ -478,10 +533,10 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
         <div class="field"><label>担当</label><input type="text" id="f_brewer" data-list="brewerList" placeholder="例）湾岸太郎"></div>
         <div class="field"><label>バッチサイズ (L)</label><input type="number" step="0.1" min="0" id="f_batchSize"></div>
       </div>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">仕込み工程</div>
+    <details class="section" open>
+      <summary class="section-title">仕込み工程</summary>
       <div class="grid2">
         <div class="field"><label>目標 OG</label><input type="number" step="0.001" min="1.000" id="f_targetOG" placeholder="1.050"></div>
         <div class="field"><label>実測 OG</label><input type="number" step="0.001" min="1.000" id="f_actualOG" placeholder="1.050"></div>
@@ -494,10 +549,10 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
         <div class="field"><label>煮沸時間 (分)</label><input type="number" min="60" id="f_boilTime"></div>
         <div class="field"><label>仕込み水量 (L)</label><input type="number" step="0.1" min="0" id="f_waterVolume"></div>
       </div>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">水質調整</div>
+    <details class="section">
+      <summary class="section-title">水質調整</summary>
       <div class="grid2">
         <div class="field"><label>水源</label><input type="text" id="f_waterSource" data-list="waterSourceList" placeholder="例）水道水"></div>
         <div class="field"><label>仕込み水 pH</label><input type="number" step="0.01" min="0" max="14" id="f_waterPh" placeholder="例）7.2"></div>
@@ -514,29 +569,29 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
       <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin:10px 0 6px;">ミネラル・酸添加剤</label>
       <div id="mineralRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('mineralRows','mineral')">＋ 添加剤を追加</button>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">原材料 — モルト</div>
+    <details class="section" open>
+      <summary class="section-title">原材料 — モルト</summary>
       <div id="fermentableRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('fermentableRows','fermentable')">＋ モルトを追加</button>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">原材料 — ホップ</div>
+    <details class="section" open>
+      <summary class="section-title">原材料 — ホップ</summary>
       <div id="hopRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('hopRows','hop')">＋ ホップを追加</button>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">副原料（フルーツ・スパイス・加糖など）</div>
+    <details class="section">
+      <summary class="section-title">副原料（フルーツ・スパイス・加糖など）</summary>
       <div id="adjunctRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('adjunctRows','adjunct')">＋ 副原料を追加</button>
       <div class="sched-note">※在庫と連携しても、ここで保存しただけでは受渡簿から差し引かれません。保存後、バッチ詳細画面の「在庫から消費を記録」を押した時点で反映されます。</div>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">酵母</div>
+    <details class="section" open>
+      <summary class="section-title">酵母</summary>
       <div class="hop-entry" id="yeastEntry">
         <div class="dyn-row">
           <input type="text" placeholder="酵母名" id="f_yeast" data-list="yeastList" value="" style="flex:1;">
@@ -557,10 +612,10 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
           <select class="f-yeast-inv" id="f_yeastInv" style="flex:1;" onchange="onInvLinkChange(this,'#yeastEntry','#f_yeast','#f_yeastAmount','#f_yeastUnit')"></select>
         </div>
       </div>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">発酵</div>
+    <details class="section" open>
+      <summary class="section-title">発酵</summary>
       <div class="grid2">
         <div class="field"><label>発酵開始日</label><input type="date" id="f_fermentStart"></div>
         <div class="field"><label>発酵温度 (℃)</label><input type="number" step="0.1" min="0" id="f_fermentTemp" class="prefill10" placeholder="10"></div>
@@ -568,10 +623,10 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
       <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin-bottom:6px;">比重・pH測定ログ</label>
       <div id="gravityRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('gravityRows','gravity')">＋ 測定を追加</button>
-    </div>
+    </details>
 
-    <div class="section">
-      <div class="section-title">パッケージング</div>
+    <details class="section">
+      <summary class="section-title">パッケージング</summary>
       <div class="grid2">
         <div class="field"><label>FG（最終比重）</label><input type="number" step="0.001" min="1.000" id="f_fg" placeholder="1.010"></div>
         <div class="field"><label>ABV（自動計算）</label><div id="f_abvDisplay" class="abv-display">—</div></div>
@@ -581,17 +636,23 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
         <div class="field"><label>CO2ボリューム (vol)</label><input type="number" step="0.1" min="0" id="f_co2vol" placeholder="2.4"></div>
       </div>
       <label style="font-size:0.76rem;color:var(--text-muted);display:block;margin:4px 0 6px;">容器の内訳（瓶・缶・樽などまとめて複数記録可）</label>
+      <div class="pkg-col-header">
+        <span class="pkg-col-header-type">形態</span>
+        <span class="pkg-col-header-unit">容器サイズ(ml)</span>
+        <span class="pkg-col-header-qty">本数</span>
+        <span class="pkg-col-header-del"></span>
+      </div>
       <div id="packageRows"></div>
       <button type="button" class="add-row-btn" onclick="addRow('packageRows','package')">＋ 容器を追加</button>
       <div class="field" style="margin-top:10px;"><label>合計容量（自動計算）</label><div id="f_totalVolDisplay" class="abv-display">—</div></div>
-    </div>
+    </details>
 
     <div id="formInvDeductArea"></div>
 
-    <div class="section">
-      <div class="section-title">メモ</div>
+    <details class="section">
+      <summary class="section-title">メモ</summary>
       <textarea id="f_notes" placeholder="工程中の気づき、トラブル、フレーバーメモなど"></textarea>
-    </div>
+    </details>
 
     <div class="actions">
       <button class="btn btn-ghost" onclick="cancelForm()">キャンセル</button>
@@ -824,6 +885,7 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
     <option value="ペットボトル">
     <option value="ボトルコンディション瓶">
     <option value="クラウラー缶">
+    <option value="欠減（試飲・こぼれ・破損など）">
   </datalist>
 
   <datalist id="yeastList">
@@ -844,6 +906,8 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
 
   <div class="footer-links">
     <span class="footer-link" onclick="exportCSV()">CSV書き出し (Excel用)</span>
+    <span class="footer-sep">・</span>
+    <span class="footer-link" onclick="exportShipmentsCSV()">出荷記録CSV書き出し（課税移出）</span>
     <span class="footer-sep">・</span>
     <span class="footer-link" onclick="exportJSON()">バックアップを書き出す</span>
     <span class="footer-sep">・</span>
@@ -1051,6 +1115,219 @@ function totalPackageVolume(b){
     const qty = parseFloat(p.quantity), unitMl = parseFloat(p.unitVolume);
     return sum + (qty && unitMl ? qty*unitMl/1000 : 0);
   }, 0);
+}
+
+/* ---------------- Shipment / 課税移出 tracking ---------------- */
+let openShipmentFormKey = null; // `${batchId}::${pkgIndex}` or `${batchId}::${pkgIndex}::${lotId}` when editing
+
+function shipmentLotsFor(pkg){
+  return pkg.shipments || [];
+}
+
+function shipmentSummary(pkg){
+  const total = parseFloat(pkg.quantity)||0;
+  const lots = shipmentLotsFor(pkg);
+  const shipped = lots.filter(l=>l.status==='shipped').reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
+  const stored = lots.filter(l=>l.status==='stored').reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
+  const loss = lots.filter(l=>l.status==='loss').reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
+  const unrecorded = Math.max(0, total - shipped - stored - loss);
+  return {total, shipped, stored, loss, unrecorded};
+}
+
+function openShipmentForm(batchId, pkgIndex, lotId){
+  const key = lotId ? `${batchId}::${pkgIndex}::${lotId}` : `${batchId}::${pkgIndex}`;
+  openShipmentFormKey = (openShipmentFormKey===key) ? null : key;
+  openDetail(batchId);
+}
+
+async function submitShipmentLot(batchId, pkgIndex, lotId){
+  const b = batches.find(x=>x.id===batchId);
+  if(!b) return;
+  if(!b.packages || !b.packages.length){
+    // migrate legacy single-package fields into a real, persistable array
+    b.packages = getPackages(b);
+  }
+  const pkg = b.packages[pkgIndex];
+  if(!pkg) return;
+  if(!pkg.shipments) pkg.shipments = [];
+
+  const formId = lotId ? `${batchId}-${pkgIndex}-${lotId}` : `${batchId}-${pkgIndex}-new`;
+  const qtyEl = document.getElementById(`ship-qty-${formId}`);
+  const statusEl = document.getElementById(`ship-status-${formId}`);
+  const dateEl = document.getElementById(`ship-date-${formId}`);
+  const destEl = document.getElementById(`ship-dest-${formId}`);
+  const noteEl = document.getElementById(`ship-note-${formId}`);
+
+  const quantity = parseFloat(qtyEl.value);
+  if(!quantity || quantity<=0){ alert('数量を入力してください。'); return; }
+  const status = statusEl.value;
+  if(status==='shipped' && !dateEl.value){ alert('課税移出済みにする場合は移出日を入力してください。'); return; }
+  if(status==='loss' && !dateEl.value){ alert('欠減にする場合は発生日を入力してください。'); return; }
+  if(status==='loss' && !destEl.value){ alert('欠減にする場合は理由（試飲・こぼれ・破損など）を入力してください。'); return; }
+
+  const lot = {
+    id: lotId || uid(),
+    quantity,
+    status,
+    date: (status==='shipped'||status==='loss') ? dateEl.value : (dateEl.value||''),
+    destination: (status==='shipped'||status==='loss') ? (destEl.value||'') : '',
+    note: noteEl.value||''
+  };
+
+  if(lotId){
+    const idx = pkg.shipments.findIndex(l=>l.id===lotId);
+    if(idx>=0) pkg.shipments[idx] = lot;
+  } else {
+    pkg.shipments.push(lot);
+  }
+
+  openShipmentFormKey = null;
+  await persist();
+  renderList();
+  openDetail(batchId);
+}
+
+async function deleteShipmentLot(batchId, pkgIndex, lotId){
+  const b = batches.find(x=>x.id===batchId);
+  if(!b) return;
+  const pkg = getPackages(b)[pkgIndex];
+  if(!pkg || !pkg.shipments) return;
+  if(!confirm('このロットの記録を削除しますか？')) return;
+  pkg.shipments = pkg.shipments.filter(l=>l.id!==lotId);
+  await persist();
+  renderList();
+  openDetail(batchId);
+}
+
+function renderPackageShipments(b){
+  const packages = getPackages(b);
+  if(!packages.length) return '';
+  const cards = packages.map((pkg, pkgIndex)=>{
+    const sum = shipmentSummary(pkg);
+    const lots = shipmentLotsFor(pkg);
+    const pkgLabel = `${pkg.type||'(形態未設定)'}${pkg.unitVolume?' '+pkg.unitVolume+'ml':''}`;
+
+    const lotsHtml = lots.map(l=>{
+      const statusLabel = l.status==='shipped' ? '✓ 課税移出済み' : l.status==='loss' ? '⚠ 欠減' : '保管中（未移出）';
+      const statusClass = l.status==='shipped' ? 'shipped' : l.status==='loss' ? 'loss' : 'stored';
+      const detail = l.status==='shipped'
+        ? `${escapeHtml(l.date||'')} ・ ${escapeHtml(l.destination||'(移出先未設定)')}`
+        : l.status==='loss'
+        ? `${escapeHtml(l.date||'')} ・ ${escapeHtml(l.destination||'(理由未設定)')}`
+        : (l.date ? `${escapeHtml(l.date)}〜保管` : '');
+      const formKey = `${b.id}::${pkgIndex}::${l.id}`;
+      const editFormHtml = openShipmentFormKey===formKey ? renderShipmentForm(b.id, pkgIndex, l) : '';
+      return `<div class="ship-lot-row">
+        <div class="ship-lot-main">
+          <span class="ship-lot-qty">${l.quantity}${escapeHtml(pkg.unitVolume?'本/個':'')}</span>
+          <span class="ship-lot-status ${statusClass}">${statusLabel}</span>
+          <span class="ship-lot-detail">${detail}</span>
+          ${l.note?`<span class="ship-lot-note">（${escapeHtml(l.note)}）</span>`:''}
+        </div>
+        <div class="ship-lot-actions">
+          <button type="button" class="footer-link" onclick="openShipmentForm('${b.id}','${pkgIndex}','${l.id}')">編集</button>
+          <button type="button" class="footer-link" onclick="deleteShipmentLot('${b.id}','${pkgIndex}','${l.id}')">削除</button>
+        </div>
+        ${editFormHtml}
+      </div>`;
+    }).join('');
+
+    const newFormKey = `${b.id}::${pkgIndex}`;
+    const newFormHtml = openShipmentFormKey===newFormKey ? renderShipmentForm(b.id, pkgIndex, null) : '';
+
+    return `<div class="ship-pkg-card">
+      <div class="ship-pkg-title">${escapeHtml(pkgLabel)}<span class="ship-pkg-total">全${sum.total}${pkg.unitVolume?'本/個':''}</span></div>
+      <div class="ship-summary">
+        <span class="ship-summary-item shipped">移出済み ${sum.shipped}</span>
+        <span class="ship-summary-item stored">保管中 ${sum.stored}</span>
+        ${sum.loss>0?`<span class="ship-summary-item loss">欠減 ${sum.loss}</span>`:''}
+        ${sum.unrecorded>0?`<span class="ship-summary-item unrecorded">未記録 ${sum.unrecorded}</span>`:''}
+      </div>
+      ${lotsHtml || '<div class="sched-note">まだロットが記録されていません。</div>'}
+      ${newFormHtml}
+      <button type="button" class="add-row-btn" onclick="openShipmentForm('${b.id}','${pkgIndex}')">＋ ロットを追加</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="section"><div class="section-title">出荷管理（課税移出・欠減）</div>${cards}</div>`;
+}
+
+function renderShipmentForm(batchId, pkgIndex, lot){
+  const formId = lot ? `${batchId}-${pkgIndex}-${lot.id}` : `${batchId}-${pkgIndex}-new`;
+  const status = lot ? lot.status : 'stored';
+  const showDetailFields = status==='shipped' || status==='loss';
+  const dateLabel = status==='loss' ? '発生日' : '移出日';
+  const destLabel = status==='loss' ? '理由（試飲・こぼれ・破損など）' : '移出先';
+  const destPlaceholder = status==='loss' ? '例）品質チェックの試飲' : '例）大西商事';
+  const destListAttr = status==='loss' ? '' : 'data-list="supplierList"';
+  return `
+    <div class="inv-receipt-form">
+      <div class="grid2">
+        <div class="field"><label>数量</label><input type="number" step="1" min="0" id="ship-qty-${formId}" value="${lot?lot.quantity:''}" placeholder="例）10"></div>
+        <div class="field"><label>状態</label>
+          <select id="ship-status-${formId}" onchange="toggleShipmentFormFields('${formId}')">
+            <option value="stored" ${status==='stored'?'selected':''}>保管中（未移出）</option>
+            <option value="shipped" ${status==='shipped'?'selected':''}>課税移出済み</option>
+            <option value="loss" ${status==='loss'?'selected':''}>欠減（試飲・こぼれ・破損など）</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" id="ship-shipped-fields-${formId}" style="${showDetailFields?'':'display:none;'}">
+        <div class="field"><label id="ship-date-label-${formId}">${dateLabel}</label><input type="date" id="ship-date-${formId}" value="${lot&&showDetailFields?lot.date:''}"></div>
+        <div class="field"><label id="ship-dest-label-${formId}">${destLabel}</label><input type="text" id="ship-dest-${formId}" ${destListAttr} value="${lot&&showDetailFields?escapeHtml(lot.destination||''):''}" placeholder="${destPlaceholder}"></div>
+      </div>
+      <div class="field"><label>メモ（任意）</label><input type="text" id="ship-note-${formId}" value="${lot?escapeHtml(lot.note||''):''}" placeholder="例）冷蔵庫A棚"></div>
+      <div class="actions" style="margin-top:6px;">
+        <button type="button" class="btn btn-ghost" onclick="openShipmentForm('${batchId}','${pkgIndex}'${lot?`,'${lot.id}'`:''})">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="submitShipmentLot('${batchId}','${pkgIndex}'${lot?`,'${lot.id}'`:''})">${lot?'更新する':'追加する'}</button>
+      </div>
+    </div>`;
+}
+
+function toggleShipmentFormFields(formId){
+  const statusEl = document.getElementById(`ship-status-${formId}`);
+  const fieldsEl = document.getElementById(`ship-shipped-fields-${formId}`);
+  const dateLabelEl = document.getElementById(`ship-date-label-${formId}`);
+  const destLabelEl = document.getElementById(`ship-dest-label-${formId}`);
+  const destInputEl = document.getElementById(`ship-dest-${formId}`);
+  if(!statusEl || !fieldsEl) return;
+  const show = statusEl.value==='shipped' || statusEl.value==='loss';
+  fieldsEl.style.display = show ? '' : 'none';
+  if(dateLabelEl) dateLabelEl.textContent = statusEl.value==='loss' ? '発生日' : '移出日';
+  if(destLabelEl) destLabelEl.textContent = statusEl.value==='loss' ? '理由（試飲・こぼれ・破損など）' : '移出先';
+  if(destInputEl){
+    destInputEl.placeholder = statusEl.value==='loss' ? '例）品質チェックの試飲' : '例）大西商事';
+    if(statusEl.value==='loss'){ destInputEl.removeAttribute('list'); destInputEl.removeAttribute('data-list'); }
+    else{ destInputEl.setAttribute('data-list','supplierList'); }
+  }
+}
+
+function shipmentStatusLabel(status){
+  if(status==='shipped') return '課税移出済み';
+  if(status==='loss') return '欠減';
+  return '保管中（未移出）';
+}
+
+function exportShipmentsCSV(){
+  const rows = [];
+  exportableBatches().forEach(b=>{
+    getPackages(b).forEach(pkg=>{
+      shipmentLotsFor(pkg).forEach(l=>{
+        const hasDetail = l.status==='shipped' || l.status==='loss';
+        rows.push([
+          b.brewDate||'', b.batchName||'', `${pkg.type||''}${pkg.unitVolume?' '+pkg.unitVolume+'ml':''}`,
+          l.quantity, shipmentStatusLabel(l.status),
+          hasDetail?(l.date||''):'', hasDetail?(l.destination||''):'', l.note||''
+        ]);
+      });
+    });
+  });
+  if(!rows.length){ alert('出荷ロットの記録がありません。'); return; }
+  rows.sort((a,b)=>String(a[5]||'9999').localeCompare(String(b[5]||'9999')));
+  const headers = ['仕込み日','バッチ名','容器','数量','状態','移出日/発生日','移出先/理由','メモ'];
+  const lines = [headers.map(csvEscape).join(',')];
+  rows.forEach(r=>lines.push(r.map(csvEscape).join(',')));
+  downloadBlob('\uFEFF'+lines.join('\r\n'), '出荷記録_課税移出_' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv;charset=utf-8');
 }
 
 /* ---------------- Inventory (原材料受渡簿) ---------------- */
@@ -2121,6 +2398,16 @@ function buildBatchFromForm(id){
   };
 }
 
+function preservePackageShipments(newPackages, oldPackages){
+  if(!oldPackages || !oldPackages.length) return newPackages;
+  (newPackages||[]).forEach((pkg, i)=>{
+    if(oldPackages[i] && oldPackages[i].shipments && oldPackages[i].shipments.length){
+      pkg.shipments = oldPackages[i].shipments;
+    }
+  });
+  return newPackages;
+}
+
 async function saveBatch(){
   const b = buildBatchFromForm(editingId);
   if(!b.batchName){ alert('バッチ名を入力してください'); return; }
@@ -2130,6 +2417,7 @@ async function saveBatch(){
     b.scheduleActuals = batches[idx].scheduleActuals;
     b.completed = batches[idx].completed;
     b.inventoryDeducted = batches[idx].inventoryDeducted;
+    b.packages = preservePackageShipments(b.packages, batches[idx].packages);
     batches[idx]=b;
   } else {
     batches.push(b);
@@ -2155,6 +2443,7 @@ async function saveFormInPlace(id){
   b.scheduleActuals = batches[idx].scheduleActuals;
   b.completed = batches[idx].completed;
   b.inventoryDeducted = batches[idx].inventoryDeducted;
+  b.packages = preservePackageShipments(b.packages, batches[idx].packages);
   batches[idx] = b;
   await persist();
   renderGauge();
@@ -2227,6 +2516,7 @@ function openDetail(id){
       ${totalPackageVolume(b)>0?`<div class="row"><span>合計容量</span><span>${totalPackageVolume(b).toFixed(2)} L</span></div>`:''}
       ${b.co2vol?`<div class="row"><span>CO2ボリューム</span><span>${escapeHtml(b.co2vol)} vol</span></div>`:''}
     </div>` : ''}
+    ${renderPackageShipments(b)}
     ${(schedSteps.length||schedDryhops.length) ? `<div class="section"><div class="section-title">仕込みスケジュール</div>
       ${b.brewStartTime?`<div class="detail-list"><div class="row"><span>仕込み開始日時</span><span>${escapeHtml(b.brewStartTime.replace('T',' '))}</span></div></div>`:''}
       ${schedSteps.length?`<div class="detail-list">${schedSteps.map(s=>`<div class="row"><span>${escapeHtml(s.label)}</span><span>予定 ${formatStepDisplay(s.date, schedStartDate)}${schedActuals[s.key]?' ／ 実績 '+escapeHtml(schedActuals[s.key]):''}</span></div>`).join('')}</div>`:''}
