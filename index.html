@@ -433,6 +433,7 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
 .ship-summary-item.stored{color:var(--copper-bright);}
 .ship-summary-item.loss{color:var(--danger);}
 .ship-summary-item.unrecorded{color:var(--danger); opacity:0.7;}
+.ship-summary-item.remaining{color:var(--text); font-weight:500;}
 .ship-lot-row{border-top:1px solid var(--border); padding:8px 0;}
 .ship-lot-row:first-of-type{border-top:none;}
 .ship-lot-main{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:0.82rem;}
@@ -532,6 +533,11 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
       <div class="grid2">
         <div class="field"><label>担当</label><input type="text" id="f_brewer" data-list="brewerList" placeholder="例）湾岸太郎"></div>
         <div class="field"><label>バッチサイズ (L)</label><input type="number" step="0.1" min="0" id="f_batchSize"></div>
+      </div>
+      <div class="field">
+        <label>酒税法上の品目区分</label>
+        <input type="text" id="f_taxCategory" data-list="taxCategoryList" placeholder="例）ビール・発泡酒等（発泡性酒類）">
+        <div class="sched-note" style="margin-top:4px;">※令和8年10月よりビール・発泡酒等の税率区分が一本化されます。それ以降の仕込みは「ビール・発泡酒等（発泡性酒類）」を選択してください（9月以前の記録は従来区分のままでかまいません）。</div>
       </div>
     </details>
 
@@ -755,6 +761,16 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
     </div>
   </div>
 
+  <datalist id="taxCategoryList">
+    <option value="ビール・発泡酒等（発泡性酒類）">
+    <option value="ビール">
+    <option value="発泡酒(1)">
+    <option value="発泡酒(2)">
+    <option value="発泡酒(3)">
+    <option value="果実酒">
+    <option value="リキュール">
+  </datalist>
+
   <datalist id="styleList">
     <option value="Pale Ale">
     <option value="American Pale Ale (APA)">
@@ -908,6 +924,8 @@ input.inv-amount-over{ border-color:var(--danger) !important; background:rgba(18
     <span class="footer-link" onclick="exportCSV()">CSV書き出し (Excel用)</span>
     <span class="footer-sep">・</span>
     <span class="footer-link" onclick="exportShipmentsCSV()">出荷記録CSV書き出し（課税移出）</span>
+    <span class="footer-sep">・</span>
+    <span class="footer-link" onclick="exportShipmentsMonthlySummaryCSV()">課税移出 月次集計CSV書き出し</span>
     <span class="footer-sep">・</span>
     <span class="footer-link" onclick="exportJSON()">バックアップを書き出す</span>
     <span class="footer-sep">・</span>
@@ -1131,7 +1149,8 @@ function shipmentSummary(pkg){
   const stored = lots.filter(l=>l.status==='stored').reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
   const loss = lots.filter(l=>l.status==='loss').reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
   const unrecorded = Math.max(0, total - shipped - stored - loss);
-  return {total, shipped, stored, loss, unrecorded};
+  const remaining = Math.max(0, total - shipped - loss); // 欠減・移出を除いた量（保管中＋未記録）
+  return {total, shipped, stored, loss, unrecorded, remaining};
 }
 
 function openShipmentForm(batchId, pkgIndex, lotId){
@@ -1164,6 +1183,14 @@ async function submitShipmentLot(batchId, pkgIndex, lotId){
   if(status==='shipped' && !dateEl.value){ alert('課税移出済みにする場合は移出日を入力してください。'); return; }
   if(status==='loss' && !dateEl.value){ alert('欠減にする場合は発生日を入力してください。'); return; }
   if(status==='loss' && !destEl.value){ alert('欠減にする場合は理由（試飲・こぼれ・破損など）を入力してください。'); return; }
+
+  const packagedTotal = parseFloat(pkg.quantity)||0;
+  const otherLotsTotal = pkg.shipments.filter(l=>l.id!==lotId).reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
+  if(otherLotsTotal + quantity > packagedTotal){
+    const remaining = Math.max(0, packagedTotal - otherLotsTotal);
+    alert(`パッケージした本数（${packagedTotal}本/個）を超えています。\nこの容器であと登録できるのは ${remaining}本/個 までです。`);
+    return;
+  }
 
   const lot = {
     id: lotId || uid(),
@@ -1216,7 +1243,7 @@ function renderPackageShipments(b){
         ? `${escapeHtml(l.date||'')} ・ ${escapeHtml(l.destination||'(理由未設定)')}`
         : (l.date ? `${escapeHtml(l.date)}〜保管` : '');
       const formKey = `${b.id}::${pkgIndex}::${l.id}`;
-      const editFormHtml = openShipmentFormKey===formKey ? renderShipmentForm(b.id, pkgIndex, l) : '';
+      const editFormHtml = openShipmentFormKey===formKey ? renderShipmentForm(b.id, pkgIndex, l, pkg) : '';
       return `<div class="ship-lot-row">
         <div class="ship-lot-main">
           <span class="ship-lot-qty">${l.quantity}${escapeHtml(pkg.unitVolume?'本/個':'')}</span>
@@ -1233,7 +1260,7 @@ function renderPackageShipments(b){
     }).join('');
 
     const newFormKey = `${b.id}::${pkgIndex}`;
-    const newFormHtml = openShipmentFormKey===newFormKey ? renderShipmentForm(b.id, pkgIndex, null) : '';
+    const newFormHtml = openShipmentFormKey===newFormKey ? renderShipmentForm(b.id, pkgIndex, null, pkg) : '';
 
     return `<div class="ship-pkg-card">
       <div class="ship-pkg-title">${escapeHtml(pkgLabel)}<span class="ship-pkg-total">全${sum.total}${pkg.unitVolume?'本/個':''}</span></div>
@@ -1242,17 +1269,18 @@ function renderPackageShipments(b){
         <span class="ship-summary-item stored">保管中 ${sum.stored}</span>
         ${sum.loss>0?`<span class="ship-summary-item loss">欠減 ${sum.loss}</span>`:''}
         ${sum.unrecorded>0?`<span class="ship-summary-item unrecorded">未記録 ${sum.unrecorded}</span>`:''}
+        <span class="ship-summary-item remaining">欠減・移出を除く残り ${sum.remaining}</span>
       </div>
       ${lotsHtml || '<div class="sched-note">まだロットが記録されていません。</div>'}
       ${newFormHtml}
-      <button type="button" class="add-row-btn" onclick="openShipmentForm('${b.id}','${pkgIndex}')">＋ ロットを追加</button>
+      <button type="button" class="add-row-btn" onclick="openShipmentForm('${b.id}','${pkgIndex}')">＋ 移出処理を実施</button>
     </div>`;
   }).join('');
 
   return `<div class="section"><div class="section-title">出荷管理（課税移出・欠減）</div>${cards}</div>`;
 }
 
-function renderShipmentForm(batchId, pkgIndex, lot){
+function renderShipmentForm(batchId, pkgIndex, lot, pkg){
   const formId = lot ? `${batchId}-${pkgIndex}-${lot.id}` : `${batchId}-${pkgIndex}-new`;
   const status = lot ? lot.status : 'stored';
   const showDetailFields = status==='shipped' || status==='loss';
@@ -1260,10 +1288,13 @@ function renderShipmentForm(batchId, pkgIndex, lot){
   const destLabel = status==='loss' ? '理由（試飲・こぼれ・破損など）' : '移出先';
   const destPlaceholder = status==='loss' ? '例）品質チェックの試飲' : '例）大西商事';
   const destListAttr = status==='loss' ? '' : 'data-list="supplierList"';
+  const packagedTotal = pkg ? (parseFloat(pkg.quantity)||0) : null;
+  const otherLotsTotal = pkg ? (pkg.shipments||[]).filter(l=>!lot||l.id!==lot.id).reduce((s,l)=>s+(parseFloat(l.quantity)||0),0) : null;
+  const remaining = packagedTotal!==null ? Math.max(0, packagedTotal - otherLotsTotal) : null;
   return `
     <div class="inv-receipt-form">
       <div class="grid2">
-        <div class="field"><label>数量</label><input type="number" step="1" min="0" id="ship-qty-${formId}" value="${lot?lot.quantity:''}" placeholder="例）10"></div>
+        <div class="field"><label>数量${remaining!==null?`（残り${remaining}本/個まで）`:''}</label><input type="number" step="1" min="0"${remaining!==null?` max="${remaining}"`:''} id="ship-qty-${formId}" value="${lot?lot.quantity:''}" placeholder="例）10"></div>
         <div class="field"><label>状態</label>
           <select id="ship-status-${formId}" onchange="toggleShipmentFormFields('${formId}')">
             <option value="stored" ${status==='stored'?'selected':''}>保管中（未移出）</option>
@@ -1314,20 +1345,49 @@ function exportShipmentsCSV(){
     getPackages(b).forEach(pkg=>{
       shipmentLotsFor(pkg).forEach(l=>{
         const hasDetail = l.status==='shipped' || l.status==='loss';
+        const unitL = (parseFloat(pkg.unitVolume)||0)/1000;
+        const totalL = unitL * (parseFloat(l.quantity)||0);
         rows.push([
-          b.brewDate||'', b.batchName||'', `${pkg.type||''}${pkg.unitVolume?' '+pkg.unitVolume+'ml':''}`,
-          l.quantity, shipmentStatusLabel(l.status),
+          b.brewDate||'', b.batchName||'', b.taxCategory||'', `${pkg.type||''}${pkg.unitVolume?' '+pkg.unitVolume+'ml':''}`,
+          l.quantity, round2(totalL), shipmentStatusLabel(l.status),
           hasDetail?(l.date||''):'', hasDetail?(l.destination||''):'', l.note||''
         ]);
       });
     });
   });
   if(!rows.length){ alert('出荷ロットの記録がありません。'); return; }
-  rows.sort((a,b)=>String(a[5]||'9999').localeCompare(String(b[5]||'9999')));
-  const headers = ['仕込み日','バッチ名','容器','数量','状態','移出日/発生日','移出先/理由','メモ'];
+  rows.sort((a,b)=>String(a[7]||'9999').localeCompare(String(b[7]||'9999')));
+  const headers = ['仕込み日','バッチ名','品目区分','容器','数量','容量(L)','状態','移出日/発生日','移出先/理由','メモ'];
   const lines = [headers.map(csvEscape).join(',')];
   rows.forEach(r=>lines.push(r.map(csvEscape).join(',')));
   downloadBlob('\uFEFF'+lines.join('\r\n'), '出荷記録_課税移出_' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv;charset=utf-8');
+}
+
+function exportShipmentsMonthlySummaryCSV(){
+  const summary = {}; // key: `${yyyymm}::${taxCategory}` -> {shipped, loss, stored}
+  exportableBatches().forEach(b=>{
+    const cat = b.taxCategory || '(品目区分未設定)';
+    getPackages(b).forEach(pkg=>{
+      const unitL = (parseFloat(pkg.unitVolume)||0)/1000;
+      shipmentLotsFor(pkg).forEach(l=>{
+        const totalL = unitL * (parseFloat(l.quantity)||0);
+        const dateForMonth = (l.status==='shipped'||l.status==='loss') ? l.date : '';
+        if(!dateForMonth) return; // only aggregate lots with a definite date (stored/未移出 has no fixed月)
+        const ym = dateForMonth.slice(0,7); // YYYY-MM
+        const key = `${ym}::${cat}`;
+        if(!summary[key]) summary[key] = {ym, cat, shipped:0, loss:0};
+        if(l.status==='shipped') summary[key].shipped += totalL;
+        else if(l.status==='loss') summary[key].loss += totalL;
+      });
+    });
+  });
+  const rows = Object.values(summary);
+  if(!rows.length){ alert('移出日・発生日が入力された記録がありません。'); return; }
+  rows.sort((a,b)=> a.ym.localeCompare(b.ym) || String(a.cat).localeCompare(String(b.cat),'ja'));
+  const headers = ['年月','品目区分','課税移出数量(L)','欠減数量(L)'];
+  const lines = [headers.map(csvEscape).join(',')];
+  rows.forEach(r=>lines.push([r.ym, r.cat, round2(r.shipped), round2(r.loss)].map(csvEscape).join(',')));
+  downloadBlob('\uFEFF'+lines.join('\r\n'), '課税移出_月次集計_' + new Date().toISOString().slice(0,10) + '.csv', 'text/csv;charset=utf-8');
 }
 
 /* ---------------- Inventory (原材料受渡簿) ---------------- */
@@ -2178,7 +2238,7 @@ function collectRows(containerId, type){
 
 /* ---------------- Form ---------------- */
 function resetForm(){
-  ['batchName','style','brewDate','brewer','batchSize','targetOG','actualOG','mashTemp','mashTime',
+  ['batchName','style','taxCategory','brewDate','brewer','batchSize','targetOG','actualOG','mashTemp','mashTime',
    'boilTime','waterVolume','waterSource','waterPh','mCa','mMg','mNa','mCl','mSO4','mHCO3',
    'yeast','yeastAmount','fermentStart','fermentTemp','fg','packageDate','co2vol','notes']
    .forEach(k=>{ const el = $('f_'+k); if(el) el.value=''; });
@@ -2213,6 +2273,7 @@ function populateFormFields(b){
   $('fermentableRows').innerHTML=''; $('hopRows').innerHTML=''; $('adjunctRows').innerHTML=''; $('mineralRows').innerHTML=''; $('packageRows').innerHTML=''; $('gravityRows').innerHTML='';
   $('f_batchName').value=b.batchName||'';
   $('f_style').value=b.style||'';
+  $('f_taxCategory').value=b.taxCategory||'';
   $('f_brewDate').value=b.brewDate||'';
   $('f_brewer').value=b.brewer||'';
   $('f_batchSize').value=b.batchSize||'';
@@ -2362,6 +2423,7 @@ function buildBatchFromForm(id){
     id: id || uid(),
     batchName: $('f_batchName').value,
     style: $('f_style').value,
+    taxCategory: $('f_taxCategory').value,
     brewDate: $('f_brewDate').value,
     brewer: $('f_brewer').value,
     batchSize: $('f_batchSize').value,
@@ -2471,6 +2533,7 @@ async function undoInventoryFromFormBtn(id){
 function openDetail(id){
   const b = batches.find(x=>x.id===id);
   if(!b) return;
+  const alreadyOnDetail = !$('viewDetail').hidden;
   const a = abv(b.actualOG||b.targetOG, b.fg);
   const schedSteps = computeScheduleSteps(b);
   const schedStartDate = parseStartDateTime(b.brewStartTime);
@@ -2484,7 +2547,7 @@ function openDetail(id){
     <div class="detail-head">
       <div>
         <div class="batch-name" style="font-size:1.3rem;">${escapeHtml(b.batchName||'')}</div>
-        <div class="batch-style">${escapeHtml(b.style||'')} ・ ${b.brewDate||''}</div>
+        <div class="batch-style">${escapeHtml(b.style||'')}${b.taxCategory?' ・ '+escapeHtml(b.taxCategory):''} ・ ${b.brewDate||''}</div>
       </div>
       <span class="status-pill status-${statusOf(b)}">${statusOf(b)}</span>
     </div>
@@ -2536,7 +2599,7 @@ function openDetail(id){
       <button class="btn btn-primary" onclick="openEditForm('${b.id}')">編集する</button>
     </div>
   `;
-  showView('detail');
+  showView('detail', !alreadyOnDetail);
 }
 
 async function deleteBatch(id){
@@ -2566,7 +2629,8 @@ async function unmarkCompleted(id){
 }
 
 /* ---------------- View switching ---------------- */
-function showView(name){
+function showView(name, scrollTop){
+  if(scrollTop===undefined) scrollTop = true;
   $('viewList').hidden = name!=='list';
   $('viewForm').hidden = name!=='form';
   $('viewDetail').hidden = name!=='detail';
@@ -2577,7 +2641,7 @@ function showView(name){
   if(name==='form') document.querySelector('.tab[data-tab="new"]').classList.add('active');
   if(name==='schedule') document.querySelector('.tab[data-tab="schedule"]').classList.add('active');
   if(name==='inventory') document.querySelector('.tab[data-tab="inventory"]').classList.add('active');
-  window.scrollTo(0,0);
+  if(scrollTop) window.scrollTo(0,0);
 }
 
 document.querySelectorAll('.tab').forEach(t=>{
