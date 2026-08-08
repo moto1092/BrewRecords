@@ -260,6 +260,8 @@ input[type=datetime-local]{color-scheme:dark;}
 .date-display .date-display-text{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .date-display .date-display-icon{ flex:none; opacity:0.6; font-size:0.95em; }
 .date-display.placeholder{ color:var(--text-muted); opacity:0.65; }
+.date-display.is-default-value{ color:var(--text-muted); }
+.date-display.is-default-value .date-display-icon{ opacity:0.4; }
 .sched-actual .date-display{ padding:7px 8px; font-size:0.85rem; }
 textarea{min-height:70px; resize:vertical;}
 .abv-display{
@@ -2385,6 +2387,9 @@ function onScheduleStartChange(){
   const b = currentScheduleBatch();
   if(!b) return;
   b.brewStartTime = $('sch_startTime').value;
+  b.brewStartTimeConfirmed = true;
+  $('sch_startTime').removeAttribute('data-is-default');
+  refreshScheduleDefaultStyling($('sch_startTime'));
   persist();
   renderTimeline(b);
   renderList();
@@ -2406,9 +2411,16 @@ async function renderSchedule(){
   let needsPersist = false;
   if(!b.brewStartTime){
     b.brewStartTime = `${b.brewDate || todayDateValue()}T09:00`;
+    b.brewStartTimeConfirmed = false;
     needsPersist = true;
   }
   $('sch_startTime').value = b.brewStartTime;
+  if(b.brewStartTimeConfirmed===false){
+    $('sch_startTime').setAttribute('data-is-default', '1');
+  } else {
+    $('sch_startTime').removeAttribute('data-is-default');
+  }
+  refreshScheduleDefaultStyling($('sch_startTime'));
   $('sch_completed').checked = statusOf(b)==='完了';
   renderTimeline(b);
   if(needsPersist){
@@ -2479,8 +2491,9 @@ function renderTimeline(b){
     timeline.innerHTML = '<div class="sched-empty">仕込み開始日時を入力すると、工程スケジュールが自動計算されます。</div>';
   } else {
     timeline.innerHTML = steps.map(s=>{
-      const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : timeOfDayValue(s.date);
-      const actualDisp = (actuals[s.key]!==undefined && actuals[s.key]!=='') ? actuals[s.key] : '(未記録)';
+      const hasActual = actuals[s.key]!==undefined && actuals[s.key]!=='';
+      const val = hasActual ? actuals[s.key] : timeOfDayValue(s.date);
+      const actualDisp = hasActual ? actuals[s.key] : '(未記録)';
       const details = `予定: ${timeOfDayValue(s.date)} / 実績: ${actualDisp}` + (s.sub ? `\n${s.sub}` : '');
       const gcal = gcalQuickAddLink(`${b.batchName||'仕込み'}：${s.label}`, s.date, addMinutes(s.date,15), details);
       return `
@@ -2488,7 +2501,7 @@ function renderTimeline(b){
         <div class="sched-dot"></div>
         <div class="sched-label">${escapeHtml(s.label)}${s.sub?`<div class="sub">${escapeHtml(s.sub)}</div>`:''}</div>
         <div class="sched-planned">${formatStepDisplay(s.date, startDate)}</div>
-        <div class="sched-actual"><input type="time" value="${val}" onchange="saveScheduleActual('${s.key}', this.value)"></div>
+        <div class="sched-actual"><input type="time" value="${val}" ${hasActual?'':'data-is-default="1"'} onchange="saveScheduleActual('${s.key}', this.value); this.removeAttribute('data-is-default'); refreshScheduleDefaultStyling(this);"></div>
         <a class="sched-cal-btn" href="${gcal}" target="_blank" rel="noopener" title="Googleカレンダーに追加">📅</a>
       </div>`;
     }).join('');
@@ -2500,15 +2513,16 @@ function renderTimeline(b){
     dryhopEl.innerHTML = `<div class="section-title" style="margin-top:22px;">ドライホップ予定</div>` +
       (b.fermentStart ? '' : `<div class="sched-note">発酵開始日を入力すると、実際の投入日が計算されます。</div>`) +
       dryhops.map(s=>{
-        const val = actuals[s.key]!==undefined && actuals[s.key]!=='' ? actuals[s.key] : (s.hasDate ? dateStrToInputValue(s.dateStr) : '');
-        const actualDisp = (actuals[s.key]!==undefined && actuals[s.key]!=='') ? actuals[s.key] : '(未記録)';
+        const hasActual = actuals[s.key]!==undefined && actuals[s.key]!=='';
+        const val = hasActual ? actuals[s.key] : (s.hasDate ? dateStrToInputValue(s.dateStr) : '');
+        const actualDisp = hasActual ? actuals[s.key] : '(未記録)';
         const dhDetails = `予定: ${s.dateStr} / 実績: ${actualDisp}` + (s.sub ? `\n${s.sub}` : '');
         const gcalHtml = s.hasDate ? `<a class="sched-cal-btn" href="${gcalQuickAddAllDayLink(`${b.batchName||'仕込み'}：${s.label}`, s.dateStr, dhDetails)}" target="_blank" rel="noopener" title="Googleカレンダーに追加">📅</a>` : `<span class="sched-cal-btn sched-cal-btn-disabled" title="発酵開始日を入力すると使えます">📅</span>`;
         return `<div class="sched-row sched-dryhop">
           <div class="sched-dot"></div>
           <div class="sched-label">${escapeHtml(s.label)}<div class="sub">${escapeHtml(s.sub)}</div></div>
           <div class="sched-planned">${escapeHtml(s.dateStr)}</div>
-          <div class="sched-actual"><input type="date" value="${val}" onchange="saveScheduleActual('${s.key}', this.value)"></div>
+          <div class="sched-actual"><input type="date" value="${val}" ${hasActual?'':'data-is-default="1"'} onchange="saveScheduleActual('${s.key}', this.value); this.removeAttribute('data-is-default'); refreshScheduleDefaultStyling(this);"></div>
           ${gcalHtml}
         </div>`;
       }).join('');
@@ -3066,11 +3080,16 @@ function wrapDateInput(input){
       textSpan.textContent = placeholderText;
       display.classList.add('placeholder');
     }
+    display.classList.toggle('is-default-value', input.hasAttribute('data-is-default'));
   }
   input._dateSync = sync;
   sync();
   input.addEventListener('input', sync);
   input.addEventListener('change', sync);
+}
+
+function refreshScheduleDefaultStyling(input){
+  if(input && input._dateSync) input._dateSync();
 }
 
 function wrapAllDateInputs(root){
