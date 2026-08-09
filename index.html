@@ -1162,7 +1162,9 @@ function shipmentSummary(pkg){
   const loss = lots.filter(l=>l.status==='loss').reduce((s,l)=>s+(parseFloat(l.quantity)||0),0);
   const unrecorded = Math.max(0, total - shipped - stored - loss);
   const remaining = Math.max(0, total - shipped - loss); // 欠減・移出を除いた量（保管中＋未記録）
-  return {total, shipped, stored, loss, unrecorded, remaining};
+  const unitL = (parseFloat(pkg.unitVolume)||0)/1000;
+  const remainingL = remaining * unitL;
+  return {total, shipped, stored, loss, unrecorded, remaining, remainingL};
 }
 
 function openShipmentForm(batchId, pkgIndex, lotId){
@@ -1308,7 +1310,7 @@ function renderPackageShipments(b){
         <span class="ship-summary-item stored">保管中 ${sum.stored}</span>
         ${sum.loss>0?`<span class="ship-summary-item loss">欠減 ${sum.loss}</span>`:''}
         ${sum.unrecorded>0?`<span class="ship-summary-item unrecorded">未記録 ${sum.unrecorded}</span>`:''}
-        <span class="ship-summary-item remaining">欠減・移出を除く残り ${sum.remaining}</span>
+        <span class="ship-summary-item remaining">欠減・移出を除く残り ${sum.remainingL.toFixed(2)} L</span>
       </div>
       ${lotsHtml || '<div class="sched-note">まだロットが記録されていません。</div>'}
       ${newFormHtml}
@@ -1690,7 +1692,7 @@ function refreshAllInvAmountWarnings(){
 
 function openInventoryView(){
   renderInventory();
-  showView('inventory');
+  showView('inventory', false);
 }
 
 const INV_NAME_DATALIST = {fermentable:'maltList', hop:'hopList', adjunct:'adjunctList', yeast:'yeastList'};
@@ -2306,7 +2308,7 @@ function openNewForm(){
   $('f_netVolDisplay').textContent = '—';
   renderFormInvDeductArea(null);
   refreshAllInvSelectColors();
-  showView('form');
+  showView('form', false);
 }
 
 function populateFormFields(b){
@@ -2690,12 +2692,12 @@ document.querySelectorAll('.tab').forEach(t=>{
       // If a form (new or existing) is already in progress, just show it
       // again instead of wiping out unsaved input. Only start a fresh
       // blank form if nothing was being edited yet.
-      if(formIsOpen){ showView('form'); }
+      if(formIsOpen){ showView('form', false); }
       else{ openNewForm(); }
     }
     else if(t.dataset.tab==='schedule'){ openScheduleView(); }
     else if(t.dataset.tab==='inventory'){ openInventoryView(); }
-    else{ showView('list'); }
+    else{ showView('list', false); }
   });
 });
 
@@ -2745,11 +2747,11 @@ function openScheduleView(){
     $('sch_dryhops').innerHTML='';
     $('sch_startTime').value='';
     $('sch_completed').checked=false;
-    showView('schedule');
+    showView('schedule', false);
     return;
   }
   renderSchedule();
-  showView('schedule');
+  showView('schedule', false);
 }
 
 async function loadReminderSetting(){
